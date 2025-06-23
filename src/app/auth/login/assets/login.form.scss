@@ -1,0 +1,96 @@
+
+.login-form {
+  width: 100%;
+  max-width: 380px;
+
+  .login-form-container {
+    padding-left: 30px;
+    padding-right: 30px;
+    margin: 0;
+    background: var(--background);
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--main-component-grey);
+      }
+
+      span {
+        background: var(--background);
+        padding: 0 15px;
+        color: var(--foreground);
+        font-size: 16px;
+      }
+    }
+
+    .oauth2-btns {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+
+      .google-btn {
+        margin: 0 5px;
+        display: inline-block;
+        width: auto;
+        height: 50px;
+        width: 50px;
+        background: white;
+        color: #000;
+        border: 2px solid var(--main-component-grey);
+        border-radius: 26px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        &:hover {
+          background: var(--main-component-grey);
+          border-color: var(--main-text-grey);
+        }
+
+        .google-icon {
+          flex-shrink: 0;
+        }
+      }
+
+      .github-btn {
+        margin: 0 5px;
+        display: inline-block;
+        width: auto;
+        height: 50px;
+        width: 50px;
+        background: white;
+        color: #000;
+        border: 2px solid var(--main-component-grey);
+        border-radius: 26px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+        &:hover {
+          background: var(--main-component-grey);
+          border-color: var(--main-text-grey);
+        }
+      }
+    }
+  }
+
+}

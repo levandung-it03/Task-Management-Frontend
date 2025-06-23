@@ -1,0 +1,73 @@
+:root {
+  --component-padding: 15px;
+}
+
+.user-info-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding: var(--component-padding);
+
+  .user-info {
+    background-color: var(--background);
+    padding: var(--component-padding);
+    width: 70%;
+    height: inherit;
+  }
+
+  .account-info {
+    flex: 1;
+    padding-left: var(--component-padding);
+  }
+
+  .divider {
+    display: block;
+    width: 100%;
+    height: 0.5px;
+    background-color: var(--border-color);
+    margin-top: var(--component-padding);
+    margin-bottom: var(--component-padding);
+    margin-left: calc(-var(--component-padding));
+    margin-right: calc(-var(--component-padding));
+  }
+
+  .user-info-description {
+    position: relative;
+
+    .page-name {
+      font-size: var(--page-name-size);
+    }
+
+    .page-description {
+      font-size: var(--page-description-size);
+      color: var(--main-text-grey);
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .reset-user-info-btn {
+      position: absolute;
+      top: calc(var(--component-padding));
+      right: 0;
+      background-color: transparent;
+      transition: all ease 0.3s;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 20px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--btn-hovered-background);
+      }
+
+      .reset-user-info-icon {
+        color: var(--foreground);
+      }
+    }
+  }
+}
