@@ -11,20 +11,21 @@
   --blue-in-env: #5050ff;
   --green-in-env: #38a218;
   --instruct-box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.2);
+  --background: #ffffff;
+  --under-background: #eaebee;
+  --foreground: #0a0a0a;
+  --main-component-grey: #c1c4c9;
+  --main-text-grey: #777;
+  --focusing-fieldset-color: rgb(50, 50, 255);
+  --main-text-err-red: #ff2020;
+  --blue-in-env: #b8b8ff;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ffffff;
-    --under-background: #eaebee;
-    --foreground: #0a0a0a;
-    --main-component-grey: #c1c4c9;
-    --main-text-grey: #777;
-    --focusing-fieldset-color: rgb(50, 50, 255);
-    --main-text-err-red: #ff2020;
-    --blue-in-env: #b8b8ff;
+    
   }
-}
+} */
 
 nextjs-portal {
   display: none !important;
