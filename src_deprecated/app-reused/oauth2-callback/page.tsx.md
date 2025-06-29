@@ -1,3 +1,4 @@
+```typescript
 
 'use client';
 
@@ -66,3 +67,5 @@ export default function CallbackPage({ serviceName }: CallbackPageProps) {
     </div>
   );
 }
+
+```

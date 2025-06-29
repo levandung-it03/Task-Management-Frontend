@@ -1,7 +1,6 @@
 "use client"
 
 import { JSX, useCallback, useState } from "react"
-import RegisterForm from "./register.form"
 import LoginForm from "./login.form"
 import ForgotPassForm from "./forgot-pass.form"
 
@@ -26,12 +25,6 @@ export default function FormsWrapper() {
           className={formSelection === "2" ? "tab active" : "tab"}
           onClick={() => handleSelect("2")}
         >
-          Sign Up
-        </button>
-        <button
-          className={formSelection === "3" ? "tab active" : "tab"}
-          onClick={() => handleSelect("3")}
-        >
           Lost Password
         </button>
       </div>
@@ -51,13 +44,6 @@ function SelectedTitle({ selection }: { selection: string }): JSX.Element {
       );
     case "2":
       return (
-        <div className="register-title form-wrapper-title">
-          <h1>Welcome, New User</h1>
-          <p>Let’s follow these steps to set up your account.</p>
-        </div>
-      );
-    case "3":
-      return (
         <div className="forgot-pass-title form-wrapper-title">
           <h1>Forgot Password</h1>
           <p>Let us help you reset your password.</p>
@@ -73,8 +59,6 @@ function SelectedForm({ selection }: { selection: string }): JSX.Element {
     case "1":
       return <LoginForm />;
     case "2":
-      return <RegisterForm />;
-    case "3":
       return <ForgotPassForm />;
     default:
       return <></>;

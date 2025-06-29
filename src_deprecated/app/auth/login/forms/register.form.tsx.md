@@ -1,3 +1,4 @@
+```typescript
 'use client'
 import { useCallback, useEffect, useState } from "react"
 import GlobalValidators from "@/util/global.validators"
@@ -229,3 +230,4 @@ export default function RegisterForm() {
     </form>
   )
 }
+```

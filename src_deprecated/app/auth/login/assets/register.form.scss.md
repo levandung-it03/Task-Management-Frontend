@@ -1,3 +1,4 @@
+```scss
 
 .register-form {
   width: 100%;
@@ -13,3 +14,4 @@
   }
 
 }
+```
