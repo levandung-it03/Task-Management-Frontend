@@ -45,7 +45,12 @@ export default function CallbackPage({ serviceName }: CallbackPageProps) {
       AuthHelper.saveAccessTokenIntoCookie(response.body.accessToken)
       AuthHelper.saveRefreshTokenIntoCookie(response.body.refreshToken)
       const role = AuthHelper.getRoleFromToken().toUpperCase()
-      window.location.href = role.includes("ADMIN") ? "/admin/dashboard" : "/user/home"
+      if (role.includes("PM"))
+        window.location.href = "/pm/dashboard"
+      else if (role.includes("LEAD"))
+        window.location.href = "/lead/dashboard"
+      else
+        window.location.href = "/emp/home"
     }
     authenticate()
   }, [router, serviceName])

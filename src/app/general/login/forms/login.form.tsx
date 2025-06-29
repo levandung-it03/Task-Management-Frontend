@@ -50,7 +50,12 @@ export default function LoginForm() {
       AuthHelper.saveAccessTokenIntoCookie(response.body.accessToken)
       AuthHelper.saveRefreshTokenIntoCookie(response.body.refreshToken)
       const role = AuthHelper.getRoleFromToken().toUpperCase()
-      window.location.href = role.includes("ADMIN") ? "/admin/dashboard" : "/user/home"
+      if (role.includes("PM"))
+        window.location.href = "/pm/dashboard"
+      else if (role.includes("LEAD"))
+        window.location.href = "/lead/dashboard"
+      else
+        window.location.href = "/emp/home"
     }
     send()
   }, [formValidation, email, password])
@@ -58,19 +63,6 @@ export default function LoginForm() {
   const handleGoogleLogin = useCallback(() => {
     async function getOauth2Authorizer() {
       const request = DTO_GetOauth2Authorizer.withBuilder().boauth2Service(oauth2Enums.google)
-      const response = await LoginAPIs.getOauth2Authorizer(request) as RecordResponse
-      if (response.status !== 200 || GlobalValidators.isNull(response.body))
-        return
-
-      localStorage.setItem("oauth2Enums", JSON.stringify(oauth2Enums))
-      window.location.href = response.body.authorizer
-    }
-    getOauth2Authorizer()
-  }, [oauth2Enums])
-
-  const handleGithubLogin = useCallback(() => {
-    async function getOauth2Authorizer() {
-      const request = DTO_GetOauth2Authorizer.withBuilder().boauth2Service(oauth2Enums.github)
       const response = await LoginAPIs.getOauth2Authorizer(request) as RecordResponse
       if (response.status !== 200 || GlobalValidators.isNull(response.body))
         return
@@ -124,9 +116,6 @@ export default function LoginForm() {
         <div className="oauth2-btns">
           <button type="button" className="google-btn" onClick={handleGoogleLogin}>
             <GoogleIcon />
-          </button>
-          <button type="button" className="github-btn" onClick={handleGithubLogin}>
-            <Github />
           </button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { GeneralAPIs, RecordResponse } from "@/apis/general.api";
-import { LoginValidators } from "@/app/auth/login/page.services";
+import { LoginValidators } from "@/app/general/login/page.services";
 import GlobalValidators from "@/util/global.validators";
 import { Eye, EyeOff } from "lucide-react";
 import { useCallback, useState } from "react";

@@ -72,15 +72,20 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
   }, [])
 
   const navBarItems: {
-    admin: Record<string, ReactNode>,
-    user: Record<string, ReactNode>,
+    pm: Record<string, ReactNode>,
+    lead: Record<string, ReactNode>,
+    emp: Record<string, ReactNode>,
   } = {
-    admin: {
+    pm: {
       dashboard: <><LayoutDashboard className="nav-item-icon" /><span className="nav-item-name"> Dashboard</span></>,
       ["manage-users"]: <><Users className="nav-item-icon" /><span className="nav-item-name"> Manage Users</span></>,
       reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
     },
-    user: {
+    lead: {
+      dashboard: <><LayoutDashboard className="nav-item-icon" /><span className="nav-item-name"> Dashboard</span></>,
+      reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
+    },
+    emp: {
       home: <><House className="nav-item-icon" /><span className="nav-item-name"> Home</span></>,
     }
   };
