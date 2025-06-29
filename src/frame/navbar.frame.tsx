@@ -9,6 +9,7 @@ import "./styles/navbar.frame.scss"
 import { DTO_Token } from '@/dtos/general.dto';
 import { GeneralAPIs, RecordResponse } from '@/apis/general.api';
 import toast from 'react-hot-toast';
+import PackageCheck from '@/assets/package-check.icon';
 
 interface NavbarComponentProps {
   lightMode: string;
@@ -102,18 +103,25 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
     logout()
   }, [])
 
+  const isSelectedIndex = useCallback((rootPath: string) => {
+    return window.location.pathname.includes(rootPath)
+  }, [])
+
   if (GlobalValidators.isNull(role) || role === 'auth')
     return null;
 
   return (
     <nav className={"main-nav-bar" + (collapse ? " nav-collapse" : "")}>
       <div className="app-logo">
-        <Ghost className="app-logo-icon" />
-        <span className="app-name">VN Ghosts</span>
+        <PackageCheck className="app-logo-icon" />
+        <span className="app-name">Tmakes</span>
       </div>
       <ul className="item-container">
         {Object.entries(navBarItems[role as keyof typeof navBarItems]).map(([key, item], index) => (
-          <li key={'nav-bar-' + key + index} className="nav-bar-item">
+          <li
+            key={'nav-bar-' + key + index}
+            className={`nav-bar-item ${isSelectedIndex(`/${role}/${key}`) && " nav-bar-item-selected"}`}
+          >
             <a className="nav-item-wrapper" href={`/${role}/${key}`}>{item}</a>
           </li>
         ))}

@@ -1,11 +1,9 @@
 :root {
   --nav-bar-padding: 10px;
-  --logo-background: rgb(0, 84, 251, 0.2);
 }
 
 .main-nav-bar {
   height: 100%;
-  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -18,7 +16,6 @@
   }
 
   .app-logo {
-    background-color: var(--logo-background);
     padding: 10px;
     display: flex;
     align-items: center;
@@ -28,17 +25,17 @@
     width: 100%;
 
     .app-logo-icon {
-      background-color: var(--logo-color);
-      color: #fff;
-      width: 40px;
-      height: 40px;
-      padding: 8px;
-      border-radius: 20px;
+      color: var(--logo-color);
+      width: 45px;
+      height: 45px;
+      padding: 4px;
     }
 
     .app-name {
-      font-size: 20px;
+      color: var(--logo-color);
+      font-size: 24px;
       margin-left: 10px;
+      font-weight: 600;
     }
   }
 
@@ -67,12 +64,24 @@
 
       &:hover {
         cursor: pointer;
-        background-color: var(--btn-hovered-background);
+        background-color: var(--background);
       }
     }
 
     .nav-last-item-wrapper {
       margin-bottom: 0;
+    }
+  }
+
+  .nav-bar-item-selected {
+    .nav-item-wrapper {
+      background: var(--main-green-gradient)!important;
+      cursor: auto!important;
+
+      .nav-item-icon,
+      .nav-item-name {
+        color: #fff!important;
+      }
     }
   }
 
@@ -143,7 +152,7 @@
             .user-role {
               color: #ffffff;
               font-size: 14px;
-              background-color: var(--logo-color);
+              background-color: var(--blue-in-env);
               padding: 0 4px;
               border-radius: 4px;
               margin-left: 4px;

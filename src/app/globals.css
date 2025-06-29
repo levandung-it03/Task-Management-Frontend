@@ -1,24 +1,24 @@
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0a0a0a;
   --btn-hovered-background: #cbcbcb;
   --border-color: #888;
   --shadow-color: rgba(82, 82, 82, 0.4);
   --reactangle-radius: 10px;
   --page-name-size: 28px;
   --page-description-size: 15px;
-  --logo-color: #5050ff;
+  --logo-color: #10492f;
+  --main-green-gradient: #10492f;
+  --main-hovered-green-gradient: #2b8f64;
+  --yellow-under-main-green: #d4f96b;
   --blue-in-env: #5050ff;
   --green-in-env: #38a218;
   --instruct-box-shadow: 0 4px 4px 2px rgba(0, 0, 0, 0.2);
-  --background: #ffffff;
   --under-background: #eaebee;
-  --foreground: #0a0a0a;
   --main-component-grey: #c1c4c9;
   --main-text-grey: #777;
   --focusing-fieldset-color: rgb(50, 50, 255);
   --main-text-err-red: #ff2020;
-  --blue-in-env: #b8b8ff;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -45,6 +45,9 @@ body {
 }
 
 body.dark {
+  --logo-color: #238058;
+  --main-green-gradient: #238058;
+  --main-hovered-green-gradient: #39a476;
   --background: #171717;
   --under-background: #353535;
   --foreground: #eeeeee;
@@ -67,13 +70,16 @@ body {
     justify-content: flex-start;
     height: 100vh;
     width: 100%;
-    background: var(--under-background);
+    background-color: var(--background);
+    padding: 10px;
     color: var(--foreground);
     overflow: hidden;
 
     .main-nav-bar {
       width: 210px;
-      background-color: var(--background);
+      background-color: var(--under-background);
+      margin-right: 10px;
+      border-radius: 20px;
     }
 
     .web-container {
@@ -81,6 +87,7 @@ body {
       height: 100%;
       background-color: var(--under-background);
       overflow-y: auto;
+      border-radius: 20px;
     }
   }
 }
@@ -323,7 +330,7 @@ a {
   margin: 2px;
   font-size: 14px!important;
   color: #fff!important;
-  background-color: var(--logo-color);
+  background-color: var(--blue-in-env);
 }
 
 /* -------------------Responsive SECTION------------------- */
