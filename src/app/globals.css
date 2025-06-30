@@ -9,7 +9,7 @@
   --page-name-size: 28px;
   --page-description-size: 15px;
   --logo-color: #10492f;
-  --main-green-gradient: #10492f;
+  --main-green: #10492f;
   --main-hovered-green-gradient: #2b8f64;
   --yellow-under-main-green: #d4f96b;
   --blue-in-env: #5050ff;
@@ -20,6 +20,15 @@
   --focusing-fieldset-color: rgb(50, 50, 255);
   --main-text-err-red: #ff2020;
   --large-component-padding: 10px;
+
+  --role-admin-border: #fdecea;
+  --role-admin-bg: #d32f2f;
+  --role-pm-border: #e3f2fd;
+  --role-pm-bg: #1976d2;
+  --role-lead-border: #e8f5e9;
+  --role-lead-bg: #388e3c;
+  --role-emp-border: #eeeeee;
+  --role-emp-bg: #000000;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -47,10 +56,10 @@ body {
 
 body.dark {
   --logo-color: #238058;
-  --main-green-gradient: #238058;
+  --main-green: #238058;
   --main-hovered-green-gradient: #39a476;
-  --background: #171717;
-  --under-background: #353535;
+  --background: #1b1f23;
+  --under-background: #2b2f33;
   --foreground: #eeeeee;
   --btn-hovered-background: #333;
   --main-component-grey: #555555;
@@ -58,6 +67,15 @@ body.dark {
   --focusing-fieldset-color: rgb(96, 157, 255);
   --main-text-err-red: #bc0505;
   --instruct-box-shadow: 0 4px 6px 2px rgba(255, 255, 255, 0.15);
+
+  --role-admin-border: #ef9a9a;
+  --role-admin-bg: #2e1b1b;
+  --role-pm-border: #90caf9;
+  --role-pm-bg: #1a237e;
+  --role-lead-border: #a5d6a7;
+  --role-lead-bg: #1b3b1b;
+  --role-emp-border: #bdbdbd;
+  --role-emp-bg: #2c2c2c;
 }
 
 body {

@@ -49,4 +49,10 @@ export class LoginValidators {
 
     return "";
   }
+  
+  static isValidDeadline(value: string): string {
+    if (!value) return "Date is required";
+    if (new Date(value) < new Date()) return "Date must be in current or future";
+    return "";
+  }
 }
