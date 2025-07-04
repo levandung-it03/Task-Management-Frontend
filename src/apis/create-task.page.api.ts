@@ -1,12 +1,13 @@
 import axiosInstance from "@/util/axios.helper"
 import { ApiResponse, GeneralAPIs, RecordResponse } from "./general.api"
-import { DTO_FastUserInfo, DTO_GroupsRelatedToUser, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.api"
+import { DTO_FastUserInfo, DTO_GroupsRelatedToUser, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.api"
+import { AuthHelper } from "@/util/auth.helper"
 
 export class CreateTaskPageAPIs {
 
   static async fastSearchUsers(request: DTO_SearchFastUserInfo): Promise<ApiResponse<DTO_FastUserInfo[]> | unknown> {
     try {
-      // Get current role in Cookie
+      // const role = AuthHelper.getRoleFromToken()
       // const response = await axiosInstance.get(`/api/private/${role}/.../v1/...`, {
       //   params: request
       // })
@@ -40,7 +41,7 @@ export class CreateTaskPageAPIs {
   
   static async getAllGroupsRelatedToUser(): Promise<ApiResponse<DTO_GroupsRelatedToUser[]> | unknown> {
     try {
-      // Get current role in Cookie
+      // const role = AuthHelper.getRoleFromToken()
       // const response = await axiosInstance.get(`/api/private/${role}/.../v1/...`)
       // return response.data
       // return setTimeout(() => {
@@ -77,7 +78,7 @@ export class CreateTaskPageAPIs {
   
   static async getAllUsersCanBeAssignedAndRelatedToGroup(groupId: number): Promise<ApiResponse<DTO_FastUserInfo[]> | unknown> {
     try {
-      // Get current role in Cookie
+      // const role = AuthHelper.getRoleFromToken()
       // const response = await axiosInstance.get(`/api/private/${role}/.../v1/.../${groupId}`)
       // return response.data
       return {
@@ -93,6 +94,16 @@ export class CreateTaskPageAPIs {
             ],
           time: "12:00:20 30/06/2025"
         }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async createTask(request: DTO_TaskRequest): Promise<ApiResponse<RecordResponse> | unknown> {
+    try {
+      const role = AuthHelper.getRoleFromToken()
+      const response = await axiosInstance.post(`/api/private/${role}/task/v1/create`, request)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

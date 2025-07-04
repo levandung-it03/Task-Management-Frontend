@@ -17,7 +17,6 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hot-toast": "^2.5.2",
-    "react-simplemde-editor": "^5.2.0",
     "sass": "^1.89.1",
     "simplemde": "^1.11.2"
   },
