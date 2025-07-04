@@ -5,6 +5,12 @@ export interface DTO_FastUserInfo {
   role: string
 }
 
+export interface DTO_GroupsRelatedToUser {
+  groupId: number
+  groupName: string
+  role: string
+}
+
 export class DTO_SearchFastUserInfo {
   private query!: string
   

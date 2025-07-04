@@ -16,6 +16,8 @@
 > npm install axios
 > npm i --save-dev @types/js-cookie
 > npm install js-cookie
+> npm install react-simplemde-editor simplemde --save
+> npm i @tiptap/react
 
 # Build project #
 > npx next build
