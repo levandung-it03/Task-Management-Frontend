@@ -20,6 +20,7 @@ export class DTO_SearchFastUserInfo {
 
 export class DTO_TaskRequest {
   private deadline!: string
+  private level!: number
   private assignedEmails!: string[]
   private description!: string
   private reportFormat!: string
@@ -27,6 +28,7 @@ export class DTO_TaskRequest {
   public static withBuilder() { return new DTO_TaskRequest() }
   
   public bdeadline(deadline: string): DTO_TaskRequest { this.deadline = deadline; return this }
+  public blevel(level: number): DTO_TaskRequest { this.level = level; return this }
   public bassignedEmails(emails: string[]): DTO_TaskRequest { this.assignedEmails = emails; return this }
   public bdescription(description: string): DTO_TaskRequest { this.description = description; return this }
   public breportFormat(format: string): DTO_TaskRequest { this.reportFormat = format; return this }

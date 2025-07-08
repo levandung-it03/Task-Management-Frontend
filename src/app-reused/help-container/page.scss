@@ -1,0 +1,38 @@
+.dc-desc-wrapper {
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+  position: relative;
+
+  .dc-desc-text {
+    color: var(--main-text-grey);
+    font-weight: 500;
+    font-size: 16px;
+    margin-right: 2px;
+  }
+
+  .dc-help-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dc-help-container {
+    position: absolute;
+    display: none;
+    top: 100%;
+    left: 100%;
+    width: auto;
+    white-space: nowrap;
+    padding: 5px 10px;
+    background-color: var(--background);
+    box-shadow: var(--instruct-box-shadow);
+    color: var(--main-text-grey);
+  }
+
+  .dc-help-icon:hover+.dc-help-container {
+    display: block;
+  }
+}

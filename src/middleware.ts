@@ -15,6 +15,7 @@ function getRoleFromToken(token?: string): string {
 }
 
 export function middleware(request: NextRequest) {
+  return NextResponse.next()
   const { pathname } = request.nextUrl
   const accessToken: string | undefined = request.cookies.get('ACCESS')?.value
   const role: string | undefined = getRoleFromToken(accessToken)

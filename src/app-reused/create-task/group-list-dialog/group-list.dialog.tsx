@@ -1,0 +1,116 @@
+'use client'
+
+import { DTO_FastUserInfo, DTO_GroupsRelatedToUser } from '@/dtos/create-task.page.api';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { CreateTaskPageAPIs } from '@/apis/create-task.page.api';
+import { ApiResponse } from '@/apis/general.api';
+import './group-list.dialog.scss'
+import { Users, X } from 'lucide-react';
+import { extractEmailToGetId, getColorByCharacter } from '../task-creation-form/task-creation.form';
+
+export interface GroupListDialogProps {
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
+  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  openDialog: boolean;
+  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
+}
+
+export default function GroupListDialog({
+  openDialog,
+  setOpenDialog,
+  setAssignedUsers,
+  setHistories
+}: GroupListDialogProps) {
+  const [groups, setGroups] = useState<DTO_GroupsRelatedToUser[]>([])
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  const onClickGroup = useCallback((id: number) => {
+    async function findRelatedUsersAndAssign() {
+      const response = await CreateTaskPageAPIs.getAllUsersCanBeAssignedAndRelatedToGroup(id) as ApiResponse<DTO_FastUserInfo[]>
+      setOpenDialog(false)
+
+      if (response.status !== 200)
+        return
+      
+      setAssignedUsers(prev => {
+        setHistories(prev)
+        return {
+          ...prev,
+          ...response.body.reduce((acc, user) => {
+            acc[extractEmailToGetId(user.username)] = {
+              username: user.username,
+              fullName: user.fullName,
+              role: user.role
+            }
+            return acc;
+          }, {} as Record<string, Record<string, string>>)
+        }
+      })
+    }
+    findRelatedUsersAndAssign()
+  }, [])
+
+  const onClickCloseDialog = useCallback(() => setOpenDialog(false), [])
+
+  useEffect(() => {
+    async function getGroups() {
+      setIsLoading(true)
+      const response = await CreateTaskPageAPIs.getAllGroupsRelatedToUser() as ApiResponse<DTO_GroupsRelatedToUser[]>
+      if (response.status !== 200) {
+        setIsLoading(false)
+        return
+      }
+      setIsLoading(false)
+      setGroups(response.body)
+    }
+    openDialog && getGroups()
+  }, [openDialog])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (overlayRef.current && overlayRef.current.contains(event.target as Node)) {
+        setOpenDialog(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  return <div className={`main-groups-dialog ${openDialog ? "" : "hidden"}`}>
+    <div ref={overlayRef} className="dialog-overlay"></div>
+    <div className="groups-container">
+      <div className="groups-container-header">
+        <div className="gch-title">
+          <div className="gch-title-wrapper">
+            <Users className="gch-title-icon"/>
+            <span className="gch-title-text">Related Groups</span>
+          </div>
+          <div className="close-btn-wrapper">
+            <X className="close-btn-icon" onClick={onClickCloseDialog}/>
+          </div>
+        </div>
+      </div>
+      <div className="groups-container-desc">
+        <i className="gch-desc-text">Choose a Group will automatically choose all Users belongs to Group to assign.</i>
+      </div>
+      <ul className="groups-container-body">
+        {isLoading
+          ? <li className="loading-row"><span>Loading...</span></li>
+          : (groups.length === 0
+            ? <li className="loading-row"><span>You haven't joined any Groups</span></li>
+            : groups.map((group, ind) => {
+              const firstNameChar = group.groupName[0].toUpperCase()
+              return <li key={"glt-" + ind} className="user-short-info gcb-group-line"
+                onClick={() => onClickGroup(group.groupId)}>
+                <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
+                <span className="usi-username">{group.groupName}</span>
+                <span className={`usi-role gcb-${group.role.toLowerCase().replace("_", "-")}`}>{group.role}</span>
+              </li>
+            })
+          )
+        }
+      </ul>
+    </div>
+  </div>
+}
