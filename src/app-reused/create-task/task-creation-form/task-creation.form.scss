@@ -53,41 +53,6 @@
     background-color: var(--btn-hovered-background);
   }
 
-  .form-caption {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-self: flex-start;
-    align-items: center;
-    margin-top: var(--component-padding);
-    margin-bottom: calc(1.5*var(--component-padding));
-
-    .caption-icon {
-      color: #fff;
-      background-color: var(--main-green);
-      width: 40px;
-      height: 40px;
-      padding: 5px;
-      margin-right: var(--component-padding);
-      border-radius: 10px;
-    }
-
-    .caption-content {
-      font-size: var(--page-name-size);
-      color: var(--main-green);
-      font-weight: 600;
-      flex: 1;
-    }
-
-    .desc-content {
-      display: block;
-      width: 100%;
-      font-size: 16px;
-      margin-left: 55px;
-      color: var(--main-text-grey);
-    }
-  }
-
   .search-user-container {
     position: relative;
     width: 100%;
