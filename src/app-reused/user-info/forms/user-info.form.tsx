@@ -60,7 +60,7 @@ export default function UserInfoForm() {
         .bgender(gender)
         .bdob(new Date(dob))
       const res = await UserInfoAPIs.updateUserInfo(AuthHelper.getRoleFromToken(), request) as RecordResponse
-      if (res.status === 200) {
+      if (String(res.status)[0] === "2") {
         toast.success(res.msg)
         setPreState({ fullName, gender, dob })
       }

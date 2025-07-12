@@ -6,11 +6,13 @@ import GlobalValidators from "@/util/global.validators"
 import { FileIcon } from "@/assets/file.icon"
 import { CreateTaskPageAPIs } from "@/apis/create-task.page.api"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.api"
-import { ApiResponse } from "@/apis/general.api"
+import { ApiResponse, GeneralAPIs, ListRecordResponse } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { X, CircleHelp } from "lucide-react"
 import { CreateTaskPageValidators } from "../page.service"
 import HelpContainer from "@/app-reused/help-container/page"
+import { TextEditor } from "@/app-reused/text-editor/page"
+import { GeneralTools } from "@/util/general.helper"
 
 export interface TaskInfo {
   deadline: string,
@@ -56,7 +58,12 @@ export function TaskCreationForm({
   const [deadline, setDeadline] = useState("")
   const [description, setDescription] = useState("")
   const [reportFormat, setReportFormat] = useState("")
-  const [level, setLevel] = useState(1)
+  const [levelList, setLevelList] = useState<string[]>([])
+  const [level, setLevel] = useState("")
+  const [priorityList, setPriorityList] = useState<string[]>([])
+  const [priority, setPriority] = useState("")
+  const [taskTypeList, setTaskTypeList] = useState<string[]>([])
+  const [taskType, setTaskType] = useState("")
   const [formValidation, setFormValidation] = useState({
     deadline: "",
     assignedUsers: [],
@@ -75,7 +82,15 @@ export function TaskCreationForm({
   }, [assignedUsersHist, setAssignedUsers, setCanUndo])
 
   const onChangeLevel = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLevel(Number(e.target.value))
+    setLevel(e.target.value)
+  }, [])
+
+  const onChangePriority = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPriority(e.target.value)
+  }, [])
+
+  const onChangeTaskType = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTaskType(e.target.value)
   }, [])
 
   const onClickSubmitBtn = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -86,9 +101,9 @@ export function TaskCreationForm({
 
       if (GlobalValidators.isEmpty(deadline)
         || formattedDeadline < new Date()
-        || GlobalValidators.isEmpty(trimmedDescription
-        || GlobalValidators.isEmpty(trimmedReportFormat
-        || Object.keys(assignedUsers).length === 0))
+        || GlobalValidators.isEmpty(trimmedDescription)
+        || GlobalValidators.isEmpty(trimmedReportFormat)
+        || Object.keys(assignedUsers).length === 0
       ) {
         toast.error("Please fill all required fields correctly")
         return
@@ -97,6 +112,8 @@ export function TaskCreationForm({
       // const request = DTO_TaskRequest.withBuilder()
       // .bdeadline(deadline)
       // .blevel(level)
+      // .bpriority(priority)
+      // .btaskType(taskType)
       // .bassignedEmails(Object.entries(assignedUsers).map(([key, user]) => user.username))
       // .bdescription(trimmedDescription)
       // .breportFormat(trimmedReportFormat)
@@ -111,6 +128,23 @@ export function TaskCreationForm({
       // window.location.href = `${role}/task/${response.body.id}`
     }
     createTask();
+  }, [])
+
+  useEffect(() => {
+    async function initValues() {
+      const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<string[]>
+      if (String(levelsResponse.status)[0] === "2")
+        setLevelList(levelsResponse.body)
+      
+      const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
+      if (String(prioritiesResponse.status)[0] === "2")
+        setPriorityList(prioritiesResponse.body)
+      
+      const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
+      if (String(taskTypesResponse.status)[0] === "2")
+        setTaskTypeList(taskTypesResponse.body)
+    }
+    initValues()
   }, [])
 
   return <form className="task-info-form">
@@ -134,9 +168,31 @@ export function TaskCreationForm({
         <fieldset className="form-group">
           <legend className="form-label">Level</legend>
           <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
+            {levelList.map(level =>
+              <option value={level}>{GeneralTools.convertEnum(level)}</option>
+            )}
+          </select>
+        </fieldset>
+      </div>
+      
+      <div className="form-group-container half-form-left-container">
+        <fieldset className="form-group">
+          <legend className="form-label">Priority</legend>
+          <select id="priority" className="form-input" value={priority} onChange={onChangePriority}>
+            {priorityList.map(priority =>
+              <option value={priority}>{GeneralTools.convertEnum(priority)}</option>
+            )}
+          </select>
+        </fieldset>
+      </div>
+      
+      <div className="form-group-container half-form-right-container">
+        <fieldset className="form-group">
+          <legend className="form-label">Task Type</legend>
+          <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType}>
+            {taskTypeList.map(taskType =>
+              <option value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
+            )}
           </select>
         </fieldset>
       </div>
@@ -375,47 +431,4 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: Search
         )
       }
   </ul>
-}
-
-function TextEditor({state, setState}: {
-  state: string,
-  setState: React.Dispatch<React.SetStateAction<string>>
-}) {
-  const textEditorRef = useRef<HTMLTextAreaElement>(null)
-  const onChangeValue = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setState(e.target.value)
-  }, [setState])
-
-  const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    const textarea = textEditorRef.current
-    if (!textarea)
-      return
-
-    const { selectionStart, selectionEnd, value } = textarea
-    const tabContent = "    "
-    if (e.key === "Tab") {
-      e.preventDefault()
-      document.execCommand("insertText", false, tabContent) //--Use execCommand to preserve undo stack
-    } else if (e.key === "Backspace") {
-      const beforeCursor = value.slice(0, selectionStart)
-      if (beforeCursor.endsWith(tabContent)) {
-        e.preventDefault()
-        //--Remove the last tabContent before the cursor
-        const newValue = value.slice(0, selectionStart - 4) + value.slice(selectionEnd)
-        setState(newValue)
-        requestAnimationFrame(() => {
-          textarea.selectionStart = textarea.selectionEnd = selectionStart - 4
-        })
-      }
-    }
-  }, [setState])
-  
-  return <textarea
-    id="textEditor"
-    ref={textEditorRef}
-    value={state}
-    onChange={onChangeValue}
-    placeholder="[Tab] for x4 Space, [Backspace] can delete x4 Space"
-    onKeyDown={onKeyDown}
-    className="desc-textarea"></textarea>
 }

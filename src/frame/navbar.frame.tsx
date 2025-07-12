@@ -105,7 +105,7 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
 
       const request = DTO_Token.withBuilder().baccessToken(token)
       const logoutRes = await GeneralAPIs.logout(request) as RecordResponse
-      if (logoutRes.status === 200) {
+      if (String(logoutRes.status)[0] === "2") {
         toast.success(logoutRes.msg)
       }
       AuthHelper.endClientSession()

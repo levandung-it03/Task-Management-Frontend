@@ -4,10 +4,19 @@ export class GeneralTools {
   static capitalize(str: string): string {
     return str[0].toUpperCase() + str.slice(1).toLowerCase()
   }
+  
+  static convertEnum(enumValue: string): string {
+    return enumValue.split("_").map((str: string) => GeneralTools.capitalize(str)).join(" ");
+  }
 
   static fieldToLabel(str: string): string {
     const result = str.replace(/([A-Z])/g, " $1").trim();
     return result.charAt(0).toUpperCase() + result.slice(1);
+  }
+
+  static formatedDateToDateInput(str: string): string {
+    const [day, month, year] = str.split("/").map(Number)
+    return `${year}-${month}-${day}`;
   }
 
   static getHistInsideCookies(cookieName: string) {

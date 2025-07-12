@@ -10,4 +10,10 @@ export class CreateTaskPageValidators {
     if (inputDate < today) return "Date must be in current or future";
     return "";
   }
+
+  static isValidDescription(desc: string): string {
+    return desc.trim().length === 0
+      ? "Description can't be empty"
+      : "";
+  }
 }
