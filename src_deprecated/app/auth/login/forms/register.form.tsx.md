@@ -119,7 +119,7 @@ export default function RegisterForm() {
         .bpassword(password)
         .botp(otpCode)
       const res = await LoginAPIs.register(request) as RecordResponse
-      if (res.status === 200) {
+      if (String(res.status)[0] === "2") {
         toast.success(res.msg)
         setTimeout(() => {
           window.location.href = "/auth/login"
