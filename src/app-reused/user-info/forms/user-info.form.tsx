@@ -2,7 +2,7 @@
 
 import { GeneralAPIs, RecordResponse } from "@/apis/general.api"
 import { UserInfoAPIs } from "@/apis/user-info.page.api"
-import { LoginValidators } from "@/app/auth/login/page.services"
+import { LoginValidators } from "@/app/general/login/page.services"
 import { DTO_UpdateUserInfoRequest } from "@/dtos/user-info.page"
 import { AuthHelper } from "@/util/auth.helper"
 import GlobalValidators from "@/util/global.validators"

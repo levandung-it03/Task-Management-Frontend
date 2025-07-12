@@ -1,6 +1,10 @@
+:root {
+  --width-max-form-width: 320px
+}
 
 .login-page {
-  min-height: 100vh;
+  width: calc(100% - 2*var(--large-component-padding));
+  min-height: calc(100vh - 2*var(--large-component-padding));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,6 +53,9 @@
 .form-wrapper-title {
   display: block;
   margin-bottom: 20px;
+  width: 100%;
+  max-width: var(--width-max-form-width);
+  text-align: left;
 
   h1 {
     color: var(--foreground);
@@ -69,8 +76,11 @@
   width: fit-content;
   margin-bottom: 20px;
   padding: 5px;
+  max-width: var(--width-max-form-width);
+  width: 100%;
 
   .tab {
+    flex: 1;
     padding: 10px 20px;
     background-color: transparent;
     border: none;

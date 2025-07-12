@@ -1,8 +1,7 @@
 'use client'
 import type React from "react"
-import { useCallback, useEffect, useState } from "react"
-import { Eye, EyeOff, Github } from "lucide-react"
-import GoogleIcon from "../../../../assets/google.icon"
+import { useCallback, useState } from "react"
+import { Eye, EyeOff } from "lucide-react"
 import GlobalValidators from "@/util/global.validators"
 import toast from "react-hot-toast"
 import "../assets/login.form.scss"
@@ -10,11 +9,9 @@ import { LoginValidators } from "../page.services"
 import { LoginAPIs } from "@/apis/login.page.api"
 import { AuthHelper } from "@/util/auth.helper"
 import { DTO_AuthRequest } from "@/dtos/login.page.dto"
-import { GeneralAPIs, RecordResponse } from "@/apis/general.api"
-import { DTO_GetOauth2Authorizer } from "@/dtos/general.dto"
+import { RecordResponse } from "@/apis/general.api"
 
 export default function LoginForm() {
-  const [oauth2Enums, setOauth2Enums] = useState<Record<string, string>>({})
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -50,46 +47,15 @@ export default function LoginForm() {
       AuthHelper.saveAccessTokenIntoCookie(response.body.accessToken)
       AuthHelper.saveRefreshTokenIntoCookie(response.body.refreshToken)
       const role = AuthHelper.getRoleFromToken().toUpperCase()
-      window.location.href = role.includes("ADMIN") ? "/admin/dashboard" : "/user/home"
+      if (role.includes("PM"))
+        window.location.href = "/pm/dashboard"
+      else if (role.includes("LEAD"))
+        window.location.href = "/lead/dashboard"
+      else
+        window.location.href = "/emp/home"
     }
     send()
   }, [formValidation, email, password])
-
-  const handleGoogleLogin = useCallback(() => {
-    async function getOauth2Authorizer() {
-      const request = DTO_GetOauth2Authorizer.withBuilder().boauth2Service(oauth2Enums.google)
-      const response = await LoginAPIs.getOauth2Authorizer(request) as RecordResponse
-      if (response.status !== 200 || GlobalValidators.isNull(response.body))
-        return
-
-      localStorage.setItem("oauth2Enums", JSON.stringify(oauth2Enums))
-      window.location.href = response.body.authorizer
-    }
-    getOauth2Authorizer()
-  }, [oauth2Enums])
-
-  const handleGithubLogin = useCallback(() => {
-    async function getOauth2Authorizer() {
-      const request = DTO_GetOauth2Authorizer.withBuilder().boauth2Service(oauth2Enums.github)
-      const response = await LoginAPIs.getOauth2Authorizer(request) as RecordResponse
-      if (response.status !== 200 || GlobalValidators.isNull(response.body))
-        return
-
-      localStorage.setItem("oauth2Enums", JSON.stringify(oauth2Enums))
-      window.location.href = response.body.authorizer
-    }
-    getOauth2Authorizer()
-  }, [oauth2Enums])
-
-  useEffect(() => {
-    async function init() {
-      const response = await GeneralAPIs.getOauth2ServiceEnums() as RecordResponse
-      if (response.status !== 200 || GlobalValidators.isNull(response.body))
-        return
-      setOauth2Enums(response.body)
-    }
-    init()
-  }, [])
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
@@ -118,17 +84,6 @@ export default function LoginForm() {
         </div>
 
         <button type="submit" className="submit-btn">Submit</button>
-
-        <div className="divider"><span>or</span></div>
-
-        <div className="oauth2-btns">
-          <button type="button" className="google-btn" onClick={handleGoogleLogin}>
-            <GoogleIcon />
-          </button>
-          <button type="button" className="github-btn" onClick={handleGithubLogin}>
-            <Github />
-          </button>
-        </div>
       </div>
     </form>
   )

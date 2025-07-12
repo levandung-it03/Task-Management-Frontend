@@ -1,13 +1,13 @@
 'use client'
 import { useCallback, useEffect, useState } from "react"
 import GlobalValidators from "@/util/global.validators"
-import "../assets/register.form.scss"
 import { LoginValidators } from "../page.services"
 import { GeneralAPIs, RecordResponse } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { DTO_VerifyEmailRequest } from "@/dtos/general.dto"
 import { DTO_LostPassRequest } from "@/dtos/login.page.dto"
 import { LoginAPIs } from "@/apis/login.page.api"
+import "../assets/forgot-pass.form.scss"
 
 export default function ForgotPassForm() {
   const [otpTypes, setOtpTypes] = useState<Record<string, string>>({})
@@ -81,8 +81,8 @@ export default function ForgotPassForm() {
   }, [])
 
   return (
-    <form className="register-form" onSubmit={handleSubmit}>
-      <div className="register-form-container">
+    <form className="forgot-pass-form" onSubmit={handleSubmit}>
+      <div className="forgot-pass-form-container">
 
         <div className="form-group-container">
           <fieldset className="form-group">

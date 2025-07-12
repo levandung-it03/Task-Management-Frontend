@@ -29,18 +29,22 @@ export function middleware(request: NextRequest) {
   if (pathname.includes(role))
     return NextResponse.next()
   
-  if (role === "admin")
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+  if (role === "pm")
+    return NextResponse.redirect(new URL('/pm/dashboard', request.url))
 
-  if (role === "user")
-    return NextResponse.redirect(new URL('/user/home', request.url))
+  if (role === "lead")
+    return NextResponse.redirect(new URL('/lead/dashboard', request.url))
+
+  if (role === "emp")
+    return NextResponse.redirect(new URL('/emp/home', request.url))
 
 }
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/user/:path*',
+    '/pm/:path*',
+    '/lead/:path*',
+    '/emp/:path*',
     '/auth/:path*',
   ],
 };
