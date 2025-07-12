@@ -2,7 +2,6 @@
 
 import { GeneralAPIs, RecordResponse } from "@/apis/general.api"
 import { UserInfoAPIs } from "@/apis/user-info.page.api"
-import { LoginValidators } from "@/app/general/login/page.services"
 import { DTO_UpdateUserInfoRequest } from "@/dtos/user-info.page"
 import { AuthHelper } from "@/util/auth.helper"
 import GlobalValidators from "@/util/global.validators"
@@ -10,6 +9,7 @@ import { useCallback, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import "../assets/user-info.form.scss"
 import { RotateCcw } from "lucide-react"
+import { LoginValidators } from "@/app/auth/login/page.services"
 
 export default function UserInfoForm() {
   const [fullName, setFullName] = useState("")
@@ -60,7 +60,7 @@ export default function UserInfoForm() {
         .bgender(gender)
         .bdob(new Date(dob))
       const res = await UserInfoAPIs.updateUserInfo(AuthHelper.getRoleFromToken(), request) as RecordResponse
-      if (res.status === 200) {
+      if (String(res.status)[0] === "2") {
         toast.success(res.msg)
         setPreState({ fullName, gender, dob })
       }

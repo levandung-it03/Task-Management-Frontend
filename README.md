@@ -16,6 +16,7 @@
 > npm install axios
 > npm i --save-dev @types/js-cookie
 > npm install js-cookie
+> npm i @tiptap/react
 
 # Build project #
 > npx next build

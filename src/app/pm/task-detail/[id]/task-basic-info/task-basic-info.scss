@@ -1,0 +1,187 @@
+.task-basic-info {
+  padding: calc(1.5*var(--padding-component));
+  background-color: var(--background);
+  border-radius: var(--padding-component);
+
+  .form-caption {
+    .caption-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-self: flex-start;
+    }
+  }
+
+  .task-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .task-info-right,
+    .task-info-left {
+      width: 50%;
+      min-width: fit-content;
+    }
+
+    .task-header {
+      width: 100%;
+      border: 1px solid var(--main-green);
+      padding-left: 0 !important;
+      background: linear-gradient(110deg,
+          #e6f4ec 0%,
+          /* nhạt ở đầu */
+          #b2dbc7 30%,
+          /* đậm hơn một chút */
+          #5ac8a1 50%,
+          /* đậm nhất ở giữa */
+          #b2dbc7 70%,
+          /* đậm hơn một chút */
+          #e6f4ec 100%
+          /* nhạt ở cuối */
+        );
+      padding: var(--padding-component) !important;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 10px;
+
+      .task-name,
+      .task-more-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        width: fit-content;
+      }
+
+      .task-name {
+        flex: 1;
+      }
+
+      .task-name-icon {
+        color: #fff;
+        background-color: var(--main-green);
+        width: 25px;
+        height: 25px;
+        padding: 3px;
+        margin-right: 15px;
+        border-radius: 5px;
+      }
+
+      .task-info-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--main-green);
+        max-width: 90%;
+        line-break: auto;
+      }
+
+      .update-info-btn,
+      .description-btn,
+      .report-format-btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        margin-left: 10px;
+        transition: background-color ease 0.3s;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        .task-header-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 5px;
+        }
+      }
+
+      .description-btn {
+        background-color: var(--main-green);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--main-hovered-green);
+          cursor: pointer;
+        }
+      }
+
+      .report-format-btn {
+        background-color: var(--focusing-fieldset-color);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--role-pm-bg);
+          cursor: pointer;
+        }
+      }
+
+      .update-info-btn {
+        border: 2px solid var(--main-green);
+        background-color: transparent;
+        padding: 10px;
+        padding-left: 14px;
+
+        .task-header-icon {
+          width: 16px;
+          height: 16px;
+          margin-right: 5px;
+          color: var(--main-green);
+        }
+
+        &:hover {
+          background-color: var(--main-component-grey);
+
+          .task-header-icon {
+            color: var(--foreground);
+          }
+
+          cursor: pointer;
+        }
+      }
+    }
+
+    .task-info-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: 55px;
+      padding-top: var(--padding-component);
+
+      .task-info-label {
+        width: 150px;
+        display: flex;
+        color: var(--main-text-grey);
+      }
+    }
+
+    .task-type {
+      background-color: var(--focusing-fieldset-color);
+      color: #fff;
+    }
+
+    .task-date {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+
+      .task-date-content {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .task-level,
+  .task-priority,
+  .task-id {
+    background-color: var(--main-green);
+    color: #fff;
+  }
+
+  .task-id {
+    margin-left: 10px;
+  }
+}
