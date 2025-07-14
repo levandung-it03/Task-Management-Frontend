@@ -102,7 +102,7 @@ export default function GroupListDialog({
             : groups.map((group, ind) => {
               const firstNameChar = group.groupName[0].toUpperCase()
               return <li key={"glt-" + ind} className="user-short-info gcb-group-line"
-                onClick={() => onClickGroup(group.groupId)}>
+                onClick={() => onClickGroup(group.id)}>
                 <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
                 <span className="usi-username">{group.groupName}</span>
                 <span className={`usi-role gcb-${group.role.toLowerCase().replace("_", "-")}`}>{group.role}</span>

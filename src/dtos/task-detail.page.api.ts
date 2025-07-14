@@ -2,20 +2,22 @@
 export interface BasicUserInfo {
   id: number;
   fullName: string;
+  email: string;
 }
 
 export interface DTO_TaskDetail {
   id: number;
   userInfo: BasicUserInfo;
-  isRootTask: boolean;
+  rootTaskId: number | null;
   name: string;
   description: string;
   reportFormat: string;
   level: string;
   taskType: string;
+  isLocked: boolean;
   priority: string;
   startDate: string;
-  endDate: string;
+  endDate: string | null;
   deadline: string;
   createdTime: string;
   updatedTime: string;
@@ -52,4 +54,21 @@ export class DTO_UpdateBasicTask {
   public btaskType(taskType: string): DTO_UpdateBasicTask { this.taskType = taskType; return this }
   public bpriority(priority: string): DTO_UpdateBasicTask { this.priority = priority; return this }
   public bdeadline(deadline: string): DTO_UpdateBasicTask { this.deadline = deadline; return this }
+}
+
+export interface DTO_TaskUser {
+  id: number
+  username: string
+  fullName: string
+  role: string
+  userTaskStatus: string
+}
+
+export class DTO_LockTaskStatus {
+  id!: number
+  locked!: boolean
+  
+  public static withBuilder() { return new DTO_LockTaskStatus() }
+  public bid(id: number): DTO_LockTaskStatus { this.id = id; return this }
+  public blocked(locked: boolean): DTO_LockTaskStatus { this.locked = locked; return this }
 }

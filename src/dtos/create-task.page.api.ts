@@ -6,7 +6,7 @@ export interface DTO_FastUserInfo {
 }
 
 export interface DTO_GroupsRelatedToUser {
-  groupId: string
+  id: number
   groupName: string
   role: string
 }
@@ -20,6 +20,7 @@ export class DTO_SearchFastUserInfo {
 
 export class DTO_TaskRequest {
   private deadline!: string
+  private startDate!: string
   private level!: string
   private priority!: string
   private taskType!: string
@@ -30,6 +31,7 @@ export class DTO_TaskRequest {
   public static withBuilder() { return new DTO_TaskRequest() }
   
   public bdeadline(deadline: string): DTO_TaskRequest { this.deadline = deadline; return this }
+  public bstartDate(startDate: string): DTO_TaskRequest { this.startDate = startDate; return this }
   public blevel(level: string): DTO_TaskRequest { this.level = level; return this }
   public bpriority(priority: string): DTO_TaskRequest { this.priority = priority; return this }
   public btaskType(taskType: string): DTO_TaskRequest { this.taskType = taskType; return this }

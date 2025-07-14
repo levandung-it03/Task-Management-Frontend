@@ -17,6 +17,7 @@
 > npm i --save-dev @types/js-cookie
 > npm install js-cookie
 > npm i @tiptap/react
+> npm install antd
 
 # Build project #
 > npx next build

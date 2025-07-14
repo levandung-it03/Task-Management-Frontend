@@ -11,7 +11,7 @@ import toast from "react-hot-toast"
 import { X } from "lucide-react"
 import { CreateTaskPageValidators } from "../page.service"
 import HelpContainer from "@/app-reused/help-container/page"
-import { TextEditor } from "@/app-reused/text-editor/page"
+import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { GeneralTools } from "@/util/general.helper"
 
 export interface TaskInfo {
@@ -56,6 +56,7 @@ export function TaskCreationForm({
   setHistories
 }: TaskCreationFormProps) {
   const [deadline, setDeadline] = useState("")
+  const [startDate, setStartDate] = useState("")
   const [description, setDescription] = useState("")
   const [reportFormat, setReportFormat] = useState("")
   const [levelList, setLevelList] = useState<string[]>([])
@@ -66,6 +67,7 @@ export function TaskCreationForm({
   const [taskType, setTaskType] = useState("")
   const [formValidation, setFormValidation] = useState({
     deadline: "",
+    startDate: "",
     assignedUsers: [],
     description: "",
     reportFormat: "",
@@ -74,6 +76,11 @@ export function TaskCreationForm({
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
     setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
+  }, [])
+  
+  const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeadline(e.target.value)
+    setFormValidation(prev => ({ ...prev, startDate: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
   }, [])
 
   const onClickUndoBtn = useCallback(() => {
@@ -96,12 +103,19 @@ export function TaskCreationForm({
   const onClickSubmitBtn = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     async function createTask() {
       const formattedDeadline = new Date(deadline)
+      const formattedStartDate = new Date(startDate)
       const trimmedDescription = description.trim()
       const trimmedReportFormat = reportFormat.trim()
 
       if (GlobalValidators.isEmpty(deadline)
+        || GlobalValidators.isEmpty(startDate)
         || formattedDeadline < new Date()
-        || GlobalValidators.isEmpty(trimmedDescription)
+        || formattedDeadline < formattedStartDate) {
+        toast.error("Check for error dates")
+        return
+      }
+
+      if (GlobalValidators.isEmpty(trimmedDescription)
         || GlobalValidators.isEmpty(trimmedReportFormat)
         || Object.keys(assignedUsers).length === 0
       ) {
@@ -111,6 +125,7 @@ export function TaskCreationForm({
 
       // const request = DTO_TaskRequest.withBuilder()
       // .bdeadline(deadline)
+      // .bstartDate(startDate)
       // .blevel(level)
       // .bpriority(priority)
       // .btaskType(taskType)
@@ -128,7 +143,7 @@ export function TaskCreationForm({
       // window.location.href = `${role}/task/${response.body.id}`
     }
     createTask();
-  }, [])
+  }, [startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers])
 
   useEffect(() => {
     async function initValues() {
@@ -166,21 +181,19 @@ export function TaskCreationForm({
 
       <div className="form-group-container half-form-right-container">
         <fieldset className="form-group">
-          <legend className="form-label">Level</legend>
-          <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
-            {levelList.map(level =>
-              <option value={level}>{GeneralTools.convertEnum(level)}</option>
-            )}
-          </select>
+          <legend className="form-label">Start Date</legend>
+          <input type="date" id="start-date" className="form-input" placeholder="Type Start Date" required
+            value={startDate} onChange={onChangeStartDate} />
         </fieldset>
+        {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
       </div>
-      
+
       <div className="form-group-container half-form-left-container">
         <fieldset className="form-group">
-          <legend className="form-label">Priority</legend>
-          <select id="priority" className="form-input" value={priority} onChange={onChangePriority}>
-            {priorityList.map(priority =>
-              <option value={priority}>{GeneralTools.convertEnum(priority)}</option>
+          <legend className="form-label">Level</legend>
+          <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
+            {levelList.map((level, ind) =>
+              <option key={"tcl-" + ind} value={level}>{GeneralTools.convertEnum(level)}</option>
             )}
           </select>
         </fieldset>
@@ -188,10 +201,21 @@ export function TaskCreationForm({
       
       <div className="form-group-container half-form-right-container">
         <fieldset className="form-group">
+          <legend className="form-label">Priority</legend>
+          <select id="priority" className="form-input" value={priority} onChange={onChangePriority}>
+            {priorityList.map((priority, ind) =>
+              <option key={"tcp-" + ind} value={priority}>{GeneralTools.convertEnum(priority)}</option>
+            )}
+          </select>
+        </fieldset>
+      </div>
+      
+      <div className="form-group-container">
+        <fieldset className="form-group">
           <legend className="form-label">Task Type</legend>
           <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType}>
-            {taskTypeList.map(taskType =>
-              <option value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
+            {taskTypeList.map((taskType, ind) =>
+              <option key={"tctt-" + ind} value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
             )}
           </select>
         </fieldset>
@@ -214,7 +238,7 @@ export function TaskCreationForm({
 
       <div className="form-group-container">
         <div className="undo-btn-container">
-          <button type="button" className={`undo-btn ${canUndo ? "" : "not-undo-btn"}`} onClick={onClickUndoBtn} disabled={!canUndo}>
+          <button type="button" className={`undo-btn ${canUndo ? "" : "disabled-btn"}`} onClick={onClickUndoBtn} disabled={!canUndo}>
             Undo
           </button>
         </div>
