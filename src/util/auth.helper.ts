@@ -13,7 +13,7 @@ export class AuthHelper {
       const decoded = AuthHelper.extractToken(rawAccessTok)
       let mainRole = decoded["SCOPES"].split(" ")[0].toLowerCase();
       if (mainRole.includes("role_")) mainRole = mainRole.split("role_")[1]
-      
+
       return mainRole || 'auth';
     } catch {
       return 'auth';
@@ -49,7 +49,7 @@ export class AuthHelper {
 
     try {
       return JSON.parse(AuthHelper.decodeJwtPayload(payloadBase64));
-    } catch(err) {
+    } catch (err) {
       console.log("AuthUtil.extractToken: Can not decode JWT Token", err)
       throw new Error("Invalid token payload")
     }
@@ -68,5 +68,12 @@ export class AuthHelper {
     Cookies.remove(AuthHelper.ACCESS_TOKEN_NAME)
     Cookies.remove(AuthHelper.REFRESH_TOKEN_NAME)
     window.location.href = "/auth/login"
+  }
+
+  static isOwner(email: string): boolean {
+    const token = AuthHelper.getAccessTokenFromCookie()
+    if (token === undefined)
+      return false
+    return email === AuthHelper.extractToken(token).sub
   }
 }
