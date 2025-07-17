@@ -1,0 +1,76 @@
+.my-confirm-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--overlay-color);
+  z-index: 5;
+
+  .my-confirm-box {
+    position: relative;
+    background-color: var(--background);
+    top: 30%;
+    margin: auto;
+    width: fit-content;
+    color: var(--foreground);
+    border-radius: 10px;
+    overflow: hidden;
+
+    .alert-title {
+      padding: 12px 15px;
+      background-color: var(--main-green);
+      color: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .alert-title-icon {
+        margin-right: 10px;
+      }
+    }
+
+    .alert-msg {
+      padding: 15px;
+      border-bottom: 1px solid var(--main-green);
+    }
+
+    .my-confirm-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 15px;
+
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color ease 0.3s;
+        font-size: 16px;
+      }
+
+      .alert-ok-btn {
+        margin-left: 10px;
+        border: 2px solid var(--main-green);
+        background-color: var(--background);
+        color: var(--main-green);
+
+        &:hover {
+          background-color: var(--main-green);
+          color: #fff;
+        }
+      }
+
+      .alert-cancel-btn {
+        border: 2px solid transparent;
+        background-color: var(--main-text-err-red);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--red-btn-hovered-bg);
+        }
+      }
+    }
+  }
+}

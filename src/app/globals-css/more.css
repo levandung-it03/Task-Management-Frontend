@@ -1,0 +1,10 @@
+
+.disabled-btn {
+  cursor: not-allowed !important;
+  background-color: var(--btn-hovered-background) !important;
+  color: #000 !important;
+}
+
+.hidden {
+  display: none !important;
+}

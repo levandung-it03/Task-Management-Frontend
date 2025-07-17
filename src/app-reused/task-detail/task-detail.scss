@@ -1,0 +1,17 @@
+:root {
+  --padding-component: 15px;
+}
+
+.task-detail-container {
+  padding: var(--padding-component);
+
+  .task-basic-info {
+    margin-bottom: 25px;
+  }
+}
+
+.tag-data {
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 13px !important;
+}

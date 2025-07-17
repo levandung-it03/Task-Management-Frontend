@@ -1,0 +1,211 @@
+.form-wrapper-title {
+  display: block;
+  margin-bottom: 20px;
+
+  h1 {
+    color: #000;
+    font-size: 32px;
+    font-weight: 100;
+  }
+
+  p {
+    color: var(--main-text-grey);
+  }
+}
+
+.form-caption {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-self: flex-start;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: calc(1.5*15px);
+
+  .caption-icon {
+    color: #fff;
+    background-color: var(--main-green);
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin-right: 15px;
+    border-radius: 10px;
+  }
+
+  .caption-content {
+    font-size: var(--page-name-size);
+    color: var(--main-green);
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .desc-content {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    margin-left: 55px;
+    color: var(--main-text-grey);
+  }
+}
+
+.form-group-container {
+  margin-bottom: 10px;
+  width: 100%;
+
+  .form-group {
+    border: 2px solid var(--main-component-grey);
+    border-radius: var(--reactangle-radius);
+    transition: border-color 0.3s ease;
+    background: var(--background);
+    color: var(--foreground);
+
+    .form-label {
+      color: var(--main-text-grey);
+      font-weight: 500;
+      font-size: 16px;
+      margin-left: 15px;
+    }
+
+    .form-input,
+    .form-select {
+      width: calc(100% - 2px*2);
+      border: none;
+      outline: none;
+      font-size: 16px;
+      color: var(--foreground);
+      background: transparent;
+      padding: 6px 10px 10px 10px;
+      margin: 2px;
+      border-radius: 0 0 calc(var(--reactangle-radius) - 4px) calc(var(--reactangle-radius) - 4px);
+
+      &::placeholder {
+        color: var(--main-text-grey);
+        font-size: 15px;
+      }
+    }
+  }
+
+  .password-group {
+    .input-with-icon {
+      position: relative;
+
+      .form-input {
+        padding-right: 40px;
+      }
+
+      .toggle-eye-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        color: var(--main-text-grey);
+      }
+    }
+  }
+
+  .otp-group {
+    .input-with-btn {
+      display: flex;
+      width: 100%;
+
+    }
+
+    .get-otp {
+      margin-top: -9px;
+      padding: 12px;
+      width: 20%;
+      border-radius: 0 calc(var(--reactangle-radius) - 2px) calc(var(--reactangle-radius) - 2px) 0;
+      border: none;
+      transition: all ease 0.3s;
+    }
+
+    .not-showing-otp-age {
+      background-color: var(--foreground);
+      color: var(--background);
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--main-component-grey);
+        color: var(--main-text-grey);
+      }
+    }
+
+    .showing-otp-age {
+      background-color: transparent;
+      color: var(--foreground);
+    }
+  }
+
+  &:has(span.input-err-msg) .form-group {
+    border-color: var(--main-text-err-red);
+
+    .form-label {
+      color: var(--main-text-err-red);
+    }
+  }
+
+  &:has(.form-input:focus):not(:has(span.input-err-msg)) .form-group {
+    border-color: var(--focusing-fieldset-color);
+
+    .form-label {
+      color: var(--focusing-fieldset-color);
+    }
+  }
+
+  .input-err-msg {
+    font-size: 14px;
+    display: block;
+    margin-top: 4px;
+    margin-left: 10px;
+    color: var(--main-text-err-red);
+  }
+}
+
+.half-form-left-container {
+  width: 47%;
+  margin-right: 3%;
+}
+
+.half-form-right-container {
+  flex: 1;
+}
+
+.forgot-password-btn {
+  display: block;
+  text-align: right;
+  background: none;
+  border: none;
+  color: var(--main-text-grey);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 25px;
+  padding: 0;
+
+  &:hover {
+    color: #555;
+  }
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 5px;
+  padding: 15px;
+  background: var(--foreground);
+  color: var(--background) !important;
+  border: 2px solid var(--foreground);
+  border-radius: var(--reactangle-radius);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--background);
+    color: var(--foreground) !important;
+  }
+}
