@@ -68,3 +68,7 @@ export class DTO_PaginationRequest {
       .bdata(data.data)
   }
 }
+
+export interface DTO_IdResponse {
+  id: number
+}
