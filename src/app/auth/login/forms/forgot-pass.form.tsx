@@ -14,6 +14,7 @@ export default function ForgotPassForm() {
   const [email, setEmail] = useState("")
   const [otpCode, setOtpCode] = useState("")
   const [otpAge, setOtpAge] = useState(0);
+  const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     email: "",
     otpCode: "",
@@ -21,20 +22,21 @@ export default function ForgotPassForm() {
 
   const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, email: LoginValidators.isValidEmail(e.target.value) }))
   }, [])
 
   const onChangeOtpCode = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim().toUpperCase();
     setOtpCode(value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, otpCode: LoginValidators.isValidOtpCode(value) }))
   }, [])
 
   const onClickGetOtp = useCallback(() => {
     async function getOtp() {
-      if (GlobalValidators.isInvalidValidation({
-        email: LoginValidators.isValidEmail(email)
-      }))  return
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
+        return
       const req = DTO_VerifyEmailRequest.withBuilder().bemail(email).botpType(otpTypes.lostPassword)
       const res = await GeneralAPIs.verifyEmailByOtp(req) as RecordResponse
       if (GlobalValidators.isNull(res.body)) return
@@ -55,7 +57,7 @@ export default function ForgotPassForm() {
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     async function register() {
-      if (GlobalValidators.isInvalidValidation(formValidation))
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
       const request = DTO_LostPassRequest.withBuilder()
         .bemail(email)

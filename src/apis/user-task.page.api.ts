@@ -1,7 +1,7 @@
 import axiosInstance from "@/util/axios.helper"
 import { ApiResponse, GeneralAPIs } from "./general.api"
-import { DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
-import { DTO_IdResponse } from "@/dtos/general.dto"
+import { DTO_CommentOfReport, DTO_CreateComment, DTO_RejectReport, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
+import { AuthHelper } from "@/util/auth.helper"
 
 const LLM_HOST = "http://localhost:1234"
 
@@ -41,6 +41,7 @@ export class UserTaskPageAPIs {
     try {
       // const response = await axiosInstance.get(`/api/.../v1/chat/completions/${userTaskId}`)
       // return response
+      console.log(AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || ""))
       return {
         code: 11000,
         msg: "Lấy thành công",
@@ -51,7 +52,7 @@ export class UserTaskPageAPIs {
               id: 1,
               createdBy: {
                 id: 1,
-                email: "levandung@gmail.com",
+                email: "emp@gmail.com",
                 fullName: "Le Van Dung"
               },
               title: "Báo cáo phân tích yêu cầu",
@@ -67,7 +68,7 @@ export class UserTaskPageAPIs {
                 id: 1,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "pm@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: null,
@@ -78,7 +79,7 @@ export class UserTaskPageAPIs {
                 id: 2,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: 1,
@@ -89,7 +90,7 @@ export class UserTaskPageAPIs {
                 id: 3,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: 1,
@@ -100,7 +101,7 @@ export class UserTaskPageAPIs {
                 id: 4,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "pm@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: null,
@@ -111,7 +112,7 @@ export class UserTaskPageAPIs {
                 id: 5,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: 4,
@@ -122,7 +123,7 @@ export class UserTaskPageAPIs {
                 id: 6,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: null,
@@ -136,7 +137,7 @@ export class UserTaskPageAPIs {
               id: 2,
               createdBy: {
                 id: 1,
-                email: "levandung@gmail.com",
+                email: "emp@gmail.com",
                 fullName: "Le Van Dung"
               },
               title: "Báo cáo thiết kế cơ sở dữ liệu",
@@ -152,7 +153,7 @@ export class UserTaskPageAPIs {
                 id: 3,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: 0,
@@ -166,12 +167,12 @@ export class UserTaskPageAPIs {
               id: 3,
               createdBy: {
                 id: 1,
-                email: "levandung@gmail.com",
+                email: "emp@gmail.com",
                 fullName: "Le Van Dung"
               },
               title: "Báo cáo thiết kế cơ sở dữ liệu",
               content: "Thiết kế ERD bao gồm các bảng:\n  - Users\n  - Projects\n  - Tasks\n\nMối quan hệ:\n  - User - Task: N-N\n  - Project - Task: 1-N",
-              rejectedReason: "Thiếu mô tả bảng trung gian.",
+              rejectedReason: null,
               reportStatus: "WAITING",
               reviewedTime: null,
               createdTime: "2025-07-06 14:20:00",
@@ -182,7 +183,7 @@ export class UserTaskPageAPIs {
                 id: 4,
                 createdBy: {
                   id: 1,
-                  email: "levandung@gmail.com",
+                  email: "emp@gmail.com",
                   fullName: "Le Van Dung"
                 },
                 repliedCommendId: 0,
@@ -202,25 +203,31 @@ export class UserTaskPageAPIs {
 
   static async updateReport(request: DTO_UpdateReport): Promise<ApiResponse<void> | unknown> {
     try {
-      const response = await axiosInstance.post(`${LLM_HOST}/v1/chat/completions`, request)
+      const response = await axiosInstance.put(`/api/.../v1/chat/completions/`)
       return response
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async createReplyComment(content: string): Promise<ApiResponse<DTO_IdResponse> | unknown> {
+  static async createComment(request: DTO_CreateComment): Promise<ApiResponse<DTO_CommentOfReport> | unknown> {
     try {
-      // const response = await axiosInstance.post(`${LLM_HOST}/v1/chat/completions`, {
-      //   comment: content
-      // })
+      // const response = await axiosInstance.post(`/api/.../v1/report/{request.reportId}/create-comment`)
       // return response
       return {
         code: 11000,
-        msg: "Lấy thành công",
+        msg: "Tạo thành công",
         status: 200,
         body: {
-          id: 1
+          id: 10,
+          createdBy: {
+            id: 1,
+            email: "emp@gmail.com",
+            fullName: "Le Van Dung"
+          },
+          repliedCommendId: request.repliedCommentId,
+          comment: request.content,
+          createdTime: new Date().toISOString()
         },
         time: "2025/11/12"
       }
@@ -229,9 +236,35 @@ export class UserTaskPageAPIs {
     }
   }
 
-  /**
-   * createReport
-   * createComment(reportId, userId, comment, repliedId)
-   * updateReport(reportId, content)  -> Just 1 time (compare createdTime==updatedTime so allowing updating, denying if it's not)
-   */
+  static async approveReport(reportId: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      // const response = await axiosInstance.put(`/api/.../v1/report/${reportId}/approve`, request)
+      // return response
+      return {
+        code: 11000,
+        msg: "Approve thành công",
+        status: 200,
+        body: null,
+        time: "2025/11/12"
+      }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async rejectReport(request: DTO_RejectReport): Promise<ApiResponse<void> | unknown> {
+    try {
+      // const response = await axiosInstance.put(`/api/.../v1/report/${reportId}/reject`, request)
+      // return response
+      return {
+        code: 11000,
+        msg: "Reject thành công",
+        status: 200,
+        body: null,
+        time: "2025/11/12"
+      }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
 }

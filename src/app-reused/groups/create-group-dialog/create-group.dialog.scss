@@ -1,0 +1,260 @@
+.group-creation-dialog {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  .dialog-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--overlay-color);
+    z-index: 3;
+  }
+
+  .group-container {
+    position: absolute;
+    border-radius: var(--component-padding);
+    top: 10%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 4;
+    background-color: var(--background);
+    width: 60%;
+    padding: calc(1.5*var(--component-padding));
+    min-height: 300px;
+    max-height: 800px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .group-container-header {
+      width: 100%;
+      background-color: var(--background);
+
+      .gch-title {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+
+        .gch-title-wrapper {
+          flex: 1;
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: flex-start;
+
+          .gch-title-icon {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            background-color: var(--main-green);
+            color: #fff;
+            border-radius: 10px;
+            margin-right: var(--component-padding);
+          }
+
+          .gch-title-text {
+            flex: 1;
+            display: block;
+            color: var(--main-green);
+            font-size: var(--page-name-size);
+            font-weight: 600;
+          }
+        }
+
+        .close-btn-wrapper {
+          .close-btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 5px;
+            border-radius: 25px;
+            background-color: transparent;
+            transition: all ease 0.3s;
+
+            &:hover {
+              background-color: var(--btn-hovered-background);
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+
+    .group-container-desc {
+      display: block;
+      width: 100%;
+      margin-bottom: calc(1.5*var(--component-padding));
+
+      .gch-desc-text {
+        display: block;
+        width: 100%;
+        font-size: 16px;
+        margin-left: 55px;
+        color: var(--main-text-grey);
+      }
+    }
+
+    .group-info {
+      width: 100%;
+
+      .search-user-container {
+        position: relative;
+        width: 100%;
+        z-index: 2;
+
+        .form-group {
+          width: 100%;
+
+          .searched-users-container {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 320px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: var(--background);
+            top: 100%;
+            left: 0;
+            margin-top: 5px;
+            padding: 10px;
+            box-shadow: var(--instruct-box-shadow);
+            border: 1px solid var(--focusing-fieldset-color);
+            border-radius: 5px;
+
+            .searched-users {
+              display: block;
+              width: 100%;
+            }
+          }
+        }
+      }
+
+      .added-for-container {
+        width: 100%;
+
+        .added-users {
+          width: 100%;
+          padding: 8px 10px;
+
+          tbody {
+            width: 100%;
+          }
+
+          .direction-tag {
+            color: var(--main-text-grey);
+          }
+
+          .added-user-tag {
+            display: block;
+            position: relative;
+            margin-bottom: 5px;
+
+            .aut-main-tag {
+              width: 100%;
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              justify-self: flex-start;
+              padding: 2px 8px;
+              border-radius: 20px;
+
+              &:hover {
+                cursor: auto;
+              }
+
+              .aut-mt-username {
+                flex: 1;
+              }
+
+              .aut-mt-close-icon {
+                height: 20px;
+                width: 20px;
+                padding: 2px;
+                border-radius: 10px;
+                transition: all;
+                color: #000;
+
+                &:hover {
+                  cursor: pointer;
+                  background-color: var(--btn-hovered-background);
+                }
+              }
+            }
+
+            .aut-main-tag-role-admin {
+              .aut-mt-username {
+                color: var(--role-admin-bg);
+              }
+
+              border: 1px solid var(--role-admin-bg);
+              background-color: var(--role-admin-border);
+            }
+
+            .aut-main-tag-role-pm {
+              .aut-mt-username {
+                color: var(--role-pm-bg);
+              }
+
+              border: 1px solid var(--role-pm-bg);
+              background-color: var(--role-pm-border);
+            }
+
+            .aut-main-tag-role-lead {
+              .aut-mt-username {
+                color: var(--role-lead-bg);
+              }
+
+              border: 1px solid var(--role-lead-bg);
+              background-color: var(--role-lead-border);
+            }
+
+            .aut-main-tag-role-emp {
+              .aut-mt-username {
+                color: var(--role-emp-bg);
+              }
+
+              border: 1px solid var(--role-emp-bg);
+              background-color: var(--role-emp-border);
+            }
+
+            .aut-full-info {
+              position: absolute;
+              z-index: 2;
+              width: 100%;
+
+              .user-short-info {
+                padding: 5px;
+                margin-bottom: 5px;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-self: flex-start;
+                width: 100%;
+                transition: all ease 0.3s;
+                border-radius: 10px;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                z-index: 2;
+                box-shadow: var(--instruct-box-shadow);
+                background-color: var(--background);
+                border: 1px solid var(--border-color);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

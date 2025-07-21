@@ -5,7 +5,6 @@ import "./task-creation.form.scss"
 import GlobalValidators from "@/util/global.validators"
 import { FileIcon } from "@/assets/file.icon"
 import { CreateTaskPageAPIs } from "@/apis/create-task.page.api"
-import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.api"
 import { ApiResponse, GeneralAPIs } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { X } from "lucide-react"
@@ -13,6 +12,7 @@ import { CreateTaskPageValidators } from "../page.service"
 import HelpContainer from "@/app-reused/help-container/page"
 import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { GeneralTools } from "@/util/general.helper"
+import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.dto"
 
 export interface TaskInfo {
   deadline: string,
@@ -24,7 +24,7 @@ export interface TaskInfo {
 export interface UserSelectedTag {
   id: string,
   data: {
-    username: string,
+    email: string,
     fullName: string,
     role: string
   }
@@ -37,6 +37,7 @@ interface SearchUserToAssignProps {
 }
 
 interface TaskCreationFormProps {
+  rootId?: number | null;
   assignedUsersHist: Record<string, Record<string, string>>;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
   assignedUsers: Record<string, Record<string, string>>;
@@ -47,12 +48,13 @@ interface TaskCreationFormProps {
 }
 
 export function TaskCreationForm({
-  assignedUsers, 
-  setAssignedUsers, 
-  setOpenDialog, 
+  rootId,
+  assignedUsers,
+  setAssignedUsers,
+  setOpenDialog,
   canUndo,
   setCanUndo,
-  assignedUsersHist, 
+  assignedUsersHist,
   setHistories
 }: TaskCreationFormProps) {
   const [deadline, setDeadline] = useState("")
@@ -65,21 +67,21 @@ export function TaskCreationForm({
   const [priority, setPriority] = useState("")
   const [taskTypeList, setTaskTypeList] = useState<string[]>([])
   const [taskType, setTaskType] = useState("")
+  const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     deadline: "",
     startDate: "",
-    assignedUsers: [],
-    description: "",
-    reportFormat: "",
   })
-  
+
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
   }, [])
-  
+
   const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDeadline(e.target.value)
+    setStartDate(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, startDate: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
   }, [])
 
@@ -100,7 +102,7 @@ export function TaskCreationForm({
     setTaskType(e.target.value)
   }, [])
 
-  const onClickSubmitBtn = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickSubmitBtn = useCallback(() => {
     async function createTask() {
       const formattedDeadline = new Date(deadline)
       const formattedStartDate = new Date(startDate)
@@ -123,38 +125,41 @@ export function TaskCreationForm({
         return
       }
 
-      // const request = DTO_TaskRequest.withBuilder()
-      // .bdeadline(deadline)
-      // .bstartDate(startDate)
-      // .blevel(level)
-      // .bpriority(priority)
-      // .btaskType(taskType)
-      // .bassignedEmails(Object.entries(assignedUsers).map(([key, user]) => user.username))
-      // .bdescription(trimmedDescription)
-      // .breportFormat(trimmedReportFormat)
-    
-      // const response = await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
-      // if (response.status !== 200) {
-      //   return
-      // }
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
+        return
 
-      // toast.success("Task created successfully!")
-      // const role = AuthHelper.getRoleFromToken()
-      // window.location.href = `${role}/task/${response.body.id}`
+      const request = DTO_TaskRequest.withBuilder()
+        .bdeadline(deadline)
+        .bstartDate(startDate)
+        .blevel(level)
+        .bpriority(priority)
+        .btaskType(taskType)
+        .bassignedEmails(Object.entries(assignedUsers).map(([key, user]) => user.email))
+        .bdescription(trimmedDescription)
+        .breportFormat(trimmedReportFormat)
+
+      const response = (rootId === null)
+        ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
+        : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
+      // if (String(response.status)[0] === "2") {
+        // toast.success(response.msg)
+        // const role = AuthHelper.getRoleFromToken()
+        // window.location.href = `${role}/task/${response.body.id}`
+      // }
     }
     createTask();
-  }, [startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers])
+  }, [rootId, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation])
 
   useEffect(() => {
     async function initValues() {
       const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<string[]>
       if (String(levelsResponse.status)[0] === "2")
         setLevelList(levelsResponse.body)
-      
+
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
       if (String(prioritiesResponse.status)[0] === "2")
         setPriorityList(prioritiesResponse.body)
-      
+
       const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
       if (String(taskTypesResponse.status)[0] === "2")
         setTaskTypeList(taskTypesResponse.body)
@@ -198,7 +203,7 @@ export function TaskCreationForm({
           </select>
         </fieldset>
       </div>
-      
+
       <div className="form-group-container half-form-right-container">
         <fieldset className="form-group">
           <legend className="form-label">Priority</legend>
@@ -209,7 +214,7 @@ export function TaskCreationForm({
           </select>
         </fieldset>
       </div>
-      
+
       <div className="form-group-container">
         <fieldset className="form-group">
           <legend className="form-label">Task Type</legend>
@@ -232,7 +237,7 @@ export function TaskCreationForm({
       <div className="form-group-container search-user-container">
         <fieldset className="form-group">
           <legend className="form-label">Search User</legend>
-          <SearchUserToAssign assignedUsers={assignedUsers} setAssignedUsers={setAssignedUsers} setHistories={setHistories}/>
+          <SearchUserToAssign assignedUsers={assignedUsers} setAssignedUsers={setAssignedUsers} setHistories={setHistories} />
         </fieldset>
       </div>
 
@@ -247,7 +252,7 @@ export function TaskCreationForm({
       <div className="form-group-container assign-for-container">
         <fieldset className="form-group">
           <legend className="form-label">Assigned Users</legend>
-          <AssignedUsers assignedUsers={assignedUsers} setAssignedUsers={setAssignedUsers} setHistories={setHistories}/>
+          <AssignedUsers assignedUsers={assignedUsers} setAssignedUsers={setAssignedUsers} setHistories={setHistories} />
         </fieldset>
       </div>
 
@@ -256,7 +261,7 @@ export function TaskCreationForm({
           <legend className="form-label">
             <HelpContainer title="Description" description="Description helps assigned Users understand Task" />
           </legend>
-          <TextEditor state={description} setState={setDescription}/>
+          <TextEditor state={description} setState={setDescription} />
         </fieldset>
       </div>
 
@@ -265,7 +270,7 @@ export function TaskCreationForm({
           <legend className="form-label">
             <HelpContainer title="Report Format" description="This Format supports Users prepare the Report better" />
           </legend>
-          <TextEditor state={reportFormat} setState={setReportFormat}/>
+          <TextEditor state={reportFormat} setState={setReportFormat} />
         </fieldset>
       </div>
 
@@ -311,20 +316,22 @@ function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: S
   const toggleAddRemoveAssignedUser = useCallback((user: DTO_FastUserInfo) => {
     setAssignedUsers(prev => {
       setHistories(prev)
-      const key = extractEmailToGetId(user.username)
+      const key = extractEmailToGetId(user.email)
       if (key in prev) {
-        const newData = {...prev}
+        const newData = { ...prev }
         delete newData[key]
         return newData
       }
       else
-        return {...prev, [key]: {
-          username: user.username,
-          fullName: user.fullName,
-          role: user.role
-        }}
+        return {
+          ...prev, [key]: {
+            email: user.email,
+            fullName: user.fullName,
+            role: user.role
+          }
+        }
     })
-  }, [])
+  }, [setAssignedUsers, setHistories])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -352,12 +359,12 @@ function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: S
             const firstNameChar = user.fullName[0].toUpperCase()
             return <tr
               key={"usi-" + ind}
-              className={`user-short-info${(extractEmailToGetId(user.username) in assignedUsers) ? " user-short-info-selected" : ""}`}
+              className={`user-short-info${(extractEmailToGetId(user.email) in assignedUsers) ? " user-short-info-selected" : ""}`}
               onClick={() => toggleAddRemoveAssignedUser(user)}
             >
               <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
               <td className="usi-full-name">{user.fullName}</td>
-              <td className="usi-username">{user.username}</td>
+              <td className="usi-email">{user.email}</td>
               <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
             </tr>
           })
@@ -401,8 +408,8 @@ export function getColorByCharacter(character: string): Record<string, string> {
   return colors[index % colors.length] || { backgroundColor: '#ccc', color: '#000' };
 }
 
-export function extractEmailToGetId(username: string): string {
-  return username.slice(0, username.indexOf("@"))
+export function extractEmailToGetId(email: string): string {
+  return email.slice(0, email.indexOf("@"))
 }
 
 function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
@@ -411,16 +418,16 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: Search
   const onClickRmAssingedUserTag = useCallback((id: string) => {
     setAssignedUsers(prev => {
       setHistories(prev)
-      const newData = {...prev}
+      const newData = { ...prev }
       delete newData[id]
       return newData
     })
-  }, [])
+  }, [setAssignedUsers, setHistories])
 
   useEffect(() => {
     setShownInfoMap(
-      Object.entries(assignedUsers).reduce<Record<string, boolean>>((acc, [id, user]) => {
-        acc[id] = false;
+      Object.entries(assignedUsers).reduce<Record<string, boolean>>((acc, pair) => {
+        acc[pair[0]] = false;
         return acc;
       }, {})
     );
@@ -428,31 +435,31 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: Search
 
   return <ul className="assigned-users">
     {Object.keys(assignedUsers).length === 0
-        ? <li className="assigned-user-tag direction-tag">
-          Assigned Users <i className="direction-tag">(blank for Root Task)</i>
+      ? <li className="assigned-user-tag direction-tag">
+        Assigned Users <i className="direction-tag">(blank for Root Task)</i>
+      </li>
+      : Object.entries(assignedUsers).map(([id, user], ind) => {
+        const firstNameChar = user.fullName[0].toUpperCase()
+        const normalRole = user.role.toLowerCase().replace("_", "-")
+        return <li className="assigned-user-tag" key={"aut-" + ind}>
+          <div className={`aut-main-tag aut-main-tag-${normalRole}`}
+            onMouseEnter={() => setShownInfoMap(prev => ({ ...prev, [id]: true }))}
+            onMouseLeave={() => setShownInfoMap(prev => ({ ...prev, [id]: false }))}
+          >
+            <span className="aut-mt-email">{user.email}</span>
+            <X className="aut-mt-close-icon" onClick={() => onClickRmAssingedUserTag(id)} />
+          </div>
+          <div className={`aut-full-info ${shownInfoMap[id] ? "" : "hidden"}`}>
+            <div className="user-short-info">
+              <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
+              <span className="usi-full-name">{user.fullName}</span>
+              <span className="usi-email">{user.email}</span>
+              <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
+            </div>
+          </div>
         </li>
-        : Object.entries(assignedUsers).map(([id, user], ind) => {
-            const firstNameChar = user.fullName[0].toUpperCase()
-            const normalRole = user.role.toLowerCase().replace("_", "-")
-            return <li className="assigned-user-tag" key={"aut-" + ind}>
-              <div className={`aut-main-tag aut-main-tag-${normalRole}`}
-                onMouseEnter={() => setShownInfoMap(prev => ({...prev, [id]: true }))}
-                onMouseLeave={() => setShownInfoMap(prev => ({...prev, [id]: false }))}
-              >
-                <span className="aut-mt-username">{user.username}</span>
-                <X className="aut-mt-close-icon" onClick={() => onClickRmAssingedUserTag(id)}/>
-              </div>
-              <div className={`aut-full-info ${shownInfoMap[id] ? "" : "hidden"}`}>
-                <div className="aut-user-short-info">
-                  <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
-                  <span className="usi-full-name">{user.fullName}</span>
-                  <span className="usi-username">{user.username}</span>
-                  <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
-                </div>
-              </div>
-            </li>
-          }
-        )
       }
+      )
+    }
   </ul>
 }

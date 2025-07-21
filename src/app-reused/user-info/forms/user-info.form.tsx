@@ -2,7 +2,6 @@
 
 import { GeneralAPIs, RecordResponse } from "@/apis/general.api"
 import { UserInfoAPIs } from "@/apis/user-info.page.api"
-import { DTO_UpdateUserInfoRequest } from "@/dtos/user-info.page"
 import { AuthHelper } from "@/util/auth.helper"
 import GlobalValidators from "@/util/global.validators"
 import { useCallback, useEffect, useState } from "react"
@@ -10,6 +9,7 @@ import toast from "react-hot-toast"
 import "../assets/user-info.form.scss"
 import { RotateCcw } from "lucide-react"
 import { LoginValidators } from "@/app/auth/login/page.services"
+import { DTO_UpdateUserInfoRequest } from "@/dtos/user-info.page.dto"
 
 export default function UserInfoForm() {
   const [fullName, setFullName] = useState("")

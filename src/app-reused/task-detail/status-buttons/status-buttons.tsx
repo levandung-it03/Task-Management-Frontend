@@ -2,11 +2,11 @@
 import { ApiResponse } from "@/apis/general.api"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
-import { DTO_LockTaskStatus, DTO_TaskDetail } from "@/dtos/task-detail.page.api"
 import { Bookmark, CheckLine, CircleCheckBig, Lock, LockOpenIcon } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import "./status-buttons.scss"
+import { DTO_LockTaskStatus, DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
 
 export default function StatusTaskButton({ taskInfo }: { taskInfo: DTO_TaskDetail }) {
   const [locked, setLocked] = useState(false)

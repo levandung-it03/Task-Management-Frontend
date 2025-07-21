@@ -280,7 +280,7 @@ export function TablePagination({ totalPages, tableState, setTableState, setReqD
     >
       {p}
     </button>
-  ), [tableState.page, setTableState, onChangePageNum])
+  ), [tableState.page, onChangePageNum])
 
   const pages = useMemo(() => {
     if (totalPages <= MAX_PAGE_LENGTH)
@@ -376,7 +376,7 @@ export function TableRowWrapper({ children, ...props }: { children: React.ReactN
         {GlobalValidators.isEmpty(data.dataList)
           ? <TableDataLoading />
           : data!.dataList.map((userInfo, ind) => (
-            <TableRowWrapper key={userInfo.username + "_" + ind}>
+            <TableRowWrapper key={userInfo.email + "_" + ind}>
               <td className="table-cell tb-cell-ava">
                 <span className="virtual-ava">{userInfo.fullName[0].toUpperCase()}</span>
               </td>
@@ -404,7 +404,7 @@ export function TableRowWrapper({ children, ...props }: { children: React.ReactN
               </td>
               <TableTDMenuBtn menuId={tableId + "-menu-" + ind} openingMenu={openingMenu}
                 setOpeningMenu={setOpeningMenu} menuAndFuncs={menuAndFuncs} data={{
-                  username: userInfo.username,
+                  email: userInfo.email,
                   authorities: userInfo.authorities
                 }}
               />

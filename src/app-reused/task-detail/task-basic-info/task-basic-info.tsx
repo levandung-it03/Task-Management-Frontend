@@ -1,8 +1,7 @@
 import { ApiResponse } from '@/apis/general.api'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import HelpContainer from '@/app-reused/help-container/page'
-import { DTO_TaskDetail, DTO_UpdateTaskDescription, DTO_UpdateTaskReportFormat } from '@/dtos/task-detail.page.api'
-import { ClipboardList, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
+import { CirclePlus, ClipboardList, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import toast from 'react-hot-toast'
 import { checkOverDue, prettierDate, prettierTime } from '../task-detail.service'
@@ -10,6 +9,7 @@ import TextDialog from './text-dialog/text.dialog'
 import TaskDialog from './task-dialog/task.dialog'
 import "./task-basic-info.scss"
 import { AuthHelper } from '@/util/auth.helper'
+import { DTO_TaskDetail, DTO_UpdateTaskDescription, DTO_UpdateTaskReportFormat } from '@/dtos/task-detail.page.dto'
 
 interface TaskBasicInfoProps {
   taskInfo: DTO_TaskDetail,
@@ -50,7 +50,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo }: TaskBasicInfoProps) {
         }
       }
     })
-  }, [taskInfo.id, taskInfo.description])
+  }, [taskInfo.id, taskInfo.description, taskInfo, setTaskInfo])
 
   const onClickOpenReportFormat = useCallback(() => {
     setOpenTextDialog(true)
@@ -75,7 +75,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo }: TaskBasicInfoProps) {
         }
       }
     })
-  }, [taskInfo.id, taskInfo.reportFormat])
+  }, [taskInfo.id, taskInfo.reportFormat, taskInfo, setTaskInfo])
 
   return <>
     <div className="task-basic-info">
@@ -177,6 +177,12 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo }: TaskBasicInfoProps) {
           </div>
         </div>
       </div>
+      <a
+        className="create-sub-task"
+        href={`/${AuthHelper.getRoleFromToken().toLowerCase()}/create-task/${taskInfo.id}`}
+      >
+        <CirclePlus className="cst-icon" />Create Sub-Task
+      </a>
     </div>
     <TextDialog
       onSubmitUpdateContent={onSubmitUpdateContent}

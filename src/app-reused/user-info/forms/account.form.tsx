@@ -4,7 +4,7 @@ import { GeneralAPIs, RecordResponse } from "@/apis/general.api";
 import { LoginValidators } from "@/app/auth/login/page.services";
 import GlobalValidators from "@/util/global.validators";
 import { Eye, EyeOff } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import "../assets/account-info.form.scss";
 import { AuthHelper } from "@/util/auth.helper";
@@ -21,6 +21,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
   const [otpAge, setOtpAge] = useState(0);
   const [showPassword, setShowPassword] = useState(false)
   const [showConfPass, setShowConfPass] = useState(false)
+  const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     otpCode: "",
     password: "",
@@ -29,6 +30,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
 
   const onChangePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({
       ...prev,
       password: LoginValidators.isValidPassword(e.target.value),
@@ -38,6 +40,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
 
   const onChangeConfPassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setConfPass(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({
       ...prev,
       password: LoginValidators.isValidPassword(e.target.value),
@@ -48,6 +51,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
   const onChangeOtpCode = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim().toUpperCase();
     setOtpCode(value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, otpCode: LoginValidators.isValidOtpCode(value) }))
   }, [])
 
@@ -80,7 +84,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     async function changePassowrd() {
-      if (GlobalValidators.isInvalidValidation(formValidation))
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
       const request = DTO_ChangePasswordRequest.withBuilder().bpassword(password).botp(otpCode)
       const res = await GeneralAPIs.changePassword(AuthHelper.getRoleFromToken(), request) as RecordResponse

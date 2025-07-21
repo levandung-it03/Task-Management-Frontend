@@ -14,8 +14,15 @@
     margin: auto;
     width: fit-content;
     color: var(--foreground);
-    border-radius: 10px;
     overflow: hidden;
+    border-color: 2px solid var(--main-green);
+    padding: 5px;
+
+    .alert-title,
+    .alert-msg {
+      max-width: 400px;
+      line-break: auto;
+    }
 
     .alert-title {
       padding: 12px 15px;
@@ -27,12 +34,14 @@
 
       .alert-title-icon {
         margin-right: 10px;
+        width: 20px;
       }
     }
 
     .alert-msg {
       padding: 15px;
       border-bottom: 1px solid var(--main-green);
+      max-width: 300px;
     }
 
     .my-confirm-actions {
@@ -41,13 +50,15 @@
       align-items: center;
       justify-content: flex-end;
       padding: 15px;
+      padding-bottom: 5px;
 
       button {
-        padding: 10px 15px;
+        padding: 8px 15px;
         cursor: pointer;
         border-radius: 5px;
         transition: background-color ease 0.3s;
-        font-size: 16px;
+        font-size: 14px;
+        border: 1px solid;
       }
 
       .alert-ok-btn {
@@ -55,6 +66,7 @@
         border: 2px solid var(--main-green);
         background-color: var(--background);
         color: var(--main-green);
+        border-color: var(--main-green);
 
         &:hover {
           background-color: var(--main-green);
@@ -64,11 +76,13 @@
 
       .alert-cancel-btn {
         border: 2px solid transparent;
-        background-color: var(--main-text-err-red);
-        color: #fff;
+        color: var(--main-text-err-red);
+        background-color: var(--background);
+        border-color: var(--main-text-err-red);
 
         &:hover {
-          background-color: var(--red-btn-hovered-bg);
+          background-color: var(--main-text-err-red);
+          color: #fff;
         }
       }
     }

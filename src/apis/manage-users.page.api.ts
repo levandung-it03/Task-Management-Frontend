@@ -1,6 +1,6 @@
 import { DTO_PaginationRequest } from "@/dtos/general.dto"
 import { GeneralAPIs } from "./general.api"
-import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page"
+import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page.dto"
 
 export class ManageUsersAPIs {
 
@@ -14,7 +14,7 @@ export class ManageUsersAPIs {
             totalPages: 9,
             dataList: [
               {
-                username: "alice.johnson.assharem.building.student.alcohol@example.com",
+                email: "alice.johnson.assharem.building.student.alcohol@example.com",
                 createdTime: "2025-06-12 06:59:32",
                 active: true,
                 fullName: "Lê Văn Dũng",
@@ -25,7 +25,7 @@ export class ManageUsersAPIs {
                 oauth2ServiceEnum: "FACEBOOK",
               },
               {
-                username: "alice.johnson.assharem.building.student.alcohol@example.com",
+                email: "alice.johnson.assharem.building.student.alcohol@example.com",
                 createdTime: "2025-06-12 06:59:32",
                 active: false,
                 fullName: "Lê Văn Dũng",

@@ -1,4 +1,3 @@
-
 .user-short-info {
   padding: 5px;
   margin-bottom: 5px;
@@ -16,7 +15,7 @@
 
     .usi-ava,
     .usi-full-name,
-    .usi-username {
+    .usi-email {
       color: var(--foreground);
     }
   }
@@ -24,7 +23,7 @@
 
   .usi-ava,
   .usi-full-name,
-  .usi-username,
+  .usi-email,
   .usi-role {
     display: block;
     margin-right: var(--margin-cell);
@@ -42,7 +41,7 @@
   }
 
   .usi-full-name,
-  .usi-username {
+  .usi-email {
     word-break: break-word;
     overflow-wrap: break-word;
   }
@@ -55,7 +54,7 @@
     color: var(--main-text-grey);
   }
 
-  .usi-username {
+  .usi-email {
     flex: 1;
     color: var(--main-text-grey);
   }
@@ -94,7 +93,7 @@
 
   .usi-ava,
   .usi-full-name,
-  .usi-username {
+  .usi-email {
     color: var(--foreground);
   }
 }

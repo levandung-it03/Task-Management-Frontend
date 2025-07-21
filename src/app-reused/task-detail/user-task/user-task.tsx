@@ -2,62 +2,149 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import "./user-task.scss"
-import { DTO_CommentOfReport, DTO_Report, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
+import { DTO_CommentOfReport, DTO_CreateComment, DTO_RejectReport, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
 import CreateReportForm from "./create-report/create-report"
 import { UserTaskPageAPIs } from "@/apis/user-task.page.api"
 import { ApiResponse } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { TextEditor } from "@/app-reused/text-editor/text-editor"
-import { ClipboardMinus, Pencil, Send, SendHorizontal, X } from "lucide-react"
+import { BookmarkX, Check, CircleCheckBig, CircleSlash, ClipboardMinus, Pencil, Send, SendHorizontal, X } from "lucide-react"
 import { AuthHelper } from "@/util/auth.helper"
-import { DTO_IdResponse } from "@/dtos/general.dto"
+import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
+import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
+import GlobalValidators from "@/util/global.validators"
+import { UserTaskService } from "./user-task.service"
+import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
 
 interface Comment {
   rootComment: DTO_CommentOfReport
   repliedComments: DTO_CommentOfReport[]
 }
-
+/**
+ * [IMPLEMENTED]
+ * 1. PM/LEAD can see their own Task
+ * 2. EMP can see assigned User-Task
+ * Prevent? API did it!
+ * Why do we need to query taskInfo? To check if this is owner (to show Reject/Approve buttons).
+ */
 export default function UserTask({ userTaskId, taskId }: { userTaskId: number, taskId: number }) {
+  const [taskInfo, setTaskInfo] = useState<DTO_TaskDetail>({
+    id: 0,
+    userInfo: {
+      id: 0,
+      fullName: "",
+      email: ""
+    },
+    rootTaskId: null,
+    name: "",
+    description: "",
+    reportFormat: "",
+    level: "",
+    taskType: "",
+    priority: "",
+    startDate: "",
+    isLocked: false,
+    endDate: null,
+    deadline: "",
+    createdTime: "",
+    updatedTime: "",
+    hasSubTask: false,
+    hasAtLeastOneReport: false,
+  })
+
+  useEffect(() => {
+    async function getDetail() {
+      const response = await TaskDetailPageAPIs.getTaskDetail(taskId) as ApiResponse<DTO_TaskDetail>
+      if (String(response.status)[0] !== "2")
+        return
+
+      setTaskInfo(response.body)
+    }
+    getDetail()
+  }, [taskId])
 
   return <div className="main-user-task">
-    <CreateReportForm userTaskId={userTaskId} />
-    <ReportList userTaskId={userTaskId} />
+    <CreateReportForm userTaskId={userTaskId} taskId={taskId} />
+    <ReportList
+      userTaskId={userTaskId}
+      taskInfo={taskInfo} />
   </div>
 }
 
-function ReportList({ userTaskId }: { userTaskId: number }) {
+function ReportList({ userTaskId, taskInfo }: {
+  userTaskId: number,
+  taskInfo: DTO_TaskDetail
+}) {
   const [reportComments, setReportComments] = useState<DTO_ReportsComments[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isOwner, setIsOwner] = useState(false)
+  const [isReportOwner, setIsReportOwner] = useState(false)
+  const [canReviewReport, setCanReviewReport] = useState(false)
 
   useEffect(() => {
+    if (!taskInfo.userInfo.email)
+      return
     async function fetchReports() {
       setIsLoading(true)
       const response = await UserTaskPageAPIs.getReportsAndComments(userTaskId) as ApiResponse<DTO_ReportsComments[]>
-      if (String(response.status)[0] === "2") {
-        setReportComments(response.body)
-        setIsOwner(AuthHelper.isOwner(response.body[0].report.createdBy.email))
+      if (String(response.status)[0] !== "2")
+        return
+
+      const isTaskOwner = AuthHelper.isOwner(taskInfo.userInfo.email)
+      const isAssignedUser = AuthHelper.isOwner(response.body[0].report.createdBy.email)
+      //--Just "Task-Owner", and "Assigned-User" can see this page.
+      // console.log("Task Owner: ", taskInfo.userInfo.email)
+      // console.log("Assigned User: ", response.body[0].report.createdBy.email)
+      // console.log("Logging-in: ", AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || "").sub)
+      if (!isAssignedUser && !isTaskOwner) {
+        window.location.href = "/"
+        return
       }
+      setReportComments(response.body)
+      setIsReportOwner(isAssignedUser)
+      setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
       setIsLoading(false)
     }
     fetchReports()
-  }, [])
+  }, [userTaskId, taskInfo.userInfo.email])
 
   return <div className="report-list">
     {isLoading
       ? <span className="is-loading">Loading...</span>
       : reportComments.map((reportInfo, ind) =>
-        <ReportFrame key={"rf-" + ind} reportInfo={reportInfo} isOwner={isOwner} />
+        <ReportFrame
+          key={"rf-" + ind}
+          reportInd={ind}
+          reportInfo={reportInfo}
+          isReportOwner={isReportOwner}
+          canReviewReport={canReviewReport}
+          setReportComments={setReportComments}/>
       )}
   </div>
 }
 
-function ReportFrame({ reportInfo, isOwner }: { reportInfo: DTO_ReportsComments, isOwner: boolean }) {
+function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, setReportComments }: {
+  reportInd: number,
+  reportInfo: DTO_ReportsComments,
+  isReportOwner: boolean,
+  canReviewReport: boolean,
+  setReportComments: React.Dispatch<React.SetStateAction<DTO_ReportsComments[]>>
+}) {
+  const [openRejectDialog, setIsRejecting] = useState(false)
   const [report, setReport] = useState("")
   const [isUpdating, setIsUpdating] = useState(false)
   const canUpdated = useMemo(() =>
     reportInfo.report.createdTime === reportInfo.report.updatedTime
     , [reportInfo.report.createdTime, reportInfo.report.updatedTime])
+
+  const addNewComment = useCallback((response: DTO_CommentOfReport) => {
+    setReportComments(prev => {
+      const newReports = [...prev];
+      const targetReport = { ...newReports[reportInd] };
+      targetReport.comments = [...targetReport.comments, response];
+      newReports[reportInd] = targetReport;
+      return newReports;
+    })
+  }, [setReportComments, reportInd])
 
   const onClickUpdateReport = useCallback(() => {
     async function updateReport() {
@@ -70,121 +157,186 @@ function ReportFrame({ reportInfo, isOwner }: { reportInfo: DTO_ReportsComments,
         .breport(report)
       const response = await UserTaskPageAPIs.updateReport(request) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
-
+        toast.success(response.msg)
+        return
       }
     }
     updateReport()
-  }, [])
+  }, [report, reportInfo.report.content, reportInfo.report.id])
 
   const onClickCancelUpdate = useCallback(() => {
     setIsUpdating(false)
     setReport(reportInfo.report.content)
   }, [reportInfo.report.content])
 
+  const onClickApproveReport = useCallback(() => {
+    async function reviewReport() {
+      if (!(await confirm("This action cannot be undone. Are you sure?")))
+        return
+      if (report.trim() === reportInfo.report.content) {
+        toast.error("Report unchanges and cannot be updated.")
+        return
+      }
+      const response = await UserTaskPageAPIs.approveReport(reportInfo.report.id) as ApiResponse<void>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        return
+      }
+    }
+    reviewReport()
+  }, [])
+
+  const ButtonsWhenUpdating = useCallback(() => (
+    <div className="report-btn-group">
+      <button className="cancel-report-btn" onClick={onClickCancelUpdate}>
+        <X className="report-btn-icon" />Cancel Update
+      </button>
+      <button className="report-btn" onClick={onClickUpdateReport}>
+        <Send className="report-btn-icon" />Submit Report
+      </button>
+    </div>
+  ), [report, onClickCancelUpdate, onClickUpdateReport])
+
+  const ButtonWhenSuperiorSeeing = useCallback(() => (
+    <div className="report-btn-group">
+      <button className="cancel-report-btn" onClick={() => setIsRejecting(true)}>
+        <CircleSlash className="report-btn-icon" />Reject Report
+      </button>
+      <button className="report-btn" onClick={onClickApproveReport}>
+        <Check className="report-btn-icon" />Approve Report
+      </button>
+    </div>
+  ), [onClickApproveReport])
+
+  const ButtonsWhenNotUpdating = useCallback(() => {
+    if (isReportOwner)
+      return <button
+        className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
+        onClick={() => setIsUpdating(true)}
+        disabled={!canUpdated}
+      >
+        <Pencil className="report-btn-icon" />Update Report
+      </button>
+
+    if (canReviewReport && reportInfo.report.reviewedTime === null)
+      return <ButtonWhenSuperiorSeeing />
+
+    if (reportInfo.report.reviewedTime !== null)
+      return <button className="disabled-btn reviewed-btn" disabled>
+        <CircleCheckBig className="reviewed-icon" />
+        Reviewed
+      </button>
+  }, [canReviewReport, isReportOwner, canUpdated])
+
   useEffect(() => setReport(reportInfo.report.content), [reportInfo.report.content])
 
-  return <div className="report-and-comments">
-    <div className="report-header">
-      <h1 className="rh-title">
-        <ClipboardMinus className="rh-title-icon" />
-        {reportInfo.report.title}
-      </h1>
-      <div className="rh-info created-by-user">
-        <span className="rh-label">OWNER</span>
-        <span className="rh-value">{reportInfo.report.createdBy.fullName}</span>
-      </div>
-      <div className="rh-info created-time">
-        <span className="rh-label">CREATED</span>
-        <span className="rh-value">{reportInfo.report.createdTime}</span>
-      </div>
-      <div className="rh-info updated-time">
-        <span className="rh-label">UPDATED</span>
-        <span className="rh-value">{reportInfo.report.updatedTime}</span>
-      </div>
-      <div className="rh-info status">
-        <span className="rh-label">STATUS</span>
-        <span className="rh-value">
-          <span className={`quick-tag rh-status-${reportInfo.report.reportStatus.toLowerCase()}`}>
-            {reportInfo.report.reportStatus}
+  return <>
+    <div className="report-and-comments">
+      <div className={`report-header report-header-${reportInfo.report.reportStatus.toLowerCase()}`}>
+        <h1 className="rh-title">
+          <ClipboardMinus className="rh-title-icon" />
+          {reportInfo.report.title}
+        </h1>
+        <div className="rh-info created-by-user">
+          <span className="rh-label">OWNER</span>
+          <span className="rh-value">{reportInfo.report.createdBy.fullName}</span>
+        </div>
+        <div className="rh-info created-time">
+          <span className="rh-label">CREATED</span>
+          <span className="rh-value">{reportInfo.report.createdTime}</span>
+        </div>
+        <div className="rh-info updated-time">
+          <span className="rh-label">UPDATED</span>
+          <span className="rh-value">{reportInfo.report.updatedTime}</span>
+        </div>
+        <div className="rh-info status">
+          <span className="rh-label">STATUS</span>
+          <span className="rh-value">
+            <span className={`quick-tag rh-status-${reportInfo.report.reportStatus.toLowerCase()}`}>
+              {reportInfo.report.reportStatus}
+            </span>
           </span>
+        </div>
+        {reportInfo.report.reviewedTime && <div className="rh-info reviewed-time">
+          <span className="rh-label">REVIEWED</span>
+          <span className="rh-value">{reportInfo.report.reviewedTime}</span>
+        </div>}
+      </div>
+      {reportInfo.report.rejectedReason && <div className="rejected-reason">
+        <span className="rejected-value">
+          <b className="rejected-label">Rejected Reason: </b>
+          {reportInfo.report.rejectedReason}
         </span>
-      </div>
-      {reportInfo.report.reviewedTime && <div className="rh-info reviewed-time">
-        <span className="rh-label">REVIEWED</span>
-        <span className="rh-value">{reportInfo.report.reviewedTime}</span>
       </div>}
-    </div>
-    {reportInfo.report.rejectedReason && <div className="rejected-reason">
-      <span className="rejected-value">
-        <b className="rejected-label">Rejected Reason: </b>
-        {reportInfo.report.rejectedReason}
-      </span>
-    </div>}
-    <div className="report-info-wrapper">
-      <div className="report-content">
-        {isUpdating
-          ? <>
-            <TextEditor state={report} setState={setReport} />
-            <div className="report-btn-group">
-              <button className="cancel-report-btn" onClick={onClickCancelUpdate}>
-                <X className="report-btn-icon" />Cancel Update
-              </button>
-              <button className="report-btn" onClick={onClickUpdateReport}>
-                <Send className="report-btn-icon" />Submit Report
-              </button>
-            </div>
-          </>
-          : <>
-            <textarea id="desc-textarea" className="desc-textarea" value={report} disabled></textarea>
-            {isOwner && <button
-              className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
-              type="button"
-              onClick={() => setIsUpdating(true)}
-              disabled={!canUpdated}
-            >
-              <Pencil className="report-btn-icon" />Update Report
-            </button>}
-          </>
-        }
+      <div className="report-info-wrapper">
+        <div className="report-content">
+          {isUpdating
+            ? <>
+              <TextEditor state={report} setState={setReport} />
+              <ButtonsWhenUpdating />
+            </>
+            : <>
+              <textarea id="desc-textarea" className="desc-textarea" value={report} disabled></textarea>
+              <ButtonsWhenNotUpdating />
+            </>}
+        </div>
+        <CommentsGroup
+          reportInfo={reportInfo}
+          addNewComment={addNewComment}
+        />
       </div>
-      <CommentsGroup reportInfo={reportInfo} />
     </div>
-  </div>
+    {openRejectDialog && <RejectingReportDialog reportId={reportInfo.report.id} setIsRejecting={setIsRejecting} />}
+  </>
 }
 
-function CommentsGroup({ reportInfo }: { reportInfo: DTO_ReportsComments }) {
-  const replyRef = useRef<HTMLInputElement>(null)
+function CommentsGroup({ reportInfo, addNewComment }: {
+  reportInfo: DTO_ReportsComments,
+  addNewComment: (response: DTO_CommentOfReport) => void
+}) {
   const [comments, setComments] = useState<Record<number, Comment>>({})
   const [comment, setComment] = useState("")
-  const [isReplying, setIsReplying] = useState(false)
-
-  const onClickReplyComment = useCallback(() => {
-    setIsReplying(true)
-  }, [])
 
   const onChangeComment = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value)
   }, [])
 
-  useEffect(() => setComments(buildNestedTwoLevelsComment(reportInfo.comments)), [reportInfo.comments])
-  useEffect(() => replyRef.current?.focus(), [isReplying])
+  const onClickCreateRootComment = useCallback(() => {
+    async function replyComment() {
+      if (comment.trim().length === 0) {
+        toast.error("Plesae type comment!")
+        return
+      }
+      const request = DTO_CreateComment.withBuilder()
+        .breportId(reportInfo.report.id)
+        .bcontent(comment)
+      const response = await UserTaskPageAPIs.createComment(request) as ApiResponse<DTO_CommentOfReport>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        addNewComment(response.body)
+        setComment("")
+        return
+      }
+    }
+    replyComment()
+  }, [comment, reportInfo.report.id])
+
+  useEffect(() => {
+    const res = buildNestedTwoLevelsComment(reportInfo.comments)
+    setComments(res)
+  }, [reportInfo.comments])
 
   return <div className="comments-wrapper">
     <div className="comments-group">
       {reportInfo.comments.length === 0
-        ? <span className="empty-comment">There's no comment here.</span>
-        : Object.entries(comments).map(([key, rootComment]) => (
-          <div key={"ec-" + key} className="comment-group">
-            <RootCommentFrame comment={rootComment.rootComment} onClickReplyComment={onClickReplyComment} />
-            <div className="sub-comment-group">
-              {rootComment.repliedComments.map(subComment => (
-                <SubCommentFrame key={"ec-" + subComment.id} comment={subComment} />
-              ))}
-              {isReplying && <ReplyCommentFrame replyRef={replyRef} setIsReplying={setIsReplying} />}
-            </div>
-
-          </div>
-        ))
+        ? <span className="empty-comment">There is no comment here.</span>
+        : Object.entries(comments).map(([key, commentAndReplies]) =>
+          <AllRelativeCommentsContainer
+            key={"ec-" + key}
+            commentAndReplies={commentAndReplies}
+            reportId={reportInfo.report.id}
+            addNewComment={addNewComment}
+          />)
       }
     </div>
     <div className="form-group-container create-comment">
@@ -197,8 +349,39 @@ function CommentsGroup({ reportInfo }: { reportInfo: DTO_ReportsComments }) {
           autoComplete="off"
           onChange={onChangeComment}
         />
-        <SendHorizontal className="comment-send-btn" />
+        <SendHorizontal className="comment-send-btn" onClick={onClickCreateRootComment} />
       </fieldset>
+    </div>
+  </div>
+}
+
+function AllRelativeCommentsContainer({ commentAndReplies, reportId, addNewComment }: {
+  commentAndReplies: Comment,
+  reportId: number,
+  addNewComment: (response: DTO_CommentOfReport) => void
+}) {
+  const replyRef = useRef<HTMLInputElement>(null)
+  const [isReplying, setIsReplying] = useState(false)
+
+  const onClickReplyComment = useCallback(() => {
+    setIsReplying(true)
+  }, [])
+
+  useEffect(() => replyRef.current?.focus(), [isReplying])
+
+  return <div className="comment-group">
+    <RootCommentFrame comment={commentAndReplies.rootComment} onClickReplyComment={onClickReplyComment} />
+    <div className="sub-comment-group">
+      {commentAndReplies.repliedComments.map(repliedComment => (
+        <SubCommentFrame key={"ec-" + repliedComment.id} comment={repliedComment} />
+      ))}
+      {isReplying && <ReplyCommentFrame
+        reportId={reportId}
+        rootCommentId={commentAndReplies.rootComment.id}
+        replyRef={replyRef}
+        setIsReplying={setIsReplying}
+        addNewComment={addNewComment}
+      />}
     </div>
   </div>
 }
@@ -231,9 +414,12 @@ function SubCommentFrame({ comment }: { comment: DTO_CommentOfReport }) {
   </div>
 }
 
-function ReplyCommentFrame({ replyRef, setIsReplying }: {
+function ReplyCommentFrame({ replyRef, setIsReplying, reportId, rootCommentId, addNewComment }: {
   replyRef: React.RefObject<HTMLInputElement>,
-  setIsReplying: React.Dispatch<React.SetStateAction<boolean>>
+  setIsReplying: React.Dispatch<React.SetStateAction<boolean>>,
+  reportId: number,
+  rootCommentId: number,
+  addNewComment: (response: DTO_CommentOfReport) => void
 }) {
   const [replying, setReplying] = useState("")
 
@@ -243,7 +429,21 @@ function ReplyCommentFrame({ replyRef, setIsReplying }: {
 
   const onClickReplyComment = useCallback(() => {
     async function replyComment() {
-      const response = await UserTaskPageAPIs.createReplyComment(replying) as ApiResponse<DTO_IdResponse>
+      if (replying.trim().length === 0) {
+        toast.error("Plesae type comment!")
+        return
+      }
+      const request = DTO_CreateComment.withBuilder()
+        .breportId(reportId)
+        .brepliedCommentId(rootCommentId)
+        .bcontent(replying)
+      const response = await UserTaskPageAPIs.createComment(request) as ApiResponse<DTO_CommentOfReport>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        addNewComment(response.body)
+        setIsReplying(false)
+        return
+      }
     }
     replyComment()
   }, [replying])
@@ -260,7 +460,7 @@ function ReplyCommentFrame({ replyRef, setIsReplying }: {
           autoComplete="off"
           onChange={onChangeReplying}
         />
-        <SendHorizontal className="comment-send-btn" onClick={onClickReplyComment}/>
+        <SendHorizontal className="comment-send-btn" onClick={onClickReplyComment} />
       </fieldset>
     </div>
     <div className="rcf-cancel-btn-wrapper">
@@ -279,7 +479,7 @@ function buildNestedTwoLevelsComment(rawComments: DTO_CommentOfReport[]) {
     new Date(a.createdTime).getTime() - new Date(b.createdTime).getTime()
   );
 
-  for (let rawComment of copiedComments) {
+  for (const rawComment of copiedComments) {
     if (!comments[rawComment.repliedCommendId])
       comments[rawComment.id] = {
         rootComment: rawComment,
@@ -288,6 +488,86 @@ function buildNestedTwoLevelsComment(rawComments: DTO_CommentOfReport[]) {
     else
       comments[rawComment.repliedCommendId].repliedComments.push(rawComment)
   }
-
   return comments
+}
+
+function RejectingReportDialog({ reportId, setIsRejecting }: {
+  reportId: number,
+  setIsRejecting: React.Dispatch<React.SetStateAction<boolean>>
+}) {
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const [content, setContent] = useState<string>("")
+  const [formTouched, setFormTouched] = useState(false)
+  const [formValidation, setFormValidation] = useState({
+    content: ""
+  })
+
+  const onClickRejectReport = useCallback(() => {
+    async function rejectReport() {
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
+        return
+      const request = DTO_RejectReport.withBuilder()
+        .breportId(reportId)
+        .brejectedReason(content)
+      const response = await UserTaskPageAPIs.rejectReport(request) as ApiResponse<void>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        return
+      }
+      setIsRejecting(false)
+    }
+    rejectReport()
+  }, [reportId, content, setIsRejecting])
+
+  const onClickCancelDialog = useCallback(() => {
+    setIsRejecting(false)
+  }, [setIsRejecting])
+
+  const onChangeContent = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setContent(e.target.value)
+    setFormTouched(true)
+    setFormValidation(prev => ({ ...prev, content: UserTaskService.isValidContent(e.target.value.trim()) }))
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (overlayRef.current && overlayRef.current.contains(event.target as Node)) {
+        setIsRejecting(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [setIsRejecting])
+
+  return <div className="reject-dialog">
+    <div ref={overlayRef} className="dialog-overlay"></div>
+    <div className="dialog-container">
+      <span className="dialog-header">
+        <BookmarkX className="dhc-icon" />
+        Rejecting Report
+      </span>
+      <div className="form-group-container reject-content">
+        <fieldset className="form-group">
+          <legend className="form-label">Reason</legend>
+          <input
+            name="rejected-comment"
+            className="form-input"
+            value={content}
+            autoComplete="off"
+            onChange={onChangeContent}
+            placeholder="Why do you reject?"
+          />
+        </fieldset>
+        {GlobalValidators.notEmpty(formValidation.content) && <span className="input-err-msg">{formValidation.content}</span>}
+      </div>
+      <div className="reject-btn-container">
+        <button className="cancel-content-btn" onClick={onClickCancelDialog} >
+          Cancel
+        </button>
+        <button className="submit-content-btn" onClick={onClickRejectReport} >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
 }

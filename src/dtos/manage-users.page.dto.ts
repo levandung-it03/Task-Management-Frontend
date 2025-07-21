@@ -5,7 +5,7 @@ export interface DTO_PaginatedDataResponse {
 }
 
 export interface DTO_ManagedUserInfoResponse {
-  username: string,
+  email: string,
   createdTime: string,
   active: boolean,
   fullName: string,

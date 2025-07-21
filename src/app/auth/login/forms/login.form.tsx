@@ -1,6 +1,6 @@
 'use client'
 import type React from "react"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 import GlobalValidators from "@/util/global.validators"
 import toast from "react-hot-toast"
@@ -15,10 +15,11 @@ export default function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     email: "",
     password: "",
-  });
+  })
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword(prev => !prev)
@@ -26,18 +27,20 @@ export default function LoginForm() {
 
   const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, email: LoginValidators.isValidEmail(e.target.value) }))
   }, [])
 
   const onChangePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, password: LoginValidators.isValidPassword(e.target.value) }))
   }, [])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     async function send() {
-      if (GlobalValidators.isInvalidValidation(formValidation))
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
       const request = DTO_AuthRequest.withBuilder().bemail(email).bpassword(password)
       const response = await LoginAPIs.authenticate(request) as RecordResponse

@@ -21,6 +21,20 @@ export interface DTO_TaskDetail {
   deadline: string;
   createdTime: string;
   updatedTime: string;
+
+  hasSubTask: boolean;
+  hasAtLeastOneReport: boolean;
+}
+
+export interface DTO_OverviewSubTask {
+  id: number;
+  name: string;
+  level: string;
+  taskType: string;
+  priority: string;
+  startDate: string;
+  endDate: string | null;
+  deadline: string;
 }
 
 export class DTO_UpdateTaskDescription {
@@ -58,7 +72,7 @@ export class DTO_UpdateBasicTask {
 
 export interface DTO_TaskUser {
   id: number
-  username: string
+  email: string
   fullName: string
   role: string
   userTaskStatus: string

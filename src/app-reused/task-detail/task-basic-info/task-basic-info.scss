@@ -1,7 +1,7 @@
 .task-basic-info {
-  padding: calc(1.5*var(--padding-component));
+  padding: calc(1.5*var(--component-padding));
   background-color: var(--background);
-  border-radius: var(--padding-component);
+  border-radius: var(--component-padding);
 
   .form-caption {
     .caption-content {
@@ -29,18 +29,10 @@
       border: 1px solid var(--main-green);
       padding-left: 0 !important;
       background: linear-gradient(110deg,
-          #e6f4ec 0%,
-          /* nhạt ở đầu */
-          #b2dbc7 30%,
-          /* đậm hơn một chút */
-          #5ac8a1 50%,
-          /* đậm nhất ở giữa */
-          #b2dbc7 70%,
-          /* đậm hơn một chút */
-          #e6f4ec 100%
-          /* nhạt ở cuối */
-        );
-      padding: var(--padding-component) !important;
+          var(--background) 0%,
+          #5ac8a1 70%,
+          var(--background) 100%);
+      padding: var(--component-padding) !important;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -147,7 +139,7 @@
       flex-wrap: wrap;
       align-items: center;
       padding-left: 55px;
-      padding-top: var(--padding-component);
+      padding-top: var(--component-padding);
 
       .task-info-label {
         width: 150px;
@@ -183,5 +175,32 @@
 
   .task-id {
     margin-left: 10px;
+  }
+
+  .create-sub-task {
+    width: 100%;
+    margin-top: var(--component-padding);
+    padding: var(--component-padding);
+    background: var(--background);
+    color: var(--main-green);
+    border: 1px solid var(--main-green);
+    border-radius: var(--component-padding);
+    transition: all ease 0.3s;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      cursor: pointer;
+      background-color: var(--main-green);
+      color: #fff;
+    }
+
+    .cst-icon {
+      width: 20px;
+      height: 20px;
+      margin-right: 5px;
+    }
   }
 }

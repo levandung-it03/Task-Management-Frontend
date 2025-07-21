@@ -111,7 +111,7 @@
             cursor: auto;
           }
 
-          .aut-mt-username {
+          .aut-mt-email {
             flex: 1;
           }
 
@@ -131,7 +131,7 @@
         }
 
         .aut-main-tag-role-admin {
-          .aut-mt-username {
+          .aut-mt-email {
             color: var(--role-admin-bg);
           }
 
@@ -140,7 +140,7 @@
         }
 
         .aut-main-tag-role-pm {
-          .aut-mt-username {
+          .aut-mt-email {
             color: var(--role-pm-bg);
           }
 
@@ -149,7 +149,7 @@
         }
 
         .aut-main-tag-role-lead {
-          .aut-mt-username {
+          .aut-mt-email {
             color: var(--role-lead-bg);
           }
 
@@ -158,7 +158,7 @@
         }
 
         .aut-main-tag-role-emp {
-          .aut-mt-username {
+          .aut-mt-email {
             color: var(--role-emp-bg);
           }
 
@@ -166,23 +166,29 @@
           background-color: var(--role-emp-border);
         }
 
-        .aut-user-short-info {
-          padding: 5px;
-          margin-bottom: 5px;
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          justify-self: flex-start;
-          width: 100%;
-          transition: all ease 0.3s;
-          border-radius: 10px;
+        .aut-full-info {
           position: absolute;
-          top: 100%;
-          left: 0;
           z-index: 2;
-          box-shadow: var(--instruct-box-shadow);
-          background-color: var(--background);
-          border: 1px solid var(--border-color);
+          width: 100%;
+
+          .user-short-info {
+            padding: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-self: flex-start;
+            width: 100%;
+            transition: all ease 0.3s;
+            border-radius: 10px;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            z-index: 2;
+            box-shadow: var(--instruct-box-shadow);
+            background-color: var(--background);
+            border: 1px solid var(--border-color);
+          }
         }
       }
     }

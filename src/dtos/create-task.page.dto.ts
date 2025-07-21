@@ -1,6 +1,6 @@
 
 export interface DTO_FastUserInfo {
-  username: string
+  email: string
   fullName: string
   role: string
 }

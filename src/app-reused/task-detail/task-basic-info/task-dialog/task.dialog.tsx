@@ -2,7 +2,6 @@ import { ClipboardList, X } from "lucide-react";
 
 import "./task.dialog.scss"
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DTO_UpdateBasicTask, DTO_TaskDetail } from "@/dtos/task-detail.page.api";
 import GlobalValidators from "@/util/global.validators";
 import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
 import { CreateTaskPageValidators } from "@/app-reused/create-task/page.service";
@@ -10,6 +9,7 @@ import { GeneralTools } from "@/util/general.helper";
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api";
 import toast from "react-hot-toast";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
+import { DTO_TaskDetail, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
 
 interface TaskDialogProps {
   openDialog: boolean;
@@ -32,6 +32,7 @@ export default function TaskDialog({
   const [priority, setPriority] = useState("")
   const [taskTypeList, setTaskTypeList] = useState<string[]>([])
   const [taskType, setTaskType] = useState("")
+  const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     deadline: "",
   })
@@ -47,10 +48,12 @@ export default function TaskDialog({
 
   const onChangePriority = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setPriority(e.target.value)
+    setFormTouched(true)
   }, [])
 
   const onChangeTaskType = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setTaskType(e.target.value)
+    setFormTouched(true)
   }, [])
 
   const onSubmitUpdateContent = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
@@ -58,7 +61,7 @@ export default function TaskDialog({
     async function submitUpdating() {
       if (!await confirm("This change cannot be undone. Are you sure?", "Confirm Updating"))
         return
-      if (GlobalValidators.isInvalidValidation(formValidation))
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
       if (priority === taskInfo.priority
         && level === taskInfo.level
@@ -87,7 +90,10 @@ export default function TaskDialog({
       setOpenDialog(false)
     }
     submitUpdating()
-  }, [taskInfo.id, priority, level, taskType, deadline])
+  }, [
+    taskInfo.id, taskInfo.deadline, taskInfo.level, taskInfo.taskType, taskInfo.priority,
+    priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo
+  ])
 
   useEffect(() => {
     async function initValues() {
@@ -105,7 +111,7 @@ export default function TaskDialog({
     }
     initValues()
   }, [])
-
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (overlayRef.current && overlayRef.current.contains(event.target as Node)) {
@@ -114,7 +120,7 @@ export default function TaskDialog({
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+  }, [setOpenDialog])
 
   useEffect(() => setLevel(taskInfo.level), [taskInfo.level])
   useEffect(() => setPriority(taskInfo.priority), [taskInfo.priority])
@@ -130,7 +136,7 @@ export default function TaskDialog({
             <ClipboardList className="dhc-icon" />
             <span className="dhc-title">Basic Information</span>
           </div>
-          <X className="close-dialog-btn" onClick={e => setOpenDialog(false)} />
+          <X className="close-dialog-btn" onClick={() => setOpenDialog(false)} />
         </div>
         <div className="input-container">
           <div className="form-group-container half-form-left-container">

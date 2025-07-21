@@ -3,10 +3,10 @@
 import { ApiResponse } from "@/apis/general.api"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
-import { DTO_TaskDetail, DTO_TaskUser } from "@/dtos/task-detail.page.api"
 import { ClipboardList } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
 import "./assigned-users.scss"
+import { DTO_TaskDetail, DTO_TaskUser } from "@/dtos/task-detail.page.dto"
 
 export default function AssignedUsers({ taskInfo }: { taskInfo: DTO_TaskDetail }) {
   const [assignedUsers, setAssignedUsers] = useState<DTO_TaskUser[]>([])
@@ -14,11 +14,11 @@ export default function AssignedUsers({ taskInfo }: { taskInfo: DTO_TaskDetail }
 
   const onClickOpenUserReports = useCallback((id: number) => {
     window.location.href = `${window.location.pathname}/user-task/${id}`
-  }, [window])
+  }, [])
 
   useEffect(() => {
     async function fetchAssignedUsers() {
-      const response = await TaskDetailPageAPIs.getUsersForTaskOwner(taskInfo.id) as ApiResponse<DTO_TaskUser[]>
+      const response = await TaskDetailPageAPIs.getUsersOfTask(taskInfo.id) as ApiResponse<DTO_TaskUser[]>
       if (String(response.status)[0] === "2") {
         setAssignedUsers(response.body)
       }
@@ -66,12 +66,12 @@ export default function AssignedUsers({ taskInfo }: { taskInfo: DTO_TaskDetail }
           const firstNameChar = user.fullName[0].toUpperCase()
           return <li
             key={"usi-" + ind}
-            className={`user-short-info${(extractEmailToGetId(user.username) in assignedUsers) ? " user-short-info-selected" : ""}`}
+            className={`user-short-info${(extractEmailToGetId(user.email) in assignedUsers) ? " user-short-info-selected" : ""}`}
             onClick={() => onClickOpenUserReports(user.id)}
           >
             <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
             <span className="usi-full-name">{user.fullName}</span>
-            <span className="usi-username">{user.username}</span>
+            <span className="usi-email">{user.email}</span>
             <span className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</span>
           </li>
         })

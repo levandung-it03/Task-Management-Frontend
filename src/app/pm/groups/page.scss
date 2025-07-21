@@ -1,0 +1,48 @@
+:root {
+  --component-padding: 15px;
+}
+
+.groups-page {
+  .groups-page-header {
+    margin: var(--component-padding);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: var(--component-padding);
+    padding-right: var(--component-padding);
+    background-color: var(--background);
+    border-radius: var(--component-padding);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+
+    .form-caption,
+    .create-group-wrapper {
+      width: auto;
+    }
+
+    .create-group-wrapper {
+      .cgw-btn {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-self: center;
+        color: #fff;
+        background-color: var(--main-green);
+        padding: 10px var(--component-padding);
+        border-radius: 10px;
+        transition: all ease 0.3s;
+
+        &:hover {
+          background-color: var(--main-hovered-green);
+          cursor: pointer;
+        }
+
+        .cgw-btn-icon {
+          margin-right: 5px;
+          width: 18px;
+        }
+      }
+    }
+  }
+}

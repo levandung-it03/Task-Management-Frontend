@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 export class AuthHelper {
   static ACCESS_TOKEN_NAME = "ACCESS"
   static REFRESH_TOKEN_NAME = "REFRESH"
+  static EMP_ROLE = "EMP"
 
   static getRoleFromToken(): string {
     try {
@@ -76,4 +77,10 @@ export class AuthHelper {
       return false
     return email === AuthHelper.extractToken(token).sub
   }
+
+  /**
+   * 1. PM/Lead -> See created Task/Project/Phase
+   * 2. EMP -> See assigned Task/Project/Phase
+   *        -> See created Reports
+   */
 }

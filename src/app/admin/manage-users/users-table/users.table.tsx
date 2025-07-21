@@ -4,7 +4,6 @@ import React, { JSX, useEffect, useMemo, useState } from "react"
 import "./users.table.scss"
 import { GeneralTools } from "@/util/general.helper"
 import GlobalValidators from "@/util/global.validators"
-import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page"
 import { ManageUsersAPIs } from "@/apis/manage-users.page.api"
 import { ApiResponse } from "@/apis/general.api"
 import {
@@ -25,6 +24,7 @@ import {
   RequestDataWrapper
 } from "@/components/table.component"
 import { DTO_PaginationRequest } from "@/dtos/general.dto"
+import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page.dto"
 
 export default function UsersTable() {
   const tableId = useMemo(() => "usif_hist", [])
@@ -112,7 +112,7 @@ export default function UsersTable() {
                 <td className="table-cell tb-cell-ava">
                   <span className="virtual-ava">{userInfo.fullName[0].toUpperCase()}</span>
                 </td>
-                <td className="table-cell tb-cell-mullines">{userInfo.username}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.email}</td>
                 <td className="table-cell">{GeneralTools.capitalize(userInfo.oauth2ServiceEnum)}</td>
                 <td className="table-cell">
                   {extractRoles(userInfo.authorities)}
@@ -147,7 +147,7 @@ export default function UsersTable() {
                   setOpeningMenu={setOpeningMenu}
                   menuAndFuncs={menuAndFuncs}
                   data={{
-                    username: userInfo.username,
+                    email: userInfo.email,
                     authorities: userInfo.authorities
                   }}
                 />

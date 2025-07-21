@@ -5,7 +5,11 @@ export default class GlobalValidators {
   static OTP_REGEX: RegExp = /^[A-Z0-9]+$/;
   static FULLNAME_REGEX: RegExp = /^[\p{L} ]+$/u;
 
-  static isInvalidValidation(validation: Record<string, string>): boolean {
+  static isInvalidValidation(touched: boolean, validation: Record<string, string>): boolean {
+    if (!touched) {
+      toast.error("Fill all the fields before submitting!")
+      return true
+    }
     const msg: string | undefined = Object.values(validation).find(msg => GlobalValidators.notEmpty(msg))
     if (GlobalValidators.nonNull(msg)) {
       toast.error(msg!)

@@ -38,8 +38,8 @@ export default function GroupListDialog({
         return {
           ...prev,
           ...response.body.reduce((acc, user) => {
-            acc[extractEmailToGetId(user.username)] = {
-              username: user.username,
+            acc[extractEmailToGetId(user.email)] = {
+              email: user.email,
               fullName: user.fullName,
               role: user.role
             }
@@ -49,9 +49,9 @@ export default function GroupListDialog({
       })
     }
     findRelatedUsersAndAssign()
-  }, [])
+  }, [setOpenDialog, setAssignedUsers, setHistories])
 
-  const onClickCloseDialog = useCallback(() => setOpenDialog(false), [])
+  const onClickCloseDialog = useCallback(() => setOpenDialog(false), [setOpenDialog])
 
   useEffect(() => {
     async function getGroups() {
@@ -64,7 +64,7 @@ export default function GroupListDialog({
       setIsLoading(false)
       setGroups(response.body)
     }
-    openDialog && getGroups()
+    if (openDialog) getGroups()
   }, [openDialog])
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export default function GroupListDialog({
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+  }, [setOpenDialog])
 
   return <div className={`main-groups-dialog ${openDialog ? "" : "hidden"}`}>
     <div ref={overlayRef} className="dialog-overlay"></div>
@@ -98,13 +98,13 @@ export default function GroupListDialog({
         {isLoading
           ? <li className="loading-row"><span>Loading...</span></li>
           : (groups.length === 0
-            ? <li className="loading-row"><span>You haven't joined any Groups</span></li>
+            ? <li className="loading-row"><span>You have not joined any Groups</span></li>
             : groups.map((group, ind) => {
               const firstNameChar = group.groupName[0].toUpperCase()
               return <li key={"glt-" + ind} className="user-short-info gcb-group-line"
                 onClick={() => onClickGroup(group.id)}>
                 <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
-                <span className="usi-username">{group.groupName}</span>
+                <span className="usi-email">{group.groupName}</span>
                 <span className={`usi-role gcb-${group.role.toLowerCase().replace("_", "-")}`}>{group.role}</span>
               </li>
             })

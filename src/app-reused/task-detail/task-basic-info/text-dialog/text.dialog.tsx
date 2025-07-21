@@ -32,7 +32,7 @@ export default function TextDialog({
   const onClickCloseDialog = useCallback(() => {
     setOpenDialog(false)
     setContent(inpContent)
-  }, [inpContent])
+  }, [inpContent, setOpenDialog])
 
   const onClickUpdate = useCallback(() => {
     async function update() {
@@ -50,7 +50,7 @@ export default function TextDialog({
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+  }, [setOpenDialog])
 
   return openDialog
     ? <div className="text-dialog">

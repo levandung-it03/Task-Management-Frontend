@@ -1,10 +1,10 @@
 :root {
-  --padding-component: 15px;
+  --component-padding: 15px;
   --btn-space: 40px;
 }
 
 .main-user-task {
-  padding: var(--padding-component);
+  padding: var(--component-padding);
   width: 100%;
 
   .report-list {
@@ -14,19 +14,18 @@
     .report-and-comments {
       width: 100%;
       background-color: var(--background);
-      padding: var(--padding-component);
-      border-radius: var(--padding-component);
+      padding: var(--component-padding);
+      border-radius: var(--component-padding);
       margin-bottom: 25px;
 
       .report-header {
-        background: linear-gradient(155deg, #f6f8f7 60%, #72deb8 100%);
         border: 1px solid var(--border-color);
         display: flex;
         flex-wrap: wrap;
         align-items: flex-start;
         justify-content: flex-start;
         margin-bottom: 10px;
-        padding: var(--padding-component);
+        padding: var(--component-padding);
         border-radius: 10px;
         box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
         transition: all ease 0.2s;
@@ -76,7 +75,7 @@
             width: 100%;
             line-break: auto;
             font-size: 14px;
-            color: #000 !important;
+            color: var(--foreground) !important;
 
             .quick-tag {
               width: fit-content;
@@ -95,10 +94,22 @@
         }
       }
 
+      .report-header-approved {
+        background: linear-gradient(155deg, var(--background) 60%, #72deb8 100%);
+      }
+
+      .report-header-rejected {
+        background: linear-gradient(155deg, var(--background) 60%, #af5959 100%);
+      }
+      
+      .report-header-waiting {
+        background: linear-gradient(155deg, var(--background) 60%, #7274de 100%);
+      }
+
       .rejected-reason {
         display: block;
         background-color: var(--main-red-bg);
-        padding: var(--padding-component);
+        padding: var(--component-padding);
         border-left: 3px solid var(--main-dark-red);
         margin-bottom: 10px;
         border-radius: 10px;
@@ -133,6 +144,22 @@
 
             &:hover {
               box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.25);
+            }
+          }
+
+          .reviewed-btn {
+            padding: 10px var(--component-padding);
+            width: 100%;
+            margin-top: 5px;
+            border-radius: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+
+            .reviewed-icon {
+              width: 16px;
+              margin-right: 5px;
             }
           }
         }
@@ -181,7 +208,7 @@
         color: var(--main-text-err-red);
         border: 1px solid var(--main-text-err-red);
         flex: 1;
-        margin-right: var(--padding-component);
+        margin-right: var(--component-padding);
 
         &:hover {
           background-color: var(--main-text-err-red);
@@ -268,10 +295,6 @@
         padding-left: 10px;
         margin-bottom: 10px;
       }
-
-      .root-comment {}
-
-      .sub-comment {}
     }
 
     .rcf-cancel-btn-wrapper {
@@ -280,7 +303,7 @@
       justify-content: flex-end;
       width: 100%;
 
-      .rcf-cancel-btn{
+      .rcf-cancel-btn {
         background-color: transparent;
         padding: 2px 4px;
         border-radius: 10px;
@@ -330,4 +353,109 @@
       cursor: pointer;
     }
   }
+}
+
+.reject-dialog {
+
+  .dialog-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--overlay-color);
+    z-index: 3;
+  }
+
+  .dialog-container {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 4;
+    background-color: var(--background);
+    width: 400px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+
+    .dialog-header {
+      line-break: auto;
+      padding: 12px 15px;
+      background-color: var(--main-text-err-red);
+      color: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+      margin-bottom: var(--component-padding);
+
+      .dhc-icon {
+        margin-right: 10px;
+        width: 20px;
+      }
+    }
+
+    .alert-msg {
+      padding: 15px;
+      border-bottom: 1px solid var(--main-green);
+      max-width: 300px;
+    }
+
+    .reject-content {
+      box-sizing: border-box;
+      .form-group {
+        border-radius: 5px;
+      }
+    }
+
+    .reject-btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      width: 100%;
+
+      button {
+        padding: 8px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color ease 0.3s;
+        font-size: 14px;
+        border: 1px solid;
+      }
+
+      .submit-content-btn {
+        margin-left: 10px;
+        border: 2px solid var(--main-green);
+        background-color: var(--background);
+        color: var(--main-green);
+        border-color: var(--main-green);
+
+        &:hover {
+          background-color: var(--main-green);
+          color: #fff;
+        }
+      }
+
+      .cancel-content-btn {
+        border: 2px solid transparent;
+        color: var(--main-text-err-red);
+        background-color: var(--background);
+        border-color: var(--main-text-err-red);
+
+        &:hover {
+          background-color: var(--main-text-err-red);
+          color: #fff;
+        }
+      }
+    }
+  }
+
 }

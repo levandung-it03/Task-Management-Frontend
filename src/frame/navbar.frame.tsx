@@ -3,7 +3,7 @@
 import LucideMoon from '@/assets/moon.icon';
 import { AuthHelper } from '@/util/auth.helper';
 import GlobalValidators from '@/util/global.validators';
-import { ArrowLeftToLine, ArrowRightToLine, Files, Ghost, House, LayoutDashboard, Lightbulb, LogOut, Settings, SquareUserRound, Users } from 'lucide-react';
+import { ArrowLeftToLine, ArrowRightToLine, Files, House, LayoutDashboard, Lightbulb, LogOut, Settings, SquareUserRound, Users } from 'lucide-react';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import "./styles/navbar.frame.scss"
 import { DTO_Token } from '@/dtos/general.dto';

@@ -171,4 +171,23 @@ export class GeneralAPIs {
     }
   }
 
+  static async getGroupRoleEnums(): Promise<string[] | unknown> {
+    try {
+      // const response = await axiosInstance.put(`/api/public/enum/v1/get-group-role-enums`)
+      // return response.data
+      return {
+        code: 11003,
+        msg: "Thành công",
+        status: 200,
+        body: [
+          "ADMIN",
+          "MEMBER",
+        ],
+        time: "12:00:20 30/06/2025"
+      }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
 }

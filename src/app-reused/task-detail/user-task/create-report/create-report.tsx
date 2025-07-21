@@ -7,9 +7,10 @@ import { useCallback, useState } from "react";
 
 export interface CreateReportFormProps {
   userTaskId: number;
+  taskId: number;
 }
 
-export default function CreateReportForm({ userTaskId }: CreateReportFormProps) {
+export default function CreateReportForm({ userTaskId, taskId }: CreateReportFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const editor = useEditor({
     extensions: [StarterKit],

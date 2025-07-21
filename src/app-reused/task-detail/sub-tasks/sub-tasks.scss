@@ -1,0 +1,86 @@
+.sub-tasks {
+
+  .sub-task {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--background);
+    margin-bottom: 5px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--background);
+    transition: all ease 0.3s;
+    align-items: center;
+
+    &:hover {
+      background-color: var(--btn-hovered-background);
+    }
+
+    .st-header {
+      flex: 1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-self: flex-start;
+        padding: var(--component-padding);
+
+      .sth-name {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        color: var(--main-green);
+        font-weight: 600;
+        font-size: 18px;
+
+        .stn-icon {
+          display: block;
+          width: 25px;
+          height: 25px;
+          padding: 3px;
+          border-radius: 5px;
+          background-color: var(--main-green);
+          color: #fff;
+          margin-right: var(--component-padding);
+        }
+      }
+
+      .sth-desc {
+        color: var(--main-text-grey);
+        margin-top: 5px;
+        margin-left: 40px;
+      }
+    }
+
+    .st-info {
+      width: 30%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+
+      .st-level,
+      .st-type,
+      .st-priority {
+        height: fit-content;
+        margin-right: 25px;
+      }
+    }
+
+    .st-dates {
+
+      .st-deadling {}
+
+      .late-date {
+        background-color: var(--role-admin-bg) !important;
+        color: #fff !important;
+        font-weight: 100;
+        font-size: 14px;
+        padding: 1px 4px;
+        border-radius: 4px;
+        margin: 2px;
+      }
+    }
+  }
+}

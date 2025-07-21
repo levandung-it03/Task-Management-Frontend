@@ -1,8 +1,8 @@
-import { BasicUserInfo } from "./task-detail.page.api"
+import { DTO_FastUserInfo } from "./create-task.page.dto"
 
 export interface DTO_CommentOfReport {
   id: number
-  createdBy: BasicUserInfo
+  createdBy: DTO_FastUserInfo
   repliedCommendId: number
   comment: string
   createdTime: string
@@ -10,7 +10,7 @@ export interface DTO_CommentOfReport {
 
 export interface DTO_Report {
   id: number
-  createdBy: BasicUserInfo
+  createdBy: DTO_FastUserInfo
   title: string
   content: string
   reportStatus: string
@@ -32,4 +32,25 @@ export class DTO_UpdateReport {
   public static withBuilder(): DTO_UpdateReport { return new DTO_UpdateReport() }
   public breportId(reportId: number): DTO_UpdateReport { this.reportId = reportId; return this; }
   public breport(report: string): DTO_UpdateReport { this.report = report; return this; }
+}
+
+export class DTO_CreateComment {
+  reportId!: number
+  repliedCommentId!: number | null
+  content!: string
+  
+  public static withBuilder(): DTO_CreateComment { return new DTO_CreateComment() }
+  public breportId(reportId: number): DTO_CreateComment { this.reportId = reportId; return this; }
+  public brepliedCommentId(repliedCommentId: number): DTO_CreateComment { this.repliedCommentId = repliedCommentId; return this; }
+  public bcontent(content: string): DTO_CreateComment { this.content = content; return this; }
+
+}
+
+export class DTO_RejectReport {
+  reportId!: number
+  rejectedReason!: string
+
+  public static withBuilder(): DTO_RejectReport { return new DTO_RejectReport() }
+  public breportId(reportId: number): DTO_RejectReport { this.reportId = reportId; return this; }
+  public brejectedReason(rejectedReason: string): DTO_RejectReport { this.rejectedReason = rejectedReason; return this; }
 }

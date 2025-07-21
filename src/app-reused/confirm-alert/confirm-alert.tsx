@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import "./confirm-alert.scss"
 import { FileQuestion } from "lucide-react"
 
-export function confirm(message: string, title = "Confirm"): Promise<boolean> {
+export async function confirm(message: string, title = "Confirm"): Promise<boolean> {
   return new Promise((resolve) => {
     const container = document.createElement("div");
     document.body.appendChild(container);
