@@ -31,13 +31,14 @@ export interface UserSelectedTag {
 }
 
 interface SearchUserToAssignProps {
+  rootId: number | undefined
   setHistories: (snapshot: Record<string, Record<string, string>>) => void;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
   assignedUsers: Record<string, Record<string, string>>;
 }
 
 interface TaskCreationFormProps {
-  rootId?: number | null;
+  rootId: number | undefined;
   assignedUsersHist: Record<string, Record<string, string>>;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
   assignedUsers: Record<string, Record<string, string>>;
@@ -138,7 +139,7 @@ export function TaskCreationForm({
         .bdescription(trimmedDescription)
         .breportFormat(trimmedReportFormat)
 
-      const response = (rootId === null)
+      const response = !rootId
         ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
         : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
       // if (String(response.status)[0] === "2") {
@@ -226,18 +227,22 @@ export function TaskCreationForm({
         </fieldset>
       </div>
 
-      <div className="form-group-container">
+      {!rootId && <div className="form-group-container">
         <div className="open-groups-dialog-container">
           <button type="button" className="ogd-btn" onClick={() => setOpenDialog(true)}>
             Groups?
           </button>
         </div>
-      </div>
+      </div>}
 
       <div className="form-group-container search-user-container">
         <fieldset className="form-group">
           <legend className="form-label">Search User</legend>
-          <SearchUserToAssign assignedUsers={assignedUsers} setAssignedUsers={setAssignedUsers} setHistories={setHistories} />
+          <SearchUserToAssign
+            rootId={rootId}
+            assignedUsers={assignedUsers}
+            setAssignedUsers={setAssignedUsers}
+            setHistories={setHistories} />
         </fieldset>
       </div>
 
@@ -279,7 +284,7 @@ export function TaskCreationForm({
   </form>
 }
 
-function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
+function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
   const searchUserRef = useRef<HTMLInputElement>(null)
   const searchedUsersRef = useRef<HTMLTableElement>(null)
   const [isSearching, setIsSearching] = useState(false)
@@ -299,7 +304,9 @@ function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: S
         return
       }
       const request = DTO_SearchFastUserInfo.withBuilder().bquery(value)
-      const response = await CreateTaskPageAPIs.fastSearchUsers(request) as ApiResponse<DTO_FastUserInfo[]>
+      const response = !rootId
+        ? await CreateTaskPageAPIs.fastSearchUsers(request) as ApiResponse<DTO_FastUserInfo[]>
+        : await CreateTaskPageAPIs.fastSearchUsersOfRootTask(rootId, request) as ApiResponse<DTO_FastUserInfo[]>
       if (response.status !== 200) {
         toast.error(response.msg)
         setIsSearching(false)
