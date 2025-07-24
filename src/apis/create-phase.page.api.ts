@@ -1,7 +1,6 @@
-import { DTO_CreateProject } from '../dtos/create-project.page.dto';
-import { DTO_ProjectItem } from '../dtos/emp.home.page.dto';
+import { DTO_CreatePhase, DTO_PhaseItem } from '../dtos/create-phase.page.dto';
 
-export async function createProject(data: DTO_CreateProject): Promise<DTO_ProjectItem> {
+export async function createPhase(data: DTO_CreatePhase): Promise<DTO_PhaseItem> {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({
@@ -17,7 +16,7 @@ export async function createProject(data: DTO_CreateProject): Promise<DTO_Projec
   });
 }
 
-export async function updateProject(id: string, data: DTO_CreateProject): Promise<DTO_ProjectItem> {
+export async function updatePhase(id: string, data: DTO_CreatePhase): Promise<DTO_PhaseItem> {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve({

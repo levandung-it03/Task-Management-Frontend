@@ -1,4 +1,4 @@
-export interface DashboardStatDetail {
+export interface DTO_DashboardStatDetail {
   value: number;
   color: string;
   growth?: number;
@@ -6,38 +6,41 @@ export interface DashboardStatDetail {
   growthText?: string;
 }
 
-export interface DashboardStats {
+export interface DTO_DashboardStats {
   totalProjects: number;
   endedProjects: number;
   runningProjects: number;
   pendingProjects: number;
-  details?: DashboardStatDetail[];
+  details?: DTO_DashboardStatDetail[];
 }
 
-export interface TeamMember {
+export interface DTO_ProjectItem {
   id: string;
   name: string;
-  avatarUrl: string;
-  role: string;
-  task: string;
-  status: 'Completed' | 'In Progress' | 'Pending';
+  description: string;
+  startDate: string;
+  endDate: string;
+  deadline: string;
+  status: 'Pending' | 'Running' | 'Completed' | 'Cancelled';
+  leaders?: Record<string, { username: string; fullName: string; role: string }>;
 }
 
-export interface ProjectItem {
-  id: string;
-  name: string;
-  dueDate: string;
-}
-
-export interface Group {
+export interface DTO_Group {
   id: string;
   groupAvatar: string;
   groupName: string;
   role: 'OWNER' | 'MEMBER';
 }
 
-export interface EmpHomeData {
-  stats: DashboardStats;
-  groups?: Group[];
-  projects: ProjectItem[];
+export interface DTO_UserInfo {
+  fullName: string;
+  email: string;
+  avatar: string;
+}
+
+export interface DTO_EmpHomeData {
+  stats: DTO_DashboardStats;
+  groups?: DTO_Group[];
+  projects: DTO_ProjectItem[];
+  user?: DTO_UserInfo;
 } 
