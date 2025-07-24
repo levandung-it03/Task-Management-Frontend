@@ -100,7 +100,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo }: TaskBasicInfoProps) {
               <LetterText className="task-header-icon" />
               Report
             </button>
-            <button className={`update-info-btn ${}`} onClick={() => setOpenTaskDialog(true)}>
+            <button className={`update-info-btn ${3}`} onClick={() => setOpenTaskDialog(true)}>
               <Pencil className="task-header-icon" />
             </button>
           </div>

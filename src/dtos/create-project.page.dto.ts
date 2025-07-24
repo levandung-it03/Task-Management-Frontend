@@ -1,11 +1,11 @@
 export const PROJECT_STATUS = ['Pending', 'Running', 'Completed', 'Cancelled'] as const;
 export type ProjectStatus = typeof PROJECT_STATUS[number];
 
-export interface CreateProjectDto {
+export interface DTO_CreateProject {
   name: string;
   description: string;
   startDate: string;
   endDate: string;
-  dueDate: string;
+  deadline: string;
   status: ProjectStatus;
 } 

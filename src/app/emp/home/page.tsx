@@ -1,21 +1,34 @@
 'use client';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef,useCallback } from 'react';
 import { fetchEmpHomeData } from '../../../apis/emp.home.page.api';
-import { EmpHomeData, ProjectItem } from '../../../dtos/emp.home.page.dto';
+import { DTO_EmpHomeData, DTO_ProjectItem } from '../../../dtos/emp.home.page.dto';
+import { DTO_CreateProject, PROJECT_STATUS, ProjectStatus } from '../../../dtos/create-project.page.dto';
 import { createProject } from '../../../apis/create-project.page.api';
-import { CreateProjectDto, PROJECT_STATUS } from '../../../dtos/create-project.page.dto';
-
+import GlobalValidators from '@/util/global.validators';
+import { CreateTaskPageValidators } from '@/app-reused/create-task/page.service';
 export default function EmpHome() {
-  const [data, setData] = useState<EmpHomeData | null>(null);
+  const [formValidation, setFormValidation] = useState({
+    deadline: "",
+    assignedUsers: [],
+    description: "",
+    reportFormat: "",
+  })
+const [deadline, setDeadline] = useState("");
+const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      setDeadline(e.target.value)
+      setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
+    }, [])
+  const [data, setData] = useState<DTO_EmpHomeData | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<DTO_CreateProject>({
     name: '',
     description: '',
     startDate: '',
     endDate: '',
-    dueDate: '',
+    deadline: '',
     status: 'Pending',
   });
+   
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -196,11 +209,11 @@ export default function EmpHome() {
               </button>
             </div>
             <div>
-              {data.projects.map((proj: ProjectItem) => (
+              {data.projects.map((proj: DTO_ProjectItem) => (
                 <div key={proj.id} style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#0ea5e9' }} />
                   <div style={{ flex: 1, fontWeight: 500 }}>{proj.name}</div>
-                  <div style={{ fontSize: 13, color: '#888' }}>Due date: {proj.dueDate}</div>
+                  <div style={{ fontSize: 13, color: '#888' }}>Deadline: {proj.deadline}</div>
                 </div>
               ))}
             </div>
@@ -227,74 +240,273 @@ export default function EmpHome() {
             boxShadow: '0 4px 32px #0002',
             padding: '32px 32px 24px 32px',
             minWidth: 400,
-            maxWidth: '90vw',
-            width: 420,
+            maxWidth: '95vw',
+            width: '60%',
+            minHeight: 300,
+            maxHeight: 600,
             display: 'flex',
             flexDirection: 'column',
             gap: 18,
             position: 'relative',
+            overflowY: 'auto',
           }}>
-            <div style={{ fontWeight: 700, fontSize: 26, textAlign: 'center', marginBottom: 8, color: '#1e293b' }}>Create New Project</div>
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Project Name</label>
-            <input
-              type="text"
-              placeholder="..."
-              value={form.name}
-              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, marginBottom: 2 }}
-            />
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Description</label>
-            <textarea
-              placeholder="..."
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, minHeight: 70, resize: 'vertical', marginBottom: 2 }}
-            />
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Start Date</label>
-            <input
-              type="date"
-              value={form.startDate}
-              onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, marginBottom: 2 }}
-            />
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>End Date</label>
-            <input
-              type="date"
-              value={form.endDate}
-              onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, marginBottom: 2 }}
-            />
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Due Date</label>
-            <input
-              type="date"
-              value={form.dueDate}
-              onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, marginBottom: 2 }}
-            />
-            <label style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Status</label>
-            <select
-              value={form.status}
-              onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-              style={{ padding: 10, borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 15, marginBottom: 2 }}
+            {/* Header Create Project */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <svg width="24" height="24" fill="none" stroke="#166534" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}>
+                <rect x="4" y="4" width="16" height="16" rx="3" fill="#e6f4ea" stroke="#166534" />
+                <path d="M8 8h8M8 12h8M8 16h4" stroke="#166534" />
+              </svg>
+              <span style={{ fontWeight: 700, fontSize: 20, color: '#166534' }}>Create Project</span>
+              <button onClick={() => setShowModal(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 30, color: '#222', cursor: 'pointer', lineHeight: 1 }}>&times;</button>
+            </div>
+            {/* Form 2 columns */}
+            <form
+              onSubmit={async e => {
+                e.preventDefault();
+                setShowModal(false);
+                const newProject = await createProject(form as DTO_CreateProject);
+                setData(d => d ? { ...d, projects: [newProject, ...d.projects] } : d);
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 0 }}
             >
-              {PROJECT_STATUS.map(status => (
-                <option key={status} value={status}>{status}</option>
-              ))}
-            </select>
+              {/* Project Name full row */}
+              <fieldset
+                style={{
+                  border: '2.5px solid #111',
+                  borderRadius: 8,
+                  padding: '0 8px 0 8px',
+                  margin: 0,
+                  minWidth: 0,
+                  position: 'relative',
+                  marginBottom: 0,
+                }}
+              >
+                <legend
+                  style={{
+                    fontSize: 16,
+                    color: '#111',
+                    fontWeight: 500,
+                    padding: '0 8px',
+                    letterSpacing: 0.2,
+                    lineHeight: 1,
+                    background: '#fff',
+                    borderRadius: 4,
+                    marginLeft: 8,
+                  }}
+                >
+                  Project Name
+                </legend>
+                <input
+                  type="text"
+                  placeholder="..."
+                  value={form.name}
+                  onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                  style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
+                  required
+                />
+              </fieldset>
+              {/* Description full row */}
+              <fieldset
+                style={{
+                  border: '2.5px solid #111',
+                  borderRadius: 8,
+                  padding: '0 8px 0 8px',
+                  margin: 0,
+                  minWidth: 0,
+                  position: 'relative',
+                  marginBottom: 0,
+                }}
+              >
+                <legend
+                  style={{
+                    fontSize: 16,
+                    color: '#111',
+                    fontWeight: 500,
+                    padding: '0 8px',
+                    letterSpacing: 0.2,
+                    lineHeight: 1,
+                    background: '#fff',
+                    borderRadius: 4,
+                    marginLeft: 8,
+                  }}
+                >
+                  Description
+                </legend>
+                <textarea
+                  placeholder="..."
+                  value={form.description}
+                  onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                  style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent', minHeight: 70, resize: 'vertical' }}
+                />
+              </fieldset>
+              {/* 4 fields in 2 columns, 2 rows */}
+              <div style={{ display: 'flex', gap: 16 }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <fieldset
+                    style={{
+                      border: '2.5px solid #111',
+                      borderRadius: 8,
+                      padding: '0 8px 0 8px',
+                      margin: 0,
+                      minWidth: 0,
+                      position: 'relative',
+                    }}
+                  >
+                    <legend
+                      style={{
+                        fontSize: 16,
+                        color: '#111',
+                        fontWeight: 500,
+                        padding: '0 8px',
+                        letterSpacing: 0.2,
+                        lineHeight: 1,
+                        background: '#fff',
+                        borderRadius: 4,
+                        marginLeft: 8,
+                      }}
+                    >
+                      Start Date
+                    </legend>
+                    <input
+                      type="date"
+                      value={form.startDate}
+                      onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
+                      style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
+                      required
+                    />
+                  </fieldset>
+                  <fieldset
+                    style={{
+                      border: '2.5px solid #111',
+                      borderRadius: 8,
+                      padding: '0 8px 0 8px',
+                      margin: 0,
+                      minWidth: 0,
+                      position: 'relative',
+                    }}
+                  >
+                    <legend
+                      style={{
+                        fontSize: 16,
+                        color: '#111',
+                        fontWeight: 500,
+                        padding: '0 8px',
+                        letterSpacing: 0.2,
+                        lineHeight: 1,
+                        background: '#fff',
+                        borderRadius: 4,
+                        marginLeft: 8,
+                      }}
+                    >
+                      End Date
+                    </legend>
+                    <input
+                      type="date"
+                      value={form.endDate}
+                      onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
+                      style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
+                      required
+                    />
+                  </fieldset>
+                </div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <fieldset
+                    style={{
+                      border: '2.5px solid #111',
+                      borderRadius: 8,
+                      padding: '0 8px 0 8px',
+                      margin: 0,
+                      minWidth: 0,
+                      position: 'relative',
+                    }}
+                  >
+                    <legend
+                      style={{
+                        fontSize: 16,
+                        color: '#111',
+                        fontWeight: 500,
+                        padding: '0 8px',
+                        letterSpacing: 0.2,
+                        lineHeight: 1,
+                        background: '#fff',
+                        borderRadius: 4,
+                        marginLeft: 8,
+                      }}
+                    >
+                      Deadline
+                    </legend>
+                    <input
+                      type="date"
+                      value={form.deadline}
+                      onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))}
+                      style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
+                      required
+                    />
+                  </fieldset>
+                  <fieldset
+                    style={{
+                      border: '2.5px solid #111',
+                      borderRadius: 8,
+                      padding: '0 8px 0 8px',
+                      margin: 0,
+                      minWidth: 0,
+                      position: 'relative',
+                    }}
+                  >
+                    <legend
+                      style={{
+                        fontSize: 16,
+                        color: '#111',
+                        fontWeight: 500,
+                        padding: '0 8px',
+                        letterSpacing: 0.2,
+                        lineHeight: 1,
+                        background: '#fff',
+                        borderRadius: 4,
+                        marginLeft: 8,
+                      }}
+                    >
+                      Status
+                    </legend>
+                    <select
+                      value={form.status}
+                      onChange={e => setForm(f => ({ ...f, status: e.target.value as ProjectStatus }))}
+                      style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
+                      required
+                    >
+                      {PROJECT_STATUS.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </fieldset>
+                </div>
+              </div>
+            </form>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 18 }}>
               <button
-                onClick={() => setShowModal(false)}
-                style={{ background: '#e5e7eb', color: '#222', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={async () => {
+                type="submit"
+                form=""
+                style={{
+                  background: '#207558', // xanh đậm
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 10,
+                  padding: '16px 0',
+                  fontWeight: 600,
+                  fontSize: 17,
+                  width: '100%',
+                  display: 'block',
+                  margin: '0 auto',
+                  boxShadow: 'none',
+                  letterSpacing: 0.2,
+                  cursor: 'pointer',
+                }}
+                onClick={async (e) => {
+                  e.preventDefault();
                   setShowModal(false);
-                  const newProject = await createProject(form as CreateProjectDto);
+                  const newProject = await createProject(form as DTO_CreateProject);
                   setData(d => d ? { ...d, projects: [newProject, ...d.projects] } : d);
                 }}
-                style={{ background: 'var(--logo-color)', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 28px', fontWeight: 600, fontSize: 15, cursor: 'pointer', boxShadow: '0 2px 8px #22c55e33' }}
               >
                 Create Project
               </button>
@@ -414,7 +626,7 @@ function StatCard({ label, value, color, growth, growthType, growthText }: {
         )}
         <span style={{ color: statusColor, fontWeight: statusFontWeight, fontSize: 13 }}>{growthText}</span>
       </div>
-    </div>
+  </div>
   );
 }
 
