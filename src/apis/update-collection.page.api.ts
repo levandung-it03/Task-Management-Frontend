@@ -1,5 +1,5 @@
 import { DTO_UpdateCollection } from '../dtos/update-collection.page.dto';
-import { DTO_ProjectItem } from '../dtos/emp.home.page.dto';
+import { DTO_ProjectItem } from '@/dtos/home.page.dto';
 
 export async function updateCollection(data: DTO_UpdateCollection): Promise<DTO_ProjectItem> {
   return new Promise(resolve => {

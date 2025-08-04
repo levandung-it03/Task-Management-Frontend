@@ -11,7 +11,7 @@ interface TextDialogProps {
   inpContent: string;
   openDialog: boolean;
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  isOwner: boolean
+  isUpdatabale: boolean
 }
 
 export default function TextDialog({
@@ -20,7 +20,7 @@ export default function TextDialog({
   inpContent,
   openDialog,
   setOpenDialog,
-  isOwner
+  isUpdatabale
 }: TextDialogProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [content, setContent] = useState<string>("")
@@ -64,7 +64,7 @@ export default function TextDialog({
           <X className="close-dialog-btn" onClick={onClickCloseDialog} />
         </div>
         <TextEditor state={content} setState={setContent} />
-        {isOwner
+        {isUpdatabale
           ? <div className="update-btn-container">
             <button className="update-content-btn" onClick={onClickUpdate} >
               Submit Update

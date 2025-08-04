@@ -1,0 +1,193 @@
+// Phase Form Styles - Isolated from layout.css
+.phase-form-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.phase-form-modal {
+  background: #fff !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 32px #0002 !important;
+  padding: 32px 32px 24px 32px !important;
+  min-width: 400px !important;
+  max-width: 95vw !important;
+  width: 60% !important;
+  min-height: 300px !important;
+  max-height: 600px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  position: relative !important;
+  overflow-y: auto !important;
+}
+
+.phase-form-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.phase-form-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  color: #166534 !important;
+}
+
+.phase-form-close {
+  margin-left: auto !important;
+  background: none !important;
+  border: none !important;
+  font-size: 30px !important;
+  color: #222 !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  transition: color 0.2s !important;
+
+  &:hover {
+    color: #666 !important;
+  }
+}
+
+.phase-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  margin-bottom: 0 !important;
+
+  .phase-form-validation-errors {
+    background: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    margin-bottom: 16px !important;
+
+    .validation-errors-title {
+      color: #dc2626 !important;
+      font-weight: 600 !important;
+      margin-bottom: 8px !important;
+    }
+
+    .validation-errors-list {
+      margin: 0 !important;
+      padding-left: 20px !important;
+      color: #dc2626 !important;
+    }
+  }
+}
+
+.phase-form-fieldset {
+  border: 2.5px solid #111 !important;
+  border-radius: 8px !important;
+  padding: 0 8px 0 8px !important;
+  margin: 0 !important;
+  min-width: 0 !important;
+  position: relative !important;
+  margin-bottom: 0 !important;
+}
+
+.phase-form-legend {
+  font-size: 16px !important;
+  color: #111 !important;
+  font-weight: 500 !important;
+  padding: 0 8px !important;
+  letter-spacing: 0.2px !important;
+  line-height: 1 !important;
+  background: #fff !important;
+  border-radius: 4px !important;
+  margin-left: 8px !important;
+}
+
+.phase-form-input,
+.phase-form-textarea,
+.phase-form-select {
+  border: none !important;
+  outline: none !important;
+  font-size: 15px !important;
+  padding: 12px 12px !important;
+  width: 100% !important;
+  background: transparent !important;
+  font-family: inherit !important;
+}
+
+.phase-form-textarea {
+  min-height: 70px !important;
+  resize: vertical !important;
+}
+
+.phase-form-row {
+  display: flex !important;
+  gap: 16px !important;
+}
+
+.phase-form-column {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+.phase-form-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  margin-top: 18px !important;
+}
+
+.phase-form-submit-button {
+  background: #207558 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 16px 0 !important;
+  font-weight: 600 !important;
+  font-size: 17px !important;
+  width: 100% !important;
+  display: block !important;
+  margin: 0 auto !important;
+  box-shadow: none !important;
+  letter-spacing: 0.2px !important;
+  cursor: pointer !important;
+  margin-top: 18px !important;
+  transition: background 0.2s !important;
+
+  &:hover {
+    background: #0f5132 !important;
+  }
+
+  &:active {
+    transform: translateY(1px) !important;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .phase-form-modal {
+    width: 90% !important;
+    padding: 24px 20px 20px 20px !important;
+  }
+
+  .phase-form-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .phase-form-title {
+    font-size: 18px !important;
+  }
+
+  .phase-form-close {
+    font-size: 24px !important;
+  }
+} 

@@ -1,0 +1,21 @@
+.project-list-container {
+  min-height: 100vh;
+  background: var(--under-background);
+  padding: 32px;
+  font-family: Inter, sans-serif;
+
+  .project-list-content {
+    max-width: 1700px;
+    margin: 0 auto;
+    background: var(--background);
+    border-radius: 18px;
+    box-shadow: 0 2px 16px #0001;
+    padding: 48px;
+
+    .project-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+  }
+} 

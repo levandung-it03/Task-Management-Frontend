@@ -1,12 +1,12 @@
 'use client'
 
-import { DTO_FastUserInfo, DTO_GroupsRelatedToUser } from '@/dtos/create-task.page.api';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CreateTaskPageAPIs } from '@/apis/create-task.page.api';
 import { ApiResponse } from '@/apis/general.api';
 import './group-list.dialog.scss'
 import { Users, X } from 'lucide-react';
 import { extractEmailToGetId, getColorByCharacter } from '../task-creation-form/task-creation.form';
+import { DTO_FastUserInfo, DTO_GroupOverview } from '@/dtos/create-task.page.dto';
 
 export interface GroupListDialogProps {
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
@@ -21,13 +21,13 @@ export default function GroupListDialog({
   setAssignedUsers,
   setHistories
 }: GroupListDialogProps) {
-  const [groups, setGroups] = useState<DTO_GroupsRelatedToUser[]>([])
+  const [groups, setGroups] = useState<DTO_GroupOverview[]>([])
   const overlayRef = useRef<HTMLDivElement>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const onClickGroup = useCallback((id: number) => {
     async function findRelatedUsersAndAssign() {
-      const response = await CreateTaskPageAPIs.getAllUsersCanBeAssignedAndRelatedToGroup(id) as ApiResponse<DTO_FastUserInfo[]>
+      const response = await CreateTaskPageAPIs.getUsersGroupToAssign(id) as ApiResponse<DTO_FastUserInfo[]>
       setOpenDialog(false)
 
       if (response.status !== 200)
@@ -56,7 +56,7 @@ export default function GroupListDialog({
   useEffect(() => {
     async function getGroups() {
       setIsLoading(true)
-      const response = await CreateTaskPageAPIs.getAllGroupsRelatedToUser() as ApiResponse<DTO_GroupsRelatedToUser[]>
+      const response = await CreateTaskPageAPIs.getAllGroupsRelatedToUser() as ApiResponse<DTO_GroupOverview[]>
       if (response.status !== 200) {
         setIsLoading(false)
         return
@@ -96,15 +96,15 @@ export default function GroupListDialog({
       </div>
       <ul className="groups-container-body">
         {isLoading
-          ? <li className="loading-row"><span>Loading...</span></li>
+          ? <li className="loading-row">Loading...</li>
           : (groups.length === 0
             ? <li className="loading-row"><span>You have not joined any Groups</span></li>
             : groups.map((group, ind) => {
-              const firstNameChar = group.groupName[0].toUpperCase()
+              const firstNameChar = group.name[0].toUpperCase()
               return <li key={"glt-" + ind} className="user-short-info gcb-group-line"
                 onClick={() => onClickGroup(group.id)}>
                 <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
-                <span className="usi-email">{group.groupName}</span>
+                <span className="usi-email">{group.name}</span>
                 <span className={`usi-role gcb-${group.role.toLowerCase().replace("_", "-")}`}>{group.role}</span>
               </li>
             })

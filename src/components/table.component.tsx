@@ -334,7 +334,7 @@ export function TableDescription({ desc }: { desc: string }): JSX.Element {
 }
 
 export function TableDataLoading(): JSX.Element {
-  return <tr className="loading-table"><td>Loading...</td></tr>
+  return <tr className="loading-row"><td>Loading...</td></tr>
 }
 
 export function TableHeadWrapper({ children }: { children: React.ReactNode }): JSX.Element {
@@ -383,7 +383,7 @@ export function TableRowWrapper({ children, ...props }: { children: React.ReactN
               <td className="table-cell tb-cell-mullines">{userInfo.createdTime}</td>
               <td className="table-cell">{userInfo.coins}</td>
               <td className="table-cell">
-                <span className="quick-tag">{GeneralTools.capitalize(userInfo.gender)}</span>
+                <span className="quick-blue-tag">{GeneralTools.capitalize(userInfo.gender)}</span>
               </td>
               <td className="table-cell">
                 <button className={`user-status status-${userInfo.active + ""}`}

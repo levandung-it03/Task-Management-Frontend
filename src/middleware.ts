@@ -8,14 +8,13 @@ function getRoleFromToken(token?: string): string {
     if (!payloadBase64) return 'auth'
     const payloadJson = atob(payloadBase64)
     const payload = JSON.parse(payloadJson)
-    return payload.SCOPES.split("ROLE_")[1].toLowerCase() || 'auth'
+    return payload.SCOPES.split("ROLE_")[1].toLowerCase().trim() || 'auth'
   } catch {
     return 'auth'
   }
 }
 
 export function middleware(request: NextRequest) {
-  return NextResponse.next()
   const { pathname } = request.nextUrl
   const accessToken: string | undefined = request.cookies.get('ACCESS')?.value
   const role: string | undefined = getRoleFromToken(accessToken)
@@ -30,15 +29,7 @@ export function middleware(request: NextRequest) {
   if (pathname.includes(role))
     return NextResponse.next()
   
-  if (role === "pm")
-    return NextResponse.redirect(new URL('/pm/dashboard', request.url))
-
-  if (role === "lead")
-    return NextResponse.redirect(new URL('/lead/dashboard', request.url))
-
-  if (role === "emp")
-    return NextResponse.redirect(new URL('/emp/home', request.url))
-
+  return NextResponse.redirect(new URL(`/${role}/home`, request.url))
 }
 
 export const config = {

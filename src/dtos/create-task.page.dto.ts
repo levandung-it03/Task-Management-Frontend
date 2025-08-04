@@ -5,31 +5,35 @@ export interface DTO_FastUserInfo {
   role: string
 }
 
-export interface DTO_GroupsRelatedToUser {
+export interface DTO_GroupOverview {
   id: number
-  groupName: string
+  name: string
   role: string
 }
 
 export class DTO_SearchFastUserInfo {
-  private query!: string
+  query!: string
   
   public static withBuilder() { return new DTO_SearchFastUserInfo() }
   public bquery(query: string): DTO_SearchFastUserInfo { this.query = query; return this }
 }
 
 export class DTO_TaskRequest {
-  private deadline!: string
-  private startDate!: string
-  private level!: string
-  private priority!: string
-  private taskType!: string
-  private assignedEmails!: string[]
-  private description!: string
-  private reportFormat!: string
+  collectionId!: number
+  name!: string
+  deadline!: string
+  startDate!: string
+  level!: string
+  priority!: string
+  taskType!: string
+  assignedEmails!: string[]
+  description!: string
+  reportFormat!: string
   
   public static withBuilder() { return new DTO_TaskRequest() }
   
+  public bname(name: string): DTO_TaskRequest { this.name = name; return this }
+  public bcollectionId(collectionId: number): DTO_TaskRequest { this.collectionId = collectionId; return this }
   public bdeadline(deadline: string): DTO_TaskRequest { this.deadline = deadline; return this }
   public bstartDate(startDate: string): DTO_TaskRequest { this.startDate = startDate; return this }
   public blevel(level: string): DTO_TaskRequest { this.level = level; return this }

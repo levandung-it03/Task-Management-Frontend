@@ -13,77 +13,50 @@ import { DTO_UpdateUserInfoRequest } from "@/dtos/user-info.page.dto"
 
 export default function UserInfoForm() {
   const [fullName, setFullName] = useState("")
-  const [gender, setGender] = useState("")
-  const [genders, setGenders] = useState<Record<string, string>>({})
-  const [dob, setDob] = useState("")
+  const [formTouched, setFormTouched] = useState(false)
   const [userInfoValidation, setUserInfoValidation] = useState({
     fullName: "",
-    dob: "",
   });
   const [preState, setPreState] = useState({
     fullName: "",
-    gender: "",
-    dob: "",
   })
 
   const onChangeFullName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setFullName(e.target.value)
+    setFormTouched(true)
     setUserInfoValidation(prev => ({ ...prev, fullName: LoginValidators.isValidFullName(e.target.value) }))
-  }, [])
-
-  const onChangeGender = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGender(e.target.value)
-  }, [])
-
-  const onChangeDob = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDob(e.target.value)
-    setUserInfoValidation(prev => ({ ...prev, dob: LoginValidators.isValidDob(e.target.value) }))
   }, [])
 
   const clickResetUserInfo = useCallback(() => {
     setFullName(preState.fullName)
-    setDob(preState.dob)
-    setGender(preState.gender)
     setUserInfoValidation({
       fullName: "",
-      dob: "",
     })
   }, [preState])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     async function updateUserInfo() {
-      if (GlobalValidators.isInvalidValidation(userInfoValidation))
+      if (GlobalValidators.isInvalidValidation(formTouched, userInfoValidation))
         return
       const request = DTO_UpdateUserInfoRequest.withBuilder()
         .bfullName(fullName)
-        .bgender(gender)
-        .bdob(new Date(dob))
       const res = await UserInfoAPIs.updateUserInfo(AuthHelper.getRoleFromToken(), request) as RecordResponse
       if (String(res.status)[0] === "2") {
         toast.success(res.msg)
-        setPreState({ fullName, gender, dob })
+        setPreState({ fullName })
       }
     }
     updateUserInfo()
-  }, [fullName, gender, dob, userInfoValidation])
+  }, [fullName, userInfoValidation])
 
   useEffect(() => {
     async function init() {
-      const genderRes = await GeneralAPIs.getGenderEnums() as RecordResponse
-      if (GlobalValidators.isNull(genderRes.body)) return
-      setGenders(genderRes.body)
-      setGender(Object.values(genderRes.body)[0])
-
       const userInfoRes = await UserInfoAPIs.getUserInfo(AuthHelper.getRoleFromToken()) as RecordResponse
-      if (GlobalValidators.isNull(userInfoRes.body))  return
+      if (GlobalValidators.isNull(userInfoRes.body)) return
       setFullName(userInfoRes.body.fullName)
-      setDob(userInfoRes.body.dob)
-      setGender(userInfoRes.body.gender)  //--Change on HTML too
       setPreState({
         fullName: userInfoRes.body.fullName,
-        gender: userInfoRes.body.gender,
-        dob: userInfoRes.body.dob,
       })
     }
     init()
@@ -110,23 +83,6 @@ export default function UserInfoForm() {
               <input type="text" id="fullName" className="form-input" placeholder="Type Full Name" required value={fullName} onChange={onChangeFullName} />
             </fieldset>
             {GlobalValidators.notEmpty(userInfoValidation.fullName) && <span className="input-err-msg">{userInfoValidation.fullName}</span>}
-          </div>
-
-          <div className="form-group-container half-form-left-container">
-            <fieldset className="form-group">
-              <legend className="form-label">Gender</legend>
-              <select className="form-select" value={gender} onChange={onChangeGender} required>
-                {Object.entries(genders).map(([key, val], index) => <option value={val} key={key + index}>{key}</option>)}
-              </select>
-            </fieldset>
-          </div>
-
-          <div className="form-group-container half-form-right-container">
-            <fieldset className="form-group">
-              <legend className="form-label">Birthday</legend>
-              <input type="date" id="dob" className="form-input" required value={dob} onChange={onChangeDob} />
-            </fieldset>
-            {GlobalValidators.notEmpty(userInfoValidation.dob) && <span className="input-err-msg">{userInfoValidation.dob}</span>}
           </div>
 
           <button type="submit" className="submit-btn">Update</button>

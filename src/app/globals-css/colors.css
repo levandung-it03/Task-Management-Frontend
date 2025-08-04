@@ -64,6 +64,10 @@ body.dark {
   --role-lead-bg: #1b3b1b;
   --role-emp-border: #888888;
   --role-emp-bg: #2c2c2c;
+
+  input[type=date] {
+    color-scheme: dark;
+  }
 }
 
 .task-level-hard,
@@ -99,4 +103,8 @@ body.dark {
 .task-time-content {
   background-color: var(--focusing-fieldset-color);
   color: #fff !important;
+}
+
+input[type=date] {
+  color-scheme: light;
 }

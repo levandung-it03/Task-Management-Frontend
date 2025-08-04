@@ -1,0 +1,12 @@
+export { default as ProjectListPage } from './project-list';
+export { ProjectHeader } from './project-header/project-header';
+export { ProjectItem } from './project-item/project-item';
+export { ProjectActions } from './project-item/project-actions/project-actions';
+export { ProjectContextMenu } from './project-item/project-context-menu/project-context-menu';
+export { ProjectModals } from './project-modals/project-modals';
+export { CreateProjectModalComponent } from './project-modals/create-project-modal/create-project-modal';
+export { UpdateProjectModal } from './project-modals/update-project-modal/update-project-modal';
+export { AddLeaderModal } from './project-modals/add-leader-modal/add-leader-modal';
+export { UpdateLeaderModal } from './project-modals/update-leader-modal/update-leader-modal';
+export { DeleteProjectModal } from './project-modals/delete-project-modal/delete-project-modal';
+export { ProjectListService } from './project-list.service'; 

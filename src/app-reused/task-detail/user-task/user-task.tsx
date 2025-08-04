@@ -5,7 +5,7 @@ import "./user-task.scss"
 import { DTO_CommentOfReport, DTO_CreateComment, DTO_RejectReport, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
 import CreateReportForm from "./create-report/create-report"
 import { UserTaskPageAPIs } from "@/apis/user-task.page.api"
-import { ApiResponse } from "@/apis/general.api"
+import { ApiResponse, GeneralAPIs } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { BookmarkX, Check, CircleCheckBig, CircleSlash, ClipboardMinus, Pencil, Send, SendHorizontal, X } from "lucide-react"
@@ -15,6 +15,7 @@ import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
 import GlobalValidators from "@/util/global.validators"
 import { UserTaskService } from "./user-task.service"
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
+import { DTO_EmailResponse } from "@/dtos/general.dto"
 
 interface Comment {
   rootComment: DTO_CommentOfReport
@@ -31,9 +32,9 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
   const [taskInfo, setTaskInfo] = useState<DTO_TaskDetail>({
     id: 0,
     userInfo: {
-      id: 0,
       fullName: "",
-      email: ""
+      email: "",
+      role: ""
     },
     rootTaskId: null,
     name: "",
@@ -48,7 +49,6 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     deadline: "",
     createdTime: "",
     updatedTime: "",
-    hasSubTask: false,
     hasAtLeastOneReport: false,
   })
 
@@ -89,8 +89,12 @@ function ReportList({ userTaskId, taskInfo }: {
       if (String(response.status)[0] !== "2")
         return
 
-      const isTaskOwner = AuthHelper.isOwner(taskInfo.userInfo.email)
-      const isAssignedUser = AuthHelper.isOwner(response.body[0].report.createdBy.email)
+      const emailRes = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
+      if (String(emailRes.status)[0] !== "2")
+        return
+
+      const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
+      const isAssignedUser = emailRes.body.email === response.body[0].report.createdBy.email
       //--Just "Task-Owner", and "Assigned-User" can see this page.
       // console.log("Task Owner: ", taskInfo.userInfo.email)
       // console.log("Assigned User: ", response.body[0].report.createdBy.email)
@@ -109,7 +113,7 @@ function ReportList({ userTaskId, taskInfo }: {
 
   return <div className="report-list">
     {isLoading
-      ? <span className="is-loading">Loading...</span>
+      ? <span className="loading-row">Loading...</span>
       : reportComments.map((reportInfo, ind) =>
         <ReportFrame
           key={"rf-" + ind}
@@ -117,7 +121,7 @@ function ReportList({ userTaskId, taskInfo }: {
           reportInfo={reportInfo}
           isReportOwner={isReportOwner}
           canReviewReport={canReviewReport}
-          setReportComments={setReportComments}/>
+          setReportComments={setReportComments} />
       )}
   </div>
 }
@@ -252,7 +256,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
         <div className="rh-info status">
           <span className="rh-label">STATUS</span>
           <span className="rh-value">
-            <span className={`quick-tag rh-status-${reportInfo.report.reportStatus.toLowerCase()}`}>
+            <span className={`quick-blue-tag rh-status-${reportInfo.report.reportStatus.toLowerCase()}`}>
               {reportInfo.report.reportStatus}
             </span>
           </span>

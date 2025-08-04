@@ -18,12 +18,15 @@ import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
  * 2. Assigned Users cannot do anything if Task.isLocked=true
  */
 export default function TaskDetail({ taskId }: { taskId: number }) {
+  const [isOwner, setIsOwner] = useState(false)
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
   const [taskInfo, setTaskInfo] = useState<DTO_TaskDetail>({
     id: 1,
     userInfo: {
-      id: 0,
       fullName: "",
-      email: ""
+      email: "",
+      role: ""
     },
     rootTaskId: null,
     name: "",
@@ -38,28 +41,36 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     deadline: "",
     createdTime: "",
     updatedTime: "",
-    hasSubTask: false,
     hasAtLeastOneReport: false,
   })
-  const isTaskOwner: boolean = useMemo(() => AuthHelper.isOwner(taskInfo.userInfo.email), [taskInfo.userInfo.email])
+
+  useEffect(() => {
+    async function checkIsOwner() {
+      const result = await AuthHelper.isEmailLoggingIn(taskInfo.userInfo.email)
+      setIsOwner(result)
+    }
+    checkIsOwner()
+  }, [taskInfo.userInfo.email])
 
   useEffect(() => {
     async function getDetail() {
+      setIsLoading(true)
       const response = await TaskDetailPageAPIs.getTaskDetail(taskId) as ApiResponse<DTO_TaskDetail>
       if (String(response.status)[0] !== "2")
         return
       setTaskInfo(response.body)
+      setIsLoading(false)
     }
     getDetail()
   }, [taskId])
 
-  return <>
-    <div className="task-detail-container">
-      <TaskBasicInfo taskInfo={taskInfo} setTaskInfo={setTaskInfo} />
-      {taskInfo.hasSubTask
-        ? <SubTasks taskId={taskInfo.id} />
-        : <AssignedUsers taskInfo={taskInfo} />}
-      {isTaskOwner && <StatusTaskButton taskInfo={taskInfo} />}
+  return (isLoading
+    ? <div className="loading-row">Loading...</div>
+    : <div className="task-detail-container">
+      <TaskBasicInfo taskInfo={taskInfo} setTaskInfo={setTaskInfo} totalUsers={totalUsers} />
+      <SubTasks taskId={taskInfo.id} />
+      <AssignedUsers taskInfo={taskInfo} isTaskOwner={isOwner} setTotalUsers={setTotalUsers} />
+      {isOwner && <StatusTaskButton taskInfo={taskInfo} />}
     </div>
-  </>
+  )
 }

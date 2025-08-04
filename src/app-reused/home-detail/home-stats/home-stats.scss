@@ -1,0 +1,82 @@
+.home-stats {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  .stat-card {
+    flex: 1;
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 180px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--instruct-box-shadow);
+    border: 1.5px solid #f1f5f9;
+    background: #ffffff;
+
+    &.total-projects {
+      background: linear-gradient(135deg, #215e43 60%, #22c55e 100%);
+      color: #fff;
+      box-shadow: none;
+      border: none;
+
+      .stat-value {
+        color: #fff;
+      }
+
+      .stat-label {
+        color: #fff;
+      }
+
+      .stat-status {
+        background: var(--logo-color);
+        color: rgb(34, 197, 94);
+        border: none;
+      }
+    }
+
+    .stat-label {
+      font-size: 20px;
+      opacity: 0.9;
+      margin-bottom: 20px;
+      color: #222;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 60px;
+      font-weight: 300;
+      margin: 0;
+      font-family: 'Inter, Roboto, Arial, sans-serif';
+      color: #111;
+    }
+
+    .stat-status-container {
+      display: flex;
+      align-items: center;
+      margin-top: 0;
+
+      .stat-status {
+        display: inline-flex;
+        align-items: center;
+        background: #fff;
+        color: #22c55e;
+        border-radius: 6px;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 2px 8px;
+        margin-right: 8px;
+        border: 1.5px solid rgb(34, 197, 94);
+      }
+
+      .stat-growth-text {
+        color: #22c55e;
+        font-weight: 500;
+        font-size: 14px;
+      }
+    }
+  }
+}

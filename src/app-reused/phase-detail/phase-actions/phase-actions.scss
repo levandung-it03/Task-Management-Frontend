@@ -1,0 +1,50 @@
+// Phase Actions Styles - Isolated from layout.css
+.phase-actions {
+  &__create-button {
+    background: #166534 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 12px 32px !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0 2px 8px #0001 !important;
+    cursor: pointer !important;
+    margin-right: 125px !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      background: #0f5132 !important;
+      box-shadow: 0 4px 12px #0002 !important;
+    }
+
+    &:active {
+      transform: translateY(1px) !important;
+    }
+  }
+
+  &__create-icon {
+    color: #fff !important;
+    font-size: 22px !important;
+    font-weight: 700 !important;
+    margin-right: 4px !important;
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .phase-actions {
+    &__create-button {
+      padding: 10px 24px !important;
+      font-size: 16px !important;
+      margin-right: 0 !important;
+    }
+
+    &__create-icon {
+      font-size: 20px !important;
+    }
+  }
+} 

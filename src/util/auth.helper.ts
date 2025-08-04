@@ -1,4 +1,6 @@
 "use client"
+import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
+import { DTO_EmailResponse } from "@/dtos/general.dto";
 import Cookies from "js-cookie";
 
 export class AuthHelper {
@@ -12,7 +14,7 @@ export class AuthHelper {
       if (!rawAccessTok) return 'auth';
 
       const decoded = AuthHelper.extractToken(rawAccessTok)
-      let mainRole = decoded["SCOPES"].split(" ")[0].toLowerCase();
+      let mainRole = decoded["SCOPES"].split(" ")[0].toLowerCase().trim();
       if (mainRole.includes("role_")) mainRole = mainRole.split("role_")[1]
 
       return mainRole || 'auth';
@@ -71,11 +73,12 @@ export class AuthHelper {
     window.location.href = "/auth/login"
   }
 
-  static isOwner(email: string): boolean {
-    const token = AuthHelper.getAccessTokenFromCookie()
-    if (token === undefined)
-      return false
-    return email === AuthHelper.extractToken(token).sub
+  static async isEmailLoggingIn(email: string): Promise<boolean> {
+    const response = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
+    if (String(response.status)[0] === "2") {
+      return response.body.email === email
+    }
+    return false
   }
 
   /**

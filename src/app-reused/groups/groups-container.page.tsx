@@ -1,16 +1,41 @@
 'use client'
 
-import { Calendar, Search, UsersRound } from "lucide-react"
+import { BookUser, Calendar, Plus, Search, UsersRound } from "lucide-react"
 import "./groups-container.page.scss"
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { OverviewedGroupInfo, DTO_PaginatedGroupsResponse } from "@/dtos/groups.page.dto"
 import { GroupPageAPIs } from "@/apis/groups.page.api"
 import { ApiResponse } from "@/apis/general.api"
 import { DTO_PaginationRequest } from "@/dtos/general.dto"
 import { RequestDataWrapper, TablePagination, TableStateWrapper } from "@/components/table.component"
 import { GroupsPageService } from "./groups-container.service"
+import { AuthHelper } from "@/util/auth.helper"
+import { GroupCreationDialog } from "./create-group-dialog/create-group.dialog"
 
-export function GroupsContainer() {
+export default function GroupsPage() {
+  const role = useMemo(() => AuthHelper.getRoleFromToken().toUpperCase(), [])
+  const [openDialog, setOpenDialog] = useState(false)
+
+  return <div className="groups-page">
+    <div className="groups-page-header">
+      <div className="form-caption">
+        <BookUser className="caption-icon" />
+        <span className="caption-content">Groups</span>
+        <i className="desc-content">All your related Groups shown here.</i>
+      </div>
+      {role !== AuthHelper.EMP_ROLE && <div className="create-group-wrapper">
+        <button className="cgw-btn" onClick={() => setOpenDialog(true)}>
+          <Plus className="cgw-btn-icon" />
+          Create Group
+        </button>
+      </div>}
+    </div>
+    <GroupsContainer />
+    {openDialog && <GroupCreationDialog openDialog={openDialog} setOpenDialog={setOpenDialog} />}
+  </div>
+}
+
+function GroupsContainer() {
   const [searchVal, setSearchVal] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [tableState, setTableState] = useState<TableStateWrapper>({
@@ -76,7 +101,7 @@ export function GroupsContainer() {
       {isLoading
         ? <div className="loading-row">Loading...</div>
         : (groups.length === 0
-          ? <div className="no-content">There is no Group related to you.</div>
+          ? <div className="loading-row">There is no Group related to you.</div>
           : <>
             {groups.map((group, ind) => <GroupBlock key={`gb-` + ind} group={group} />)}
             <TablePagination
@@ -97,8 +122,8 @@ function GroupBlock({ group }: { group: OverviewedGroupInfo }) {
     <div className="group-header">
       <h1 className="group-name">{group.name}</h1>
       <span className="group-status">
-        <span className={`quick-tag group-active-${group.isActive}`}>
-          {group.isActive ? "Active" : "Inactive"}
+        <span className={`quick-blue-tag group-active-${group.active}`}>
+          {group.active ? "Active" : "Inactive"}
         </span>
       </span>
     </div>

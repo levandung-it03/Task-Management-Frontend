@@ -3,7 +3,7 @@
 import LucideMoon from '@/assets/moon.icon';
 import { AuthHelper } from '@/util/auth.helper';
 import GlobalValidators from '@/util/global.validators';
-import { ArrowLeftToLine, ArrowRightToLine, Files, House, LayoutDashboard, Lightbulb, LogOut, Settings, SquareUserRound, Users } from 'lucide-react';
+import { ArrowLeftToLine, ArrowRightToLine, Container, Files, House, LayoutDashboard, Lightbulb, LogOut, Settings, SquareUserRound, Users } from 'lucide-react';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import "./styles/navbar.frame.scss"
 import { DTO_Token } from '@/dtos/general.dto';
@@ -78,20 +78,23 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
     emp: Record<string, ReactNode>,
   } = {
     admin: {
-      dashboard: <><LayoutDashboard className="nav-item-icon" /><span className="nav-item-name"> Dashboard</span></>,
       ["manage-users"]: <><Users className="nav-item-icon" /><span className="nav-item-name"> Manage Users</span></>,
       reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
     },
     pm: {
-      dashboard: <><LayoutDashboard className="nav-item-icon" /><span className="nav-item-name"> Dashboard</span></>,
-      reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
+      home: <><House className="nav-item-icon" /><span className="nav-item-name"> Home</span></>,
+      projects: <><Container className="nav-item-icon" /><span className="nav-item-name"> Projects</span></>,
+      groups: <><Users className="nav-item-icon" /><span className="nav-item-name"> Groups</span></>,
     },
     lead: {
-      dashboard: <><LayoutDashboard className="nav-item-icon" /><span className="nav-item-name"> Dashboard</span></>,
-      reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
+      home: <><House className="nav-item-icon" /><span className="nav-item-name"> Home</span></>,
+      projects: <><Container className="nav-item-icon" /><span className="nav-item-name"> Projects</span></>,
+      groups: <><Users className="nav-item-icon" /><span className="nav-item-name"> Groups</span></>,
     },
     emp: {
       home: <><House className="nav-item-icon" /><span className="nav-item-name"> Home</span></>,
+      projects: <><Container className="nav-item-icon" /><span className="nav-item-name"> Projects</span></>,
+      groups: <><Users className="nav-item-icon" /><span className="nav-item-name"> Groups</span></>,
     }
   };
 

@@ -9,6 +9,10 @@
     &:hover {
       background-color: var(--btn-hovered-background);
     }
+
+    .usi-status {
+      margin-left: 15px;
+    }
   }
 }
 
@@ -85,15 +89,15 @@
     }
 
     .total-users>* {
-      color: var(--main-green);
+      color: var(--foreground);
     }
 
     .total-completed>* {
-      color: var(--blue-in-env);
+      color: var(--main-green);
     }
 
     .total-in-progress>* {
-      color: var(--foreground);
+      color: var(--blue-in-env);
     }
 
     .total-kicked-out>* {

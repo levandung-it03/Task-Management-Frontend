@@ -1,7 +1,7 @@
 import { ClipboardList, X } from "lucide-react";
 
 import "./task.dialog.scss"
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import GlobalValidators from "@/util/global.validators";
 import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
 import { CreateTaskPageValidators } from "@/app-reused/create-task/page.service";
@@ -10,6 +10,9 @@ import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api";
 import toast from "react-hot-toast";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
 import { DTO_TaskDetail, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
+import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.dto";
+import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
+import { AuthHelper } from "@/util/auth.helper";
 
 interface TaskDialogProps {
   openDialog: boolean;
@@ -25,6 +28,7 @@ export default function TaskDialog({
   setOpenDialog,
 }: TaskDialogProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
+  const [isOwner, setIsOwner] = useState(false)
   const [deadline, setDeadline] = useState("")
   const [levelList, setLevelList] = useState<string[]>([])
   const [level, setLevel] = useState("")
@@ -36,6 +40,8 @@ export default function TaskDialog({
   const [formValidation, setFormValidation] = useState({
     deadline: "",
   })
+  const [addedUsers, setAddedUsers] = useState<Record<string, Record<string, string>>>({})
+  const isUpdatable = useMemo(() => isOwner && !taskInfo.hasAtLeastOneReport, [isOwner, taskInfo.hasAtLeastOneReport])
 
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
@@ -76,6 +82,7 @@ export default function TaskDialog({
         .blevel(level)
         .btaskType(taskType)
         .bdeadline(deadline)
+        .baddedUserEmail(Object.values(addedUsers)[0].email)
       const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
         toast.success(response.msg)
@@ -111,7 +118,7 @@ export default function TaskDialog({
     }
     initValues()
   }, [])
-  
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (overlayRef.current && overlayRef.current.contains(event.target as Node)) {
@@ -122,10 +129,18 @@ export default function TaskDialog({
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [setOpenDialog])
 
+  useEffect(() => {
+    async function checkIsOwner() {
+      const result = await AuthHelper.isEmailLoggingIn(taskInfo.userInfo.email)
+      setIsOwner(result)
+    }
+    checkIsOwner()
+  }, [taskInfo.userInfo.email])
+
   useEffect(() => setLevel(taskInfo.level), [taskInfo.level])
   useEffect(() => setPriority(taskInfo.priority), [taskInfo.priority])
   useEffect(() => setTaskType(taskInfo.taskType), [taskInfo.taskType])
-  useEffect(() => setDeadline(GeneralTools.formatedDateToDateInput(taskInfo.deadline)), [taskInfo.deadline])
+  useEffect(() => setDeadline(taskInfo.deadline && GeneralTools.formatedDateToDateInput(taskInfo.deadline)), [taskInfo.deadline])
 
   return openDialog
     ? <div className="task-dialog">
@@ -143,7 +158,7 @@ export default function TaskDialog({
             <fieldset className="form-group">
               <legend className="form-label">Deadline</legend>
               <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
-                value={deadline} onChange={onChangeDeadline} />
+                value={deadline} onChange={onChangeDeadline} readOnly={!isUpdatable} />
             </fieldset>
             {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
           </div>
@@ -151,7 +166,7 @@ export default function TaskDialog({
           <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Level</legend>
-              <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
+              <select id="level" className="form-input" value={level} onChange={onChangeLevel} disabled={!isUpdatable}>
                 {levelList.map((level, ind) =>
                   <option key={"tdl-" + ind} value={level}>{GeneralTools.convertEnum(level)}</option>
                 )}
@@ -162,7 +177,7 @@ export default function TaskDialog({
           <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
               <legend className="form-label">Priority</legend>
-              <select id="priority" className="form-input" value={priority} onChange={onChangePriority}>
+              <select id="priority" className="form-input" value={priority} onChange={onChangePriority} disabled={!isUpdatable}>
                 {priorityList.map((priority, ind) =>
                   <option key={"tdp-" + ind} value={priority}>{GeneralTools.convertEnum(priority)}</option>
                 )}
@@ -173,7 +188,7 @@ export default function TaskDialog({
           <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Task Type</legend>
-              <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType}>
+              <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType} disabled={!isUpdatable}>
                 {taskTypeList.map((taskType, ind) =>
                   <option key={"tdt-" + ind} value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
                 )}
@@ -181,13 +196,172 @@ export default function TaskDialog({
             </fieldset>
           </div>
 
-          <div className="update-btn-container">
-            <button className="update-content-btn" onClick={onSubmitUpdateContent} type="button">
-              Submit Update
-            </button>
-          </div>
+          {isUpdatable && <>
+            <div className="form-group-container search-user-container">
+              <fieldset className="form-group">
+                <legend className="form-label">Search User</legend>
+                <SearchUserToAdd
+                  rootId={taskInfo.rootTaskId}
+                  mainId={taskInfo.id}
+                  addedUsers={addedUsers}
+                  setAddedUsers={setAddedUsers} />
+              </fieldset>
+            </div>
+
+            <div className="form-group-container added-for-container">
+              <fieldset className="form-group">
+                <legend className="form-label">Added Users</legend>
+                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
+              </fieldset>
+            </div>
+
+            <div className="update-btn-container">
+              <button className="update-content-btn" onClick={onSubmitUpdateContent} type="button">
+                Submit Update
+              </button>
+            </div>
+          </>}
         </div>
       </div>
     </div>
     : <></>
+}
+
+function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers }: {
+  rootId: number | null,
+  mainId: number,
+  addedUsers: Record<string, Record<string, string>>,
+  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>
+}) {
+  const searchUserRef = useRef<HTMLInputElement>(null)
+  const searchedUsersRef = useRef<HTMLTableElement>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchedUsers, setSearchedUsers] = useState<DTO_FastUserInfo[]>([])
+  const [searchUser, setSearchUser] = useState("")
+  const [isOpenSearchUser, setIsOpenSearchUser] = useState(false)
+
+  const onChangeSearchUser = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    async function searchUser() {
+      setIsSearching(true)
+      const value = e.target.value
+      setSearchUser(value)
+
+      if (value.trim().length === 0) {
+        setSearchedUsers([])
+        setIsSearching(false)
+        return
+      }
+      const response = !rootId
+        ? await TaskDetailPageAPIs.searchNewAddedUsersForRootTask(mainId, value) as ApiResponse<DTO_FastUserInfo[]>
+        : await TaskDetailPageAPIs.searchNewAddedUsersForSubTask(rootId, value) as ApiResponse<DTO_FastUserInfo[]>
+      if (response.status !== 200) {
+        toast.error(response.msg)
+        setIsSearching(false)
+        return
+      }
+      setSearchedUsers(response.body)
+      setIsSearching(false)
+    }
+    searchUser()
+  }, [])
+
+  const onFocusSearchUser = useCallback(() => setIsOpenSearchUser(true), [])
+
+  const toggleAddRemoveAddedUser = useCallback((user: DTO_FastUserInfo) => {
+    setAddedUsers({
+      [extractEmailToGetId(user.email)]: {
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role
+      }
+    })
+  }, [setAddedUsers])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchUserRef.current && !searchUserRef.current.contains(event.target as Node)
+        && searchedUsersRef.current && !searchedUsersRef.current.contains(event.target as Node)
+      ) {
+        setIsOpenSearchUser(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, []);
+
+  return <>
+    <input type="text" id="searchUser" className="form-input" placeholder="Assign a new User?" autoComplete="off"
+      ref={searchUserRef} value={searchUser}
+      onChange={onChangeSearchUser}
+      onFocus={onFocusSearchUser} />
+    <table ref={searchedUsersRef} className={`searched-users-container${isOpenSearchUser ? "" : " hidden"}`}>
+      <thead></thead>
+      <tbody className="searched-users">
+        {isSearching
+          ? <tr><td className="loading-row">Loading...</td></tr>
+          : searchedUsers.map((user, ind) => {
+            const firstNameChar = user.fullName[0].toUpperCase()
+            return <tr
+              key={"usi-" + ind}
+              className={`user-short-info${(extractEmailToGetId(user.email) in addedUsers) ? " user-short-info-selected" : ""}`}
+              onClick={() => toggleAddRemoveAddedUser(user)}
+            >
+              <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
+              <td className="usi-full-name">{user.fullName}</td>
+              <td className="usi-email">{user.email}</td>
+              <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
+            </tr>
+          })
+        }
+      </tbody>
+    </table>
+  </>
+}
+
+function AddedUser({ addedUsers, setAddedUsers }: {
+  addedUsers: Record<string, Record<string, string>>,
+  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>
+}) {
+  const [shownInfoMap, setShownInfoMap] = useState<Record<string, boolean>>({})
+
+  const onClickRmAssingedUserTag = useCallback((id: string) => {
+    setAddedUsers({})
+  }, [setAddedUsers])
+
+  useEffect(() => {
+    setShownInfoMap(
+      Object.entries(addedUsers).reduce<Record<string, boolean>>((acc, pair) => {
+        acc[pair[0]] = false;
+        return acc;
+      }, {})
+    );
+  }, [addedUsers])
+
+  return <ul className="added-user">
+    {Object.keys(addedUsers).length === 0
+      ? <li className="added-user-tag direction-tag">Added User</li>
+      : Object.entries(addedUsers).map(([id, user], ind) => {
+        const firstNameChar = user.fullName[0].toUpperCase()
+        const normalRole = user.role.toLowerCase().replace("_", "-")
+        return <li className="added-user-tag" key={"aut-" + ind}>
+          <div className={`aut-main-tag aut-main-tag-${normalRole}`}
+            onMouseEnter={() => setShownInfoMap(prev => ({ ...prev, [id]: true }))}
+            onMouseLeave={() => setShownInfoMap(prev => ({ ...prev, [id]: false }))}
+          >
+            <span className="aut-mt-email">{user.email}</span>
+            <X className="aut-mt-close-icon" onClick={() => onClickRmAssingedUserTag(id)} />
+          </div>
+          <div className={`aut-full-info ${shownInfoMap[id] ? "" : "hidden"}`}>
+            <div className="user-short-info">
+              <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
+              <span className="usi-full-name">{user.fullName}</span>
+              <span className="usi-email">{user.email}</span>
+              <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
+            </div>
+          </div>
+        </li>
+      }
+      )
+    }
+  </ul>
 }

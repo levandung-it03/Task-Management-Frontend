@@ -72,3 +72,7 @@ export class DTO_PaginationRequest {
 export interface DTO_IdResponse {
   id: number
 }
+
+export interface DTO_EmailResponse {
+  email: string
+}

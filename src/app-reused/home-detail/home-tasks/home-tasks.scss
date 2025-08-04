@@ -1,0 +1,83 @@
+.home-tasks {
+  flex: 2;
+  background: var(--background);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--instruct-box-shadow);
+  display: flex;
+  flex-direction: column;
+
+  .tasks-title {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--main-green);
+    display: flex;
+    align-items: center;
+    justify-self: flex-start;
+
+    .tasks-icon {
+      width: 25px;
+      height: 25px;
+      background-color: var(--main-green);
+      border-radius: 5px;
+      color: #fff;
+      padding: 4px;
+      margin-right: 8px;
+    }
+  }
+
+  .tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .tag-data {
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 13px !important;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 10px;
+      border: 1px solid var(--main-component-grey);
+      border-radius: 12px;
+      background: var(--background);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 0 6px 2px rgba(70, 70, 70, 0.2);
+      }
+
+      .task-name {
+        flex: 1;
+        font-weight: 600;
+        color: var(--main-green);
+        font-style: italic;
+      }
+
+      .role-tag {
+        background: #22c55e;
+        color: #fff;
+        border-radius: 999px;
+        padding: 6px 0;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        min-width: 80px;
+        text-align: center;
+        display: inline-block;
+        border: none;
+
+        &.member {
+          background: #111;
+        }
+      }
+    }
+  }
+}

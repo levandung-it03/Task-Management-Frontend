@@ -1,0 +1,42 @@
+.calendar-container {
+  padding: 1rem;
+  max-width: 20rem;
+  font-family: sans-serif;
+  box-shadow: var(--instruct-box-shadow);
+  border-radius: 12px;
+}
+
+.calendar-header {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  width: 2.5rem;
+  height: 2.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+th {
+  font-weight: 500;
+}
+
+.day-cell {
+  border-radius: 9999px;
+  color: var(--foreground);
+}
+
+.today {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+}

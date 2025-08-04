@@ -1,0 +1,1 @@
+//-- Đây là trang coi chi tiết Collections (tên phase, ngày tạo), không phải danh sách Collections (không có thì xoá page.tsx này đi)

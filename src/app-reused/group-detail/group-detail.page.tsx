@@ -6,19 +6,20 @@ import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
 import { GroupsPageService } from "@/app-reused/groups/groups-container.service"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.dto"
-import { DTO_ChangeGroupRole, DTO_ChangeGroupStatus, DTO_GroupResponse, GroupHasUser } from "@/dtos/groups.page.dto"
+import { DTO_ChangeGroupRole, DTO_ChangeGroupStatus, DTO_DetailGroupResponse, DTO_UpdateGroup, GroupHasUser, OverviewedGroupInfo } from "@/dtos/groups.page.dto"
 import GlobalValidators from "@/util/global.validators"
-import { Calendar, CalendarCog, CheckCircle, CircleOff, LogOut, SquarePen, SquarePlus, UserPen, Users, UsersRound, X } from "lucide-react"
+import { Calendar, CalendarCog, CheckCircle, CircleOff, LogIn, LogOut, SquarePen, SquarePlus, UserPen, Users, UsersRound, X } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast"
-import { AuthHelper } from "@/util/auth.helper"
 import { GroupPageAPIs } from "@/apis/groups.page.api"
 import "./group-detail.page.scss"
-import { useParams } from "next/navigation"
+import { DTO_EmailResponse, DTO_IdResponse } from "@/dtos/general.dto"
+import { AuthHelper } from "@/util/auth.helper"
 
 export default function DetailGroupPage({ groupId }: { groupId: number }) {
   const [isLoading, setIsLoading] = useState(true)
-  const [group, setGroup] = useState<DTO_GroupResponse>({
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [group, setGroup] = useState<DTO_DetailGroupResponse>({
     baseInfo: {
       id: 0,
       createdByUser: {
@@ -27,10 +28,10 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
         role: ""
       },
       name: "",
-      isActive: false,
       createdTime: "",
       updatedTime: "",
       userQuantity: 0,
+      active: false,
     },
     groupHasUsers: []
   })
@@ -38,7 +39,7 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
   useEffect(() => {
     async function fetchGroup() {
       setIsLoading(true)
-      const response = await GroupPageAPIs.getGroup(groupId) as ApiResponse<DTO_GroupResponse>
+      const response = await GroupPageAPIs.getGroup(groupId) as ApiResponse<DTO_DetailGroupResponse>
       if (String(response.status)[0] === "2")
         setGroup(response.body)
       setIsLoading(false)
@@ -46,17 +47,26 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
     fetchGroup()
   }, [groupId])
 
+  useEffect(() => {
+    async function checkIsAdmin() {
+      const isAdmin = await AuthHelper.isEmailLoggingIn(group.baseInfo.createdByUser.email)
+      setIsAdmin(isAdmin)
+    }
+    checkIsAdmin()
+  }, [group.baseInfo.createdByUser.email])
+
   return <div className="detail-group-page">
     {isLoading
       ? <div className="loading-row">Loading...</div>
-      : <GroupInfoContainer group={group} setGroup={setGroup} />
+      : <GroupInfoContainer group={group} setGroup={setGroup} isAdmin={isAdmin}/>
     }
   </div>
 }
 
-function GroupInfoContainer({ group, setGroup }: {
-  group: DTO_GroupResponse,
-  setGroup: React.Dispatch<React.SetStateAction<DTO_GroupResponse>>,
+function GroupInfoContainer({ group, setGroup, isAdmin }: {
+  group: DTO_DetailGroupResponse,
+  setGroup: React.Dispatch<React.SetStateAction<DTO_DetailGroupResponse>>,
+  isAdmin: boolean
 }) {
   const [openUpdateDialog, setOpenUpdateDialog] = useState(false)
   const [groupRoles, setGroupRoles] = useState<string[]>([])
@@ -73,10 +83,10 @@ function GroupInfoContainer({ group, setGroup }: {
   }, [])
 
   return <>
-    <GroupBaseInfo group={group} setOpenDialog={setOpenUpdateDialog} setGroup={setGroup} />
+    <GroupBaseInfo group={group} setOpenDialog={setOpenUpdateDialog} setGroup={setGroup} isAdmin={isAdmin}/>
     <ul className="joined-users">
       {group.groupHasUsers.map((user, ind) =>
-        <UserTag key={"ju-" + ind} userGroup={user} groupRoles={groupRoles} />
+        <UserTag key={"ju-" + ind} userGroup={user} groupRoles={groupRoles} isAdmin={isAdmin} />
       )}
     </ul>
     {openUpdateDialog &&
@@ -87,10 +97,11 @@ function GroupInfoContainer({ group, setGroup }: {
   </>
 }
 
-function GroupBaseInfo({ group, setOpenDialog, setGroup }: {
-  group: DTO_GroupResponse,
+function GroupBaseInfo({ group, setOpenDialog, setGroup, isAdmin }: {
+  group: DTO_DetailGroupResponse,
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>,
-  setGroup: React.Dispatch<React.SetStateAction<DTO_GroupResponse>>,
+  setGroup: React.Dispatch<React.SetStateAction<DTO_DetailGroupResponse>>,
+  isAdmin: boolean
 }) {
   const onClickOpenUpdateDialog = useCallback(() => {
     setOpenDialog(true)
@@ -110,7 +121,7 @@ function GroupBaseInfo({ group, setOpenDialog, setGroup }: {
           ...prev,
           baseInfo: {
             ...prev.baseInfo,
-            isActive: status
+            active: status
           }
         }))
         return
@@ -119,18 +130,18 @@ function GroupBaseInfo({ group, setOpenDialog, setGroup }: {
     changeStatus()
   }, [group.baseInfo.id, setGroup])
 
-  return <div className={`group-base-info group-with-sts-${group.baseInfo.isActive}`}>
+  return <div className={`group-base-info group-with-sts-${group.baseInfo.active}`}>
     <div className="group-header">
       <h1 className="form-caption">
         <Users className="caption-icon" />
         <span className="caption-content-customized">{group.baseInfo.name}</span>
         <span className="group-status">
-          <span className={`quick-tag group-active-${group.baseInfo.isActive}`}>
-            {group.baseInfo.isActive ? "Active" : "Inactive"}
+          <span className={`quick-blue-tag group-active-${group.baseInfo.active}`}>
+            {group.baseInfo.active ? "Active" : "Inactive"}
           </span>
         </span>
-        {isAdminLoggingIn(group.groupHasUsers) && <div className="group-buttons">
-          {group.baseInfo.isActive
+        {isAdmin && <div className="group-buttons">
+          {group.baseInfo.active
             ? <button className="inactive-group" onClick={() => onClickChangeGroupStatus(false)}>
               <CircleOff className="gb-icon" /> Inactive
             </button>
@@ -165,11 +176,13 @@ function GroupBaseInfo({ group, setOpenDialog, setGroup }: {
   </div>
 }
 
-function UserTag({ userGroup, groupRoles }: {
+function UserTag({ userGroup, groupRoles, isAdmin }: {
   userGroup: GroupHasUser,
-  groupRoles: string[]
+  groupRoles: string[],
+  isAdmin: boolean
 }) {
   const tagRef = useRef<HTMLLIElement>(null)
+  const [userGroupStatus, setUserGroupStatus] = useState(false)
   const [role, setRole] = useState(userGroup.role)
   const firstNameChar = useMemo(() => userGroup.joinedUser.fullName[0].toUpperCase(), [userGroup.joinedUser.fullName])
   const onChangeGroupRole = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -178,7 +191,7 @@ function UserTag({ userGroup, groupRoles }: {
       if (!(await confirm("This change cannot be undone. Are you sure?")))
         return
       const request = DTO_ChangeGroupRole.withBuilder()
-        .buserGroupId(userGroup.id)
+        .bgroupUserId(userGroup.id)
         .brole(newRole)
       const response = await GroupPageAPIs.changeUserGroupRole(request) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
@@ -190,6 +203,20 @@ function UserTag({ userGroup, groupRoles }: {
     changeRole()
   }, [userGroup.id])
 
+  const onClickReaddUser = useCallback(() => {
+    async function kickUser() {
+      if (!(await confirm("This action cannot be undone. Are you sure?", "Re-add User")))
+        return
+      const response = await GroupPageAPIs.reAddGroupUser(userGroup.id) as ApiResponse<void>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        setUserGroupStatus(true)
+        return
+      }
+    }
+    kickUser()
+  }, [])
+
   const onClickKickUser = useCallback(() => {
     async function kickUser() {
       if (!(await confirm("This action cannot be undone. Are you sure?", "Kick User out")))
@@ -197,12 +224,14 @@ function UserTag({ userGroup, groupRoles }: {
       const response = await GroupPageAPIs.kickUserOut(userGroup.id) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
         toast.success(response.msg)
-        tagRef.current?.remove()
+        setUserGroupStatus(false)
         return
       }
     }
     kickUser()
   }, [])
+
+  useEffect(() => setUserGroupStatus(userGroup.active), [userGroup.active])
 
   return <li ref={tagRef} className="joined-user">
     <a className="ju-wrapper" href={``}>
@@ -213,26 +242,34 @@ function UserTag({ userGroup, groupRoles }: {
         {userGroup.joinedUser.role}
       </span>
     </a>
-    <select
-      value={role}
-      className={`ju-tags ju-${role.toLowerCase().replace("_", "-")}`}
-      onChange={onChangeGroupRole}
-    >
-      {groupRoles.map((role, ind) =>
-        <option key={"jut-" + ind} value={role} className="jut-group-role-opt">
-          {role}
-        </option>
-      )}
-    </select>
-    <button className="ju-tags kick-user-btn" onClick={onClickKickUser}>
-      <LogOut className="kub-icon" />Kick
-    </button>
+    {isAdmin
+      ? <select
+        value={role}
+        className={`ju-tags ju-${role.toLowerCase().replace("_", "-")}`}
+        onChange={onChangeGroupRole}
+      >
+        {groupRoles.map((role, ind) =>
+          <option key={"jut-" + ind} value={role} className="jut-group-role-opt">
+            {role}
+          </option>
+        )}
+      </select>
+      : <span className={`ju-tags ju-${role.toLowerCase().replace("_", "-")}`} >
+        {role}
+      </span>}
+    {isAdmin && (userGroupStatus
+      ? <button className="ju-tags kick-user-btn" onClick={onClickKickUser}>
+        <LogOut className="usgb-icon" />Kick
+      </button>
+      : <button className="ju-tags re-add-user-btn" onClick={onClickReaddUser}>
+        <LogIn className="usgb-icon" />Re-add
+      </button>)}
   </li>
 }
 
 function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>,
-  group: DTO_GroupResponse
+  group: DTO_DetailGroupResponse
 }) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [addedUsers, setAddedUsers] = useState<Record<string, Record<string, string>>>({})
@@ -265,17 +302,17 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
 
-      // const request = DTO_UpdateGroup.withBuilder()
-      //   .bgroupId(group.baseInfo.id)
-      //   .bname(trimmedName)
-      //   .bassignedEmails(Object.entries(addedUsers).map(([key, user]) => user.email))
+      const request = DTO_UpdateGroup.withBuilder()
+        .bgroupId(group.baseInfo.id)
+        .bname(trimmedName)
+        .baddedEmails(Object.entries(addedUsers).map(([key, user]) => user.email))
 
-      // const response = await GroupPageAPIs.updateGroup(request) as ApiResponse<DTO_IdResponse>
-      // if (String(response.status)[0] === "2") {
-      //   toast.success(response.msg)
-      //   window.location.reload()
-      //   return
-      // }
+      const response = await GroupPageAPIs.updateGroup(request) as ApiResponse<DTO_IdResponse>
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        window.location.reload()
+        return
+      }
     }
     createGroup();
   }, [formValidation, name])
@@ -403,7 +440,7 @@ function SearchUserToAdd({ addedUsers, setAddedUsers }: {
       <thead></thead>
       <tbody className="searched-users">
         {isLoading
-          ? <tr className="loading-row"><td>Loading...</td></tr>
+          ? <tr><td className="loading-row">Loading...</td></tr>
           : searchedUsers.map((user, ind) => {
             const firstNameChar = user.fullName[0].toUpperCase()
             return <tr
@@ -477,11 +514,4 @@ function AddedUsers({ existingUsers, addedUsers, setAddedUsers }: {
         })
     }
   </ul>
-}
-
-function isAdminLoggingIn(groupHasUsers: GroupHasUser[]) {
-  return groupHasUsers.some(groupUser =>
-    AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || "").sub === groupUser.joinedUser.email
-    && groupUser.role.toUpperCase().includes("ADMIN")
-  )
 }

@@ -1,8 +1,8 @@
 import GlobalValidators from "@/util/global.validators"
 
 export class LoginValidators {
-  static isValidEmail(value: string): string {
-    return GlobalValidators.EMAIL_REGEX.test(value.trim()) ? "" : "Email is invalid"
+  static isValidUsername(value: string): string {
+    return GlobalValidators.notEmpty(value) ? "" : "Email is invalid"
   }
 
   static isValidPassword(value: string): string {

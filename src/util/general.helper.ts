@@ -15,6 +15,7 @@ export class GeneralTools {
   }
 
   static formatedDateToDateInput(str: string): string {
+    console.log(str)
     const [day, month, year] = str.split("/").map(Number)
     return `${year}-${month}-${day}`;
   }

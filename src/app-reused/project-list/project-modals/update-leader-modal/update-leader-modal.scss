@@ -1,0 +1,201 @@
+.update-leader-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.update-leader-modal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px #0002;
+  padding: 32px 32px 24px 32px;
+  min-width: 600px;
+  max-width: 95vw;
+  width: 60%;
+  min-height: 200px;
+  max-height: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  overflow-y: auto;
+  margin-top: 130px;
+
+  .update-leader-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 8px;
+
+    .update-leader-modal-title {
+      font-weight: 700;
+      font-size: 28px;
+      color: #166534;
+      flex: 1;
+      text-align: center;
+    }
+
+    .update-leader-modal-close {
+      position: absolute;
+      right: 0;
+      background: none;
+      border: none;
+      font-size: 26px;
+      color: #222;
+      cursor: pointer;
+      line-height: 1;
+    }
+  }
+
+  .update-leader-modal-assigned {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .update-leader-modal-label {
+      font-weight: 600;
+      color: #166534;
+      font-size: 17px;
+      margin-bottom: 2px;
+    }
+
+    .update-leader-modal-assigned-container {
+      min-height: 44px;
+      border: 1.5px solid #166534;
+      border-radius: 8px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #fff;
+      width: 100%;
+      justify-content: center;
+
+      .update-leader-modal-placeholder {
+        color: #888;
+        font-size: 16px;
+      }
+
+      .update-leader-modal-assigned-user {
+        background: #e6f4ea;
+        color: #166534;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 30px;
+        margin-bottom: 2px;
+        width: 100%;
+        max-width: 100%;
+
+        .update-leader-modal-assigned-avatar {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 12px;
+          flex-shrink: 0;
+          text-transform: uppercase;
+          margin-right: 10px;
+        }
+
+        .update-leader-modal-assigned-info {
+          flex: 1;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+          min-width: 0;
+
+          .update-leader-modal-assigned-name {
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .update-leader-modal-assigned-email {
+            color: #207558;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .update-leader-modal-assigned-role {
+          border-radius: 12px;
+          padding: 1.5px 8px;
+          font-weight: 700;
+          font-size: 11px;
+          width: 95px;
+          text-align: center;
+          letter-spacing: 0.5px;
+          box-shadow: 0 1px 4px #0001;
+          flex-shrink: 0;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .update-leader-modal-assigned-kick {
+          background: #d32f2f;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 4px 8px;
+          font-weight: 600;
+          font-size: 12px;
+          cursor: pointer;
+          min-width: 60px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+
+          &:hover {
+            background: #b71c1c;
+          }
+        }
+      }
+    }
+  }
+
+  .update-leader-modal-submit {
+    background: #166534;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-weight: 700;
+    font-size: 20px;
+    width: 220px;
+    align-self: center;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+} 

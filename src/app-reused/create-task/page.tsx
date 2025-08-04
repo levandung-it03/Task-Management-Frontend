@@ -5,7 +5,7 @@ import { TaskCreationForm } from "./task-creation-form/task-creation.form"
 import GroupListDialog from "./group-list-dialog/group-list.dialog"
 import "./page.scss"
 
-export default function CreateTask({ rootId }: { rootId?: number | null }) {
+export default function CreateTask({ rootId }: { rootId?: number }) {
   const [openDialog, setOpenDialog] = useState(false)
   const [assignedUsers, setAssignedUsers] = useState<Record<string, Record<string, string>>>({})
   const [assignedUsersHist, setAssignedUsersHist] = useState<Record<string, Record<string, string>>>({})

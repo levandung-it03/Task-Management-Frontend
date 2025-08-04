@@ -4,10 +4,9 @@ import { GeneralAPIs, RecordResponse } from "@/apis/general.api";
 import { LoginValidators } from "@/app/auth/login/page.services";
 import GlobalValidators from "@/util/global.validators";
 import { Eye, EyeOff } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import "../assets/account-info.form.scss";
-import { AuthHelper } from "@/util/auth.helper";
 import { DTO_ChangePasswordRequest } from "@/dtos/general.dto";
 
 interface AccountComponentProps {
@@ -65,7 +64,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
 
   const onClickGetOtp = useCallback(() => {
     async function getOtp() {
-      const res = await GeneralAPIs.authorizeEmailByOtp(AuthHelper.getRoleFromToken()) as RecordResponse
+      const res = await GeneralAPIs.authorizeEmailByOtp() as RecordResponse
       if (GlobalValidators.isNull(res.body)) return
 
       toast.success(res.msg)
@@ -87,7 +86,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
       const request = DTO_ChangePasswordRequest.withBuilder().bpassword(password).botp(otpCode)
-      const res = await GeneralAPIs.changePassword(AuthHelper.getRoleFromToken(), request) as RecordResponse
+      const res = await GeneralAPIs.changePassword(request) as RecordResponse
       if (res.status !== 200)
         return
       toast.success(res.msg)

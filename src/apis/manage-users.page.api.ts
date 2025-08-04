@@ -6,7 +6,7 @@ export class ManageUsersAPIs {
 
   static async getPaginatedUsers(request: DTO_PaginationRequest): Promise<DTO_PaginatedDataResponse | unknown> {
     try {
-      // const response = await axiosInstance.get(`/api/private/pm/user-info/v1/get-paginated-users`, { params: request })
+      // const response = await axiosInstance.get(`/api/private/pm/v1/user-info/get-paginated-users`, { params: request })
       console.log(request)
       const response = {
         data: {

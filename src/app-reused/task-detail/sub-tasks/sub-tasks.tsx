@@ -7,6 +7,7 @@ import { DTO_OverviewSubTask } from "@/dtos/task-detail.page.dto"
 import { ClipboardList } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { checkOverDue } from "../task-detail.service"
+import { GeneralTools } from "@/util/general.helper"
 
 export default function SubTasks({ taskId }: { taskId: number }) {
   const [subTasks, setSubTasks] = useState<DTO_OverviewSubTask[]>([])
@@ -49,14 +50,14 @@ function SubTask({ subTask }: { subTask: DTO_OverviewSubTask }) {
       <span className={`st-level tag-data task-level-${subTask.level.toLowerCase()}`}>
         {subTask.level}
       </span>
-      <span className="st-type tag-data quick-tag">{subTask.taskType}</span>
+      <span className="st-type tag-data quick-blue-tag">{GeneralTools.capitalize(subTask.taskType)}</span>
       <span className={`st-priority tag-data task-priority-${subTask.priority.toLowerCase()}`}>
-        {subTask.priority}
+        {GeneralTools.capitalize(subTask.priority)}
       </span>
     </div>
     <div className="st-dates">
-      <span className="quick-tag start-date">Started at {subTask.startDate}</span>
-      {subTask.endDate !== null && <span className="quick-tag end-date">Ended at {subTask.endDate}</span>}
+      <span className="quick-blue-tag start-date">Started at {subTask.startDate}</span>
+      {subTask.endDate !== null && <span className="quick-blue-tag end-date">Ended at {subTask.endDate}</span>}
       <span className={`st-deadline ${checkOverDue(subTask.deadline)}-date`}>Deadline {subTask.deadline}</span>
     </div>
   </a>

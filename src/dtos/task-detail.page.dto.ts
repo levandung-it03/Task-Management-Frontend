@@ -1,13 +1,8 @@
-
-export interface BasicUserInfo {
-  id: number;
-  fullName: string;
-  email: string;
-}
+import { DTO_FastUserInfo } from "./create-task.page.dto";
 
 export interface DTO_TaskDetail {
   id: number;
-  userInfo: BasicUserInfo;
+  userInfo: DTO_FastUserInfo;
   rootTaskId: number | null;
   name: string;
   description: string;
@@ -22,7 +17,6 @@ export interface DTO_TaskDetail {
   createdTime: string;
   updatedTime: string;
 
-  hasSubTask: boolean;
   hasAtLeastOneReport: boolean;
 }
 
@@ -61,6 +55,7 @@ export class DTO_UpdateBasicTask {
   taskType!: string;
   priority!: string;
   deadline!: string;
+  addedUserEmail!: string
 
   public static withBuilder() { return new DTO_UpdateBasicTask() }
   public bid(id: number): DTO_UpdateBasicTask { this.id = id; return this }
@@ -68,6 +63,7 @@ export class DTO_UpdateBasicTask {
   public btaskType(taskType: string): DTO_UpdateBasicTask { this.taskType = taskType; return this }
   public bpriority(priority: string): DTO_UpdateBasicTask { this.priority = priority; return this }
   public bdeadline(deadline: string): DTO_UpdateBasicTask { this.deadline = deadline; return this }
+  public baddedUserEmail(addedUserEmail: string): DTO_UpdateBasicTask { this.addedUserEmail = addedUserEmail; return this }
 }
 
 export interface DTO_TaskUser {
@@ -76,6 +72,7 @@ export interface DTO_TaskUser {
   fullName: string
   role: string
   userTaskStatus: string
+  wasDone: boolean
 }
 
 export class DTO_LockTaskStatus {

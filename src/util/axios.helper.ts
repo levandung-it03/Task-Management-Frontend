@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
     const request = DTO_Token.withBuilder().baccessToken(token)
     const refreshTokenRes = await GeneralAPIs.refreshToken(request) as RecordResponse
     if (refreshTokenRes.status !== 200) {
-      AuthHelper.endClientSession()
+      // AuthHelper.endClientSession()
       return Promise.reject(error)
     }
 

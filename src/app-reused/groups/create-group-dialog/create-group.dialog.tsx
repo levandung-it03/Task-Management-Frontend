@@ -10,6 +10,10 @@ import toast from "react-hot-toast"
 import GlobalValidators from "@/util/global.validators"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.dto"
 import { GroupsPageService } from "../groups-container.service"
+import { DTO_GroupRequest } from "@/dtos/groups.page.dto"
+import { GroupPageAPIs } from "@/apis/groups.page.api"
+import { DTO_IdResponse } from "@/dtos/general.dto"
+import { AuthHelper } from "@/util/auth.helper"
 
 export function GroupCreationDialog({ openDialog, setOpenDialog }: {
   openDialog: boolean,
@@ -32,25 +36,23 @@ export function GroupCreationDialog({ openDialog, setOpenDialog }: {
   }, [])
 
   const onClickSubmitBtn = useCallback(() => {
-
     async function createGroup() {
       const trimmedName = name.trim()
 
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
 
-      // const request = DTO_GroupRequest.withBuilder()
-      // .bname(trimmedName)
-      // .bassignedEmails(Object.entries(addedUsers).map(([key, user]) => user.email))
+      const request = DTO_GroupRequest.withBuilder()
+      .bname(trimmedName)
+      .bassignedEmails(Object.entries(addedUsers).map(([key, user]) => user.email))
 
-      // const response = await GroupPageAPIs.createGroup(request) as ApiResponse<DTO_IdResponse>
-      // if (String(response.status)[0] !== "2") {
-      //   return
-      // }
-
-      // toast.success(response.msg)
-      // const role = AuthHelper.getRoleFromToken()
-      // window.location.href = `${role}/groups/${response.body.id}`
+      const response = await GroupPageAPIs.createGroup(request) as ApiResponse<DTO_IdResponse>
+      if (String(response.status)[0] !== "2") {
+        return
+      }
+      toast.success(response.msg)
+      const role = AuthHelper.getRoleFromToken()
+      window.location.href = `/${role}/groups/${response.body.id}`
     }
     createGroup();
   }, [formValidation, name, addedUsers])
@@ -178,7 +180,7 @@ function SearchUserToAdd({ addedUsers, setAddedUsers }: {
       <thead></thead>
       <tbody className="searched-users">
         {isLoading
-          ? <tr className="loading-row"><td>Loading...</td></tr>
+          ? <tr><td className="loading-row">Loading...</td></tr>
           : searchedUsers.map((user, ind) => {
             const firstNameChar = user.fullName[0].toUpperCase()
             return <tr

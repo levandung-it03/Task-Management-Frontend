@@ -122,7 +122,7 @@ export default function UsersTable() {
                 <td className="table-cell">{userInfo.coins}</td>
                 <td className="table-cell">{userInfo.dob}</td>
                 <td className="table-cell">
-                  <span className="quick-tag">{GeneralTools.capitalize(userInfo.gender)}</span>
+                  <span className="quick-blue-tag">{GeneralTools.capitalize(userInfo.gender)}</span>
                 </td>
                 <td className="table-cell">
                   <button className={`user-status status-${userInfo.active + ""}`}
@@ -169,6 +169,6 @@ export default function UsersTable() {
 function extractRoles(scopes: string): JSX.Element[] {
   return scopes.split(",").map((scope, ind) => {
     const role = scope.split("ROLE_")[1].toLowerCase()
-    return <span key={scope + ind} className="user-role quick-tag">{role}</span>
+    return <span key={scope + ind} className="user-role quick-blue-tag">{role}</span>
   })
 }

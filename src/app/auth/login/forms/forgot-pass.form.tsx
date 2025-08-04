@@ -23,7 +23,7 @@ export default function ForgotPassForm() {
   const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
     setFormTouched(true)
-    setFormValidation(prev => ({ ...prev, email: LoginValidators.isValidEmail(e.target.value) }))
+    setFormValidation(prev => ({ ...prev, email: LoginValidators.isValidUsername(e.target.value) }))
   }, [])
 
   const onChangeOtpCode = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

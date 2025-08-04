@@ -1,4 +1,5 @@
-import { DTO_ChangePasswordRequest, DTO_Token, DTO_VerifyEmailRequest } from "@/dtos/general.dto";
+import { DTO_ChangePasswordRequest, DTO_EmailResponse, DTO_Token, DTO_VerifyEmailRequest } from "@/dtos/general.dto";
+import { AuthHelper } from "@/util/auth.helper";
 import axiosInstance from "@/util/axios.helper"
 import GlobalValidators from "@/util/global.validators";
 import toast from "react-hot-toast";
@@ -38,18 +39,9 @@ export class GeneralAPIs {
     return error;
   }
 
-  static async getGenderEnums(): Promise<RecordResponse | unknown> {
-    try {
-      const response = await axiosInstance.get(`/api/public/enums/v1/get-gender-enums`)
-      return response.data
-    } catch (error: unknown) {
-      return GeneralAPIs.extractError(error)
-    }
-  }
-
   static async getOtpEnumTypes(): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/public/enums/v1/get-otp-enum-types`)
+      const response = await axiosInstance.get(`/api/public/v1/enums/otp-type`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
@@ -58,7 +50,7 @@ export class GeneralAPIs {
 
   static async getOauth2ServiceEnums(): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/public/enums/v1/get-oauth2-service-enums`)
+      const response = await axiosInstance.get(`/api/public/v1/enums/get-oauth2-service-enums`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
@@ -67,16 +59,16 @@ export class GeneralAPIs {
 
   static async verifyEmailByOtp(request: DTO_VerifyEmailRequest): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.post(`/api/public/auth/account/v1/verify-email`, request)
+      const response = await axiosInstance.post(`/api/public/auth/v1/account/verify-email`, request)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async authorizeEmailByOtp(role: string): Promise<RecordResponse | unknown> {
+  static async authorizeEmailByOtp(): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.post(`/api/private/${role}/account/v1/authorize-email`)
+      const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/authorize-email`)
       return response.data
     } catch (error: unknown) {
       console.log(error)
@@ -86,7 +78,7 @@ export class GeneralAPIs {
 
   static async logout(request: DTO_Token): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.post(`/api/private/auth/account/v1/log-out`, request)
+      const response = await axiosInstance.post(`/api/private/auth/v1/account/log-out`, request)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
@@ -95,96 +87,63 @@ export class GeneralAPIs {
 
   static async refreshToken(request: DTO_Token): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.post(`/api/private/auth/account/v1/refresh-token`, request)
+      const response = await axiosInstance.post(`/api/private/auth/v1/account/refresh-token`, request)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async changePassword(role: string, request: DTO_ChangePasswordRequest): Promise<RecordResponse | unknown> {
+  static async changePassword(request: DTO_ChangePasswordRequest): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.put(`/api/private/${role}/account/v1/change-password`, request)
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/change-password`, request)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async getTaskLevelEnums(): Promise<string[] | unknown> {
+  static async getTaskLevelEnums(): Promise<ApiResponse<string[]> | unknown> {
     try {
-      // const response = await axiosInstance.put(`/api/public/enum/v1/get-task-level-enums`)
-      // return response.data
-      return {
-        code: 11003,
-        msg: "Thành công",
-        status: 200,
-        body: ["HARD", "ADVANCED", "NORMAL", "LIGHT"],
-        time: "12:00:20 30/06/2025"
-      }
+      const response = await axiosInstance.get(`/api/public/v1/enum/task-level`)
+      console.log(response.data)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async getTaskPriorityEnums(): Promise<string[] | unknown> {
+  static async getTaskPriorityEnums(): Promise<ApiResponse<string[]> | unknown> {
     try {
-      // const response = await axiosInstance.put(`/api/public/enum/v1/get-priority-enums`)
-      // return response.data
-      return {
-        code: 11003,
-        msg: "Thành công",
-        status: 200,
-        body: ["URGENT", "HIGH", "NORMAL", "LOW"],
-        time: "12:00:20 30/06/2025"
-      }
+      const response = await axiosInstance.get(`/api/public/v1/enum/task-priority`)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async getTaskTypeEnums(): Promise<string[] | unknown> {
+  static async getTaskTypeEnums(): Promise<ApiResponse<string[]> | unknown> {
     try {
-      // const response = await axiosInstance.put(`/api/public/enum/v1/get-task-types-enums`)
-      // return response.data
-      return {
-        code: 11003,
-        msg: "Thành công",
-        status: 200,
-        body: [
-          "BUSINESS_ANALYSIS",
-          "BACKEND",
-          "FRONTEND",
-          "DEPLOY",
-          "DESIGN",
-          "TEST",
-          "DOCUMENTATION",
-          "MAINTENANCE",
-          "RESEARCH",
-          "TRAINING",
-          "AI"
-        ],
-        time: "12:00:20 30/06/2025"
-      }
+      const response = await axiosInstance.get(`/api/public/v1/enum/task-type`)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async getGroupRoleEnums(): Promise<string[] | unknown> {
+  static async getGroupRoleEnums(): Promise<ApiResponse<string[]> | unknown> {
     try {
-      // const response = await axiosInstance.put(`/api/public/enum/v1/get-group-role-enums`)
-      // return response.data
-      return {
-        code: 11003,
-        msg: "Thành công",
-        status: 200,
-        body: [
-          "ADMIN",
-          "MEMBER",
-        ],
-        time: "12:00:20 30/06/2025"
-      }
+      const response = await axiosInstance.get(`/api/public/v1/enum/group-role`)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async getEmail(): Promise<ApiResponse<DTO_EmailResponse> | unknown> {
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/email`)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

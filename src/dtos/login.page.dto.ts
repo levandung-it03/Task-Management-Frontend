@@ -1,10 +1,10 @@
 
 export class DTO_AuthRequest {
-  private email!: string
+  private username!: string
   private password!: string
 
   public static withBuilder() { return new DTO_AuthRequest() }
-  public bemail(email: string): DTO_AuthRequest { this.email = email; return this }
+  public busername(username: string): DTO_AuthRequest { this.username = username; return this }
   public bpassword(password: string): DTO_AuthRequest { this.password = password; return this }
 }
 

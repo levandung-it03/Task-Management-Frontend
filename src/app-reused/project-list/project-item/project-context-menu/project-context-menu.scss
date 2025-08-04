@@ -1,0 +1,41 @@
+.project-context-menu {
+  position: absolute;
+  top: 54px;
+  right: 16px;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 4px 24px #0002;
+  z-index: 10;
+  padding: 8px 0;
+
+  .project-context-menu-item {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #222;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: background 0.2s;
+    border-bottom: 1px solid #e5e7eb;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f3f4f6;
+    }
+
+    &--danger {
+      color: #d32f2f;
+
+      &:hover {
+        background: #fef2f2;
+      }
+    }
+  }
+} 

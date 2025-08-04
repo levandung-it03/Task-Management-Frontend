@@ -1,5 +1,12 @@
+import GlobalValidators from "@/util/global.validators";
 
 export class CreateTaskPageValidators {
+
+  static isValidName(value: string): string {
+    if (GlobalValidators.isEmpty(value))
+      return "Name cannot empty"
+    return ""
+  }
   
   static isValidDeadline(value: string): string {
     if (!value) return "Date is required";

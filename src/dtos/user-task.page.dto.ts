@@ -54,3 +54,14 @@ export class DTO_RejectReport {
   public breportId(reportId: number): DTO_RejectReport { this.reportId = reportId; return this; }
   public brejectedReason(rejectedReason: string): DTO_RejectReport { this.rejectedReason = rejectedReason; return this; }
 }
+
+export class DTO_ReportRequest {
+  taskUserId!: number
+  title!: string
+  content!: string
+
+  public static withBuilder(): DTO_ReportRequest { return new DTO_ReportRequest() }
+  public btaskUserId(taskUserId: number): DTO_ReportRequest { this.taskUserId = taskUserId; return this }  
+  public btitle(title: string): DTO_ReportRequest { this.title = title; return this }  
+  public bcontent(content: string): DTO_ReportRequest { this.content = content; return this }  
+}

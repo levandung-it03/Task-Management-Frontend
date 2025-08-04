@@ -12,12 +12,12 @@ import { DTO_AuthRequest } from "@/dtos/login.page.dto"
 import { RecordResponse } from "@/apis/general.api"
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
-    email: "",
+    username: "",
     password: "",
   })
 
@@ -25,10 +25,10 @@ export default function LoginForm() {
     setShowPassword(prev => !prev)
   }, [])
 
-  const onChangeEmail = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value)
+  const onChangeUsername = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value)
     setFormTouched(true)
-    setFormValidation(prev => ({ ...prev, email: LoginValidators.isValidEmail(e.target.value) }))
+    setFormValidation(prev => ({ ...prev, username: LoginValidators.isValidUsername(e.target.value) }))
   }, [])
 
   const onChangePassword = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,33 +42,28 @@ export default function LoginForm() {
     async function send() {
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
-      const request = DTO_AuthRequest.withBuilder().bemail(email).bpassword(password)
+      const request = DTO_AuthRequest.withBuilder().busername(username).bpassword(password)
       const response = await LoginAPIs.authenticate(request) as RecordResponse
       if (GlobalValidators.isNull(response.body))
         return
       toast.success(response.msg)
       AuthHelper.saveAccessTokenIntoCookie(response.body.accessToken)
       AuthHelper.saveRefreshTokenIntoCookie(response.body.refreshToken)
-      const role = AuthHelper.getRoleFromToken().toUpperCase()
-      if (role.includes("PM"))
-        window.location.href = "/pm/dashboard"
-      else if (role.includes("LEAD"))
-        window.location.href = "/lead/dashboard"
-      else
-        window.location.href = "/emp/home"
+      
+      window.location.href = `/${AuthHelper.getRoleFromToken()}/home`
     }
     send()
-  }, [formValidation, email, password])
+  }, [formValidation, username, password])
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>
       <div className="login-form-container">
         <div className="form-group-container">
           <fieldset className="form-group">
-            <legend className="form-label">Email</legend>
-            <input type="email" id="email" className="form-input" placeholder="Type Email" required value={email} onChange={onChangeEmail} />
+            <legend className="form-label">Username</legend>
+            <input type="username" id="username" className="form-input" placeholder="Type Username" required value={username} onChange={onChangeUsername} />
           </fieldset>
-          {GlobalValidators.notEmpty(formValidation.email) && <span className="input-err-msg">{formValidation.email}</span>}
+          {GlobalValidators.notEmpty(formValidation.username) && <span className="input-err-msg">{formValidation.username}</span>}
         </div>
 
         <div className="form-group-container">

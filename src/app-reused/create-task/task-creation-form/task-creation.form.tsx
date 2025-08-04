@@ -58,6 +58,7 @@ export function TaskCreationForm({
   assignedUsersHist,
   setHistories
 }: TaskCreationFormProps) {
+  const [name, setName] = useState("")
   const [deadline, setDeadline] = useState("")
   const [startDate, setStartDate] = useState("")
   const [description, setDescription] = useState("")
@@ -70,9 +71,16 @@ export function TaskCreationForm({
   const [taskType, setTaskType] = useState("")
   const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
+    name: "",
     deadline: "",
     startDate: "",
   })
+
+  const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+    setFormTouched(true)
+    setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidName(e.target.value) }))
+  }, [])
 
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
@@ -130,6 +138,7 @@ export function TaskCreationForm({
         return
 
       const request = DTO_TaskRequest.withBuilder()
+        .bname(name)
         .bdeadline(deadline)
         .bstartDate(startDate)
         .blevel(level)
@@ -143,13 +152,13 @@ export function TaskCreationForm({
         ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
         : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
       // if (String(response.status)[0] === "2") {
-        // toast.success(response.msg)
-        // const role = AuthHelper.getRoleFromToken()
-        // window.location.href = `${role}/task/${response.body.id}`
+      // toast.success(response.msg)
+      // const role = AuthHelper.getRoleFromToken()
+      // window.location.href = `${role}/task/${response.body.id}`
       // }
     }
     createTask();
-  }, [rootId, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation])
+  }, [rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation])
 
   useEffect(() => {
     async function initValues() {
@@ -174,6 +183,15 @@ export function TaskCreationForm({
         <FileIcon className="caption-icon" />
         <span className="caption-content">Task Assigning</span>
         <i className="desc-content">Fill these information to create a Task and assign Users.</i>
+      </div>
+
+      <div className="form-group-container">
+        <fieldset className="form-group">
+          <legend className="form-label">Task Name</legend>
+          <input type="text" id="name" className="form-input" placeholder="Type Task Name" required
+            value={name} onChange={onChangeName} />
+        </fieldset>
+        {GlobalValidators.notEmpty(formValidation.name) && <span className="input-err-msg">{formValidation.name}</span>}
       </div>
 
       <div className="form-group-container half-form-left-container">
@@ -307,8 +325,8 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
       }
       const request = DTO_SearchFastUserInfo.withBuilder().bquery(value)
       const response = !rootId
-        ? await CreateTaskPageAPIs.fastSearchUsers(request) as ApiResponse<DTO_FastUserInfo[]>
-        : await CreateTaskPageAPIs.fastSearchUsersOfRootTask(rootId, request) as ApiResponse<DTO_FastUserInfo[]>
+        ? await CreateTaskPageAPIs.fastSearchUsersTask(request) as ApiResponse<DTO_FastUserInfo[]>
+        : await CreateTaskPageAPIs.fastSearchUsersTaskOfRootTask(rootId, request) as ApiResponse<DTO_FastUserInfo[]>
       if (response.status !== 200) {
         toast.error(response.msg)
         setIsSearching(false)
@@ -363,7 +381,7 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
       <thead></thead>
       <tbody className="searched-users">
         {isSearching
-          ? <tr className="loading-row"><td>Loading...</td></tr>
+          ? <tr><td className="loading-row">Loading...</td></tr>
           : searchedUsers.map((user, ind) => {
             const firstNameChar = user.fullName[0].toUpperCase()
             return <tr
@@ -421,7 +439,11 @@ export function extractEmailToGetId(email: string): string {
   return email.slice(0, email.indexOf("@"))
 }
 
-function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
+function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: {
+  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
+  assignedUsers: Record<string, Record<string, string>>;
+}) {
   const [shownInfoMap, setShownInfoMap] = useState<Record<string, boolean>>({})
 
   const onClickRmAssingedUserTag = useCallback((id: string) => {
@@ -444,9 +466,7 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: Search
 
   return <ul className="assigned-users">
     {Object.keys(assignedUsers).length === 0
-      ? <li className="assigned-user-tag direction-tag">
-        Assigned Users <i className="direction-tag">(blank for Root Task)</i>
-      </li>
+      ? <li className="assigned-user-tag direction-tag">Assigned Users</li>
       : Object.entries(assignedUsers).map(([id, user], ind) => {
         const firstNameChar = user.fullName[0].toUpperCase()
         const normalRole = user.role.toLowerCase().replace("_", "-")
