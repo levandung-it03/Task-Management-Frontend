@@ -1,17 +1,52 @@
-
 export interface DTO_PaginatedDataResponse {
-  totalPages: number,
-  dataList: DTO_ManagedUserInfoResponse[]
+  dataList: DTO_ManagedUserInfoResponse[];
 }
 
 export interface DTO_ManagedUserInfoResponse {
-  email: string,
-  createdTime: string,
-  active: boolean,
-  fullName: string,
-  authorities: string,
-  coins: number,
-  dob: string,
-  gender: string,
-  oauth2ServiceEnum: string,
+  accountId: number;
+  fullname: string;
+  email: string;
+  phone: string;
+  department: string;
+  authorities: string;
+  status: boolean;
+}
+
+export class DTO_UpdateAccountStatusRequest {
+  id!: number;
+  status!: boolean;
+
+  public static withBuilder() {
+    return new DTO_UpdateAccountStatusRequest();
+  }
+
+  public setId(id: number) {
+    this.id = id;
+    return this;
+  }
+
+  public setStatus(status: boolean) {
+    this.status = status;
+    return this;
+  }
+}
+
+
+export class DTO_UpdateAccountRoleRequest {
+  id!: number;
+  role!: string;
+
+  public static withBuilder() {
+    return new DTO_UpdateAccountRoleRequest();
+  }
+ 
+  public setId(id: number) {
+    this.id = id;
+    return this;
+  }
+
+  public setRole(role: string) {
+    this.role = role;
+    return this;
+  }
 }

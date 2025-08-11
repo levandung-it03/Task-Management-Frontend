@@ -40,8 +40,8 @@ export default function UndoneTasks() {
               <span className="quick-blue-tag task-type">
                 {GeneralTools.capitalize(task.taskType)}
               </span>
-              <span className={`tag-data task-priority-${task.taskPriority.toLowerCase()}`}>
-                {GeneralTools.capitalize(task.taskPriority)}
+              <span className={`tag-data task-priority-${task.priority.toLowerCase()}`}>
+                {GeneralTools.capitalize(task.priority)}
               </span>
             <span className="task-deadline quick-blue-tag">Deadline {prettierDate(task.deadline)}</span>
           </a>

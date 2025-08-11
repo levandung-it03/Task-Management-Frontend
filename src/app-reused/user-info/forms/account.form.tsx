@@ -10,10 +10,10 @@ import "../assets/account-info.form.scss";
 import { DTO_ChangePasswordRequest } from "@/dtos/general.dto";
 
 interface AccountComponentProps {
-  email: string;
+  username: string;
 }
 
-export default function AccountForm({ email }: AccountComponentProps) {
+export default function AccountForm({ username }: AccountComponentProps) {
   const [password, setPassword] = useState("")
   const [confPass, setConfPass] = useState("")
   const [otpCode, setOtpCode] = useState("")
@@ -87,27 +87,28 @@ export default function AccountForm({ email }: AccountComponentProps) {
         return
       const request = DTO_ChangePasswordRequest.withBuilder().bpassword(password).botp(otpCode)
       const res = await GeneralAPIs.changePassword(request) as RecordResponse
-      if (res.status !== 200)
-        return
-      toast.success(res.msg)
+      if (String(res.status).startsWith("2")) {
+        toast.success(res.msg)
+        window.location.reload()
+      }
     }
     changePassowrd()
-  }, [password, otpCode, formValidation])
+  }, [password, otpCode, formValidation, formTouched])
 
   return (
     <form className="account-info-form" onSubmit={handleSubmit}>
       <div className="user-info-description">
         <h1 className="page-name">Password</h1>
-        <p className="page-description">
+        <i className="page-description">
           Complete these steps to change your password.
-        </p>
+        </i>
       </div>
       <i className="divider"></i>
 
       <div className="form-group-container">
         <fieldset className="form-group">
-          <legend className="form-label">Email</legend>
-          <input type="email" id="email" className="form-input" placeholder="Type Email" required value={email} disabled />
+          <legend className="form-label">Username</legend>
+          <input type="email" id="email" className="form-input" placeholder="Type Email" required value={username} disabled />
         </fieldset>
       </div>
 
@@ -115,7 +116,7 @@ export default function AccountForm({ email }: AccountComponentProps) {
         <fieldset className="form-group otp-group">
           <legend className="form-label">OTP Code</legend>
           <div className="input-with-btn">
-            <input id="otpCode" className="form-input" placeholder="To verify Email" required value={otpCode} onChange={onChangeOtpCode} />
+            <input id="otpCode" className="form-input" placeholder="To authorize" required value={otpCode} onChange={onChangeOtpCode} />
             <button className={"get-otp " + (otpAge === 0 ? "not-showing-otp-age" : "showing-otp-age")}
               onClick={onClickGetOtp} disabled={otpAge !== 0} type="button">
               {otpAge === 0 ? "GET" : otpAge + "s"}

@@ -1,13 +1,13 @@
 'use client'
 
 import "./task-detail.scss"
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import { ApiResponse } from '@/apis/general.api'
 import { TaskBasicInfo } from './task-basic-info/task-basic-info'
 import AssignedUsers from './assigned-users/assigned-users'
 import SubTasks from './sub-tasks/sub-tasks'
-import StatusTaskButton from "./status-buttons/status-buttons"
+import TaskDetailInteractBtns from "./status-buttons/status-buttons"
 import { AuthHelper } from "@/util/auth.helper"
 import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
 
@@ -26,7 +26,8 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     userInfo: {
       fullName: "",
       email: "",
-      role: ""
+      role: "",
+      department: ""
     },
     rootTaskId: null,
     name: "",
@@ -56,10 +57,11 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     async function getDetail() {
       setIsLoading(true)
       const response = await TaskDetailPageAPIs.getTaskDetail(taskId) as ApiResponse<DTO_TaskDetail>
-      if (String(response.status)[0] !== "2")
-        return
-      setTaskInfo(response.body)
-      setIsLoading(false)
+      if (String(response.status)[0] === "2") {
+        setTaskInfo(response.body)
+        setIsLoading(false)
+        console.log(response.body)
+      }
     }
     getDetail()
   }, [taskId])
@@ -70,7 +72,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
       <TaskBasicInfo taskInfo={taskInfo} setTaskInfo={setTaskInfo} totalUsers={totalUsers} />
       <SubTasks taskId={taskInfo.id} />
       <AssignedUsers taskInfo={taskInfo} isTaskOwner={isOwner} setTotalUsers={setTotalUsers} />
-      {isOwner && <StatusTaskButton taskInfo={taskInfo} />}
+      {isOwner && <TaskDetailInteractBtns taskInfo={taskInfo} />}
     </div>
   )
 }

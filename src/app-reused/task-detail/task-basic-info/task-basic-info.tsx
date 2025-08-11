@@ -2,14 +2,14 @@ import { ApiResponse } from '@/apis/general.api'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import HelpContainer from '@/app-reused/help-container/page'
 import { CirclePlus, ClipboardList, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { checkOverDue, prettierDate, prettierTime } from '../task-detail.service'
 import TextDialog from './text-dialog/text.dialog'
 import TaskDialog from './task-dialog/task.dialog'
 import "./task-basic-info.scss"
 import { AuthHelper } from '@/util/auth.helper'
-import { DTO_TaskDetail, DTO_UpdateTaskDescription, DTO_UpdateTaskReportFormat } from '@/dtos/task-detail.page.dto'
+import { DTO_TaskDetail, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
 import { GeneralTools } from '@/util/general.helper'
 
 interface TaskBasicInfoProps {
@@ -41,9 +41,9 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
           toast.error("Content cannot be empty")
           return
         }
-        const request = DTO_UpdateTaskDescription.withBuilder()
+        const request = DTO_UpdateContentRequest.withBuilder()
           .bid(taskInfo.id)
-          .bdescription(content)
+          .bcontent(content)
         const response = await TaskDetailPageAPIs.updateTaskDescription(request) as ApiResponse<void>
         if (String(response.status)[0] === "2") {
           toast.success(response.msg)
@@ -66,9 +66,9 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
           toast.error("Content cannot be empty")
           return
         }
-        const request = DTO_UpdateTaskReportFormat.withBuilder()
+        const request = DTO_UpdateContentRequest.withBuilder()
           .bid(taskInfo.id)
-          .breportFormat(content)
+          .bcontent(content)
         const response = await TaskDetailPageAPIs.updateTaskReportFormat(request) as ApiResponse<void>
         if (String(response.status)[0] === "2") {
           toast.success(response.msg)
@@ -119,6 +119,18 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
         </div>
         <div className="task-info-left">
           <div className="task-info-item">
+            <span className="task-info-label">Created by</span>
+            <span className="task-info-value">
+              <span className="task-date">{taskInfo.userInfo.fullName}</span>
+            </span>
+          </div>
+          <div className="task-info-item">
+            <span className="task-info-label">Email</span>
+            <span className="task-info-value">
+              <span className="task-date">{taskInfo.userInfo.email}</span>
+            </span>
+          </div>
+          <div className="task-info-item">
             <span className="task-info-label">Task Type</span>
             <span className="task-info-value">
               <span className="tag-data task-type">{GeneralTools.capitalize(taskInfo.taskType)}</span>
@@ -140,6 +152,8 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
               </span>
             </span>
           </div>
+        </div>
+        <div className="task-info-right">
           <div className="task-info-item">
             <span className="task-info-label">Deadline</span>
             <span className="task-info-value">
@@ -151,8 +165,6 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
               </span>
             </span>
           </div>
-        </div>
-        <div className="task-info-right">
           <div className="task-info-item">
             <span className="task-info-label">Start Date</span>
             <span className="task-info-value">
@@ -199,7 +211,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       inpContent={dialogContent}
       openDialog={openTextDialog}
       setOpenDialog={setOpenTextDialog}
-      isUpdatabale={isOwner && !taskInfo.hasAtLeastOneReport}
+      isUpdatabale={isOwner}
     />
     <TaskDialog
       taskInfo={taskInfo}

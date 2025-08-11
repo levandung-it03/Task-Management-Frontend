@@ -31,7 +31,7 @@ export class UserTaskPageAPIs {
   static async getCompletion(request: DTO_LLMCompleteion): Promise<Record<string, string> | unknown> {
     try {
       const response = await axiosInstance.post(`${LLM_HOST}/chat/completions`, request)
-      return response
+      return response.data
     } catch (error: unknown) {
       console.error("Error From LLM:", error)
       // return GeneralAPIs.extractError(error)
@@ -43,7 +43,7 @@ export class UserTaskPageAPIs {
       const { taskUserId, ...restParams } = request
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${taskUserId}/create-report`
       const response = await axiosInstance.post(url, restParams)
-      return response
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
@@ -53,7 +53,7 @@ export class UserTaskPageAPIs {
     try {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${userTaskId}/all-reports`
       const response = await axiosInstance.get(url)
-      return response
+      return response.data
       // console.log(AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || ""))
       // return {
       //   code: 11000,
@@ -217,7 +217,7 @@ export class UserTaskPageAPIs {
     try {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${request.reportId}`
       const response = await axiosInstance.put(url, { report: request.report })
-      return response
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
@@ -228,24 +228,7 @@ export class UserTaskPageAPIs {
       const { reportId, ...restParams } = request
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${reportId}/create-comment`
       const response = await axiosInstance.post(url, restParams)
-      return response
-      // return {
-      //   code: 11000,
-      //   msg: "Tạo thành công",
-      //   status: 200,
-      //   body: {
-      //     id: 10,
-      //     createdBy: {
-      //       id: 1,
-      //       email: "emp@gmail.com",
-      //       fullName: "Le Van Dung"
-      //     },
-      //     repliedCommendId: request.repliedCommentId,
-      //     comment: request.content,
-      //     createdTime: new Date().toISOString()
-      //   },
-      //   time: "2025/11/12"
-      // }
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
@@ -255,7 +238,7 @@ export class UserTaskPageAPIs {
     try {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${reportId}/approve-report`
       const response = await axiosInstance.put(url)
-      return response
+      return response.data
       // return {
       //   code: 11000,
       //   msg: "Approve thành công",
@@ -272,7 +255,7 @@ export class UserTaskPageAPIs {
     try {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${request.reportId}/reject-report`
       const response = await axiosInstance.put(url, { rejectedReason: request.rejectedReason })
-      return response
+      return response.data
       // return {
       //   code: 11000,
       //   msg: "Reject thành công",

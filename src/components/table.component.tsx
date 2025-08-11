@@ -355,7 +355,7 @@ export function TableBodyWrapper({ children }: { children: React.ReactNode }): J
   </tbody>
 }
 
-export function TableRowWrapper({ children, ...props }: { children: React.ReactNode, props: unknown }): JSX.Element {
+export function TableRowWrapper({ children, ...props }: { children: React.ReactNode }): JSX.Element {
   return <tr {...props} className="table-row-group">
     {children}
   </tr>

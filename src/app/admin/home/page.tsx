@@ -3,11 +3,11 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function NotFound() {
+export default function HomeRedirection() {
   const router = useRouter()
 
   useEffect(() => {
-    router.replace('/auth/login')
+    router.replace('/admin/manage-users')
   }, [router])
 
   return null

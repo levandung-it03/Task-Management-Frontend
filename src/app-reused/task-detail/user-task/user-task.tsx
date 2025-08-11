@@ -34,7 +34,8 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     userInfo: {
       fullName: "",
       email: "",
-      role: ""
+      role: "",
+      department: ""
     },
     rootTaskId: null,
     name: "",
@@ -93,20 +94,17 @@ function ReportList({ userTaskId, taskInfo }: {
       if (String(emailRes.status)[0] !== "2")
         return
 
+      setIsLoading(false)
+      if (response.body.length === 0)
+        return
+      
       const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
       const isAssignedUser = emailRes.body.email === response.body[0].report.createdBy.email
-      //--Just "Task-Owner", and "Assigned-User" can see this page.
-      // console.log("Task Owner: ", taskInfo.userInfo.email)
-      // console.log("Assigned User: ", response.body[0].report.createdBy.email)
-      // console.log("Logging-in: ", AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || "").sub)
-      if (!isAssignedUser && !isTaskOwner) {
-        window.location.href = "/"
-        return
-      }
+      
+      //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
       setReportComments(response.body)
       setIsReportOwner(isAssignedUser)
       setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
-      setIsLoading(false)
     }
     fetchReports()
   }, [userTaskId, taskInfo.userInfo.email])
@@ -162,6 +160,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
       const response = await UserTaskPageAPIs.updateReport(request) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
         toast.success(response.msg)
+        window.location.reload()
         return
       }
     }
@@ -184,6 +183,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
       const response = await UserTaskPageAPIs.approveReport(reportInfo.report.id) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
         toast.success(response.msg)
+        window.location.reload()
         return
       }
     }
@@ -519,9 +519,10 @@ function RejectingReportDialog({ reportId, setIsRejecting }: {
         return
       }
       setIsRejecting(false)
+      window.location.reload()
     }
     rejectReport()
-  }, [reportId, content, setIsRejecting])
+  }, [reportId, content, setIsRejecting, formTouched])
 
   const onClickCancelDialog = useCallback(() => {
     setIsRejecting(false)

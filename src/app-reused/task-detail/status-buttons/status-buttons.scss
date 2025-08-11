@@ -48,7 +48,8 @@
   .task-status-buttons {
     .completed-task,
     .complete-task-button,
-    .lock-task-button {
+    .lock-task-button,
+    .delete-task-button {
       width: 100%;
       padding: 15px;
       border-radius: 10px;
@@ -61,6 +62,8 @@
 
       .tsb-icon {
         margin-right: 10px;
+        width: 16px;
+        height: 16px;
       }
     }
   }
@@ -81,6 +84,7 @@
     }
   }
 
+  .delete-task-button,
   .task-locked-btn {
     background-color: var(--main-text-err-red);
     color: #fff;

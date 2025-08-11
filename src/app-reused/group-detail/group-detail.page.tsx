@@ -315,7 +315,7 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
       }
     }
     createGroup();
-  }, [formValidation, name])
+  }, [formValidation, name, formTouched])
 
   useEffect(() => setAddedUsers(existingUsers), [existingUsers])
   useEffect(() => setName(group.baseInfo.name), [group.baseInfo.name])
@@ -451,6 +451,7 @@ function SearchUserToAdd({ addedUsers, setAddedUsers }: {
               <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
               <td className="usi-full-name">{user.fullName}</td>
               <td className="usi-email">{user.email}</td>
+              <td className="usi-dep quick-blue-tag">{user.department}</td>
               <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
             </tr>
           })

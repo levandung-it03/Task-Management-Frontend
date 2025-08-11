@@ -36,47 +36,48 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers }: 
     fetchAssignedUsers()
   }, [taskInfo.id])
 
-  return <>
-    <div className="analyst-quantities">
-      <div className="small-caption">
-        <ClipboardList className="sc-icon" />
-        <span className="sc-title">Assigned Users</span>
-        <i className="sc-desc">All assigned Users for this Task are here, and a short analyst.</i>
+  return (assignedUsers.length > 0
+    && <>
+      <div className="analyst-quantities">
+        <div className="small-caption">
+          <ClipboardList className="sc-icon" />
+          <span className="sc-title">Assigned Users</span>
+          <i className="sc-desc">All assigned Users for this Task are here{assignedUsers.length > 1 && ", and a short analyst."}</i>
+        </div>
+        <div className="quantities">
+          <div className="quantity-block total-users">
+            <h1 className="analyst-number">{assignedUsers.length}</h1>
+            <span className="analyst-category">Total Users</span>
+          </div>
+          <div className="quantity-block total-completed">
+            <h1 className="analyst-number">
+              {totalUsersDone}
+            </h1>
+            <span className="analyst-category">Users Done</span>
+          </div>
+          <div className="quantity-block total-in-progress">
+            <h1 className="analyst-number">
+              {assignedUsers.length - totalUsersDone - totalUsersKickedOut}
+            </h1>
+            <span className="analyst-category">In Progress</span>
+          </div>
+          <div className="quantity-block total-kicked-out">
+            <h1 className="analyst-number">
+              {totalUsersKickedOut}
+            </h1>
+            <span className="analyst-category">Kicked Out</span>
+          </div>
+        </div>
       </div>
-      <div className="quantities">
-        <div className="quantity-block total-users">
-          <h1 className="analyst-number">{assignedUsers.length}</h1>
-          <span className="analyst-category">Total Users</span>
-        </div>
-        <div className="quantity-block total-completed">
-          <h1 className="analyst-number">
-            {totalUsersDone}
-          </h1>
-          <span className="analyst-category">Users Done</span>
-        </div>
-        <div className="quantity-block total-in-progress">
-          <h1 className="analyst-number">
-            {assignedUsers.length - totalUsersDone - totalUsersKickedOut}
-          </h1>
-          <span className="analyst-category">In Progress</span>
-        </div>
-        <div className="quantity-block total-kicked-out">
-          <h1 className="analyst-number">
-            {totalUsersKickedOut}
-          </h1>
-          <span className="analyst-category">Kicked Out</span>
-        </div>
-      </div>
-    </div>
-    <ul className="assigned-users">
-      {isLoading
-        ? <li className="loading-row">Loading...</li>
-        : assignedUsers.map((user, ind) => 
-          <UserTag key={"usi-" + ind} isTaskOwner={isTaskOwner} userTask={user} assignedUsers={assignedUsers} />
-        )
-      }
-    </ul>
-  </>
+      <ul className="assigned-users">
+        {isLoading
+          ? <li className="loading-row">Loading...</li>
+          : assignedUsers.map((user, ind) => 
+            <UserTag key={"usi-" + ind} isTaskOwner={isTaskOwner} userTask={user} assignedUsers={assignedUsers} />
+          )
+        }
+      </ul>
+    </>)
 }
 
 function UserTag({ isTaskOwner, userTask, assignedUsers }: { 
@@ -121,11 +122,12 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
 
   return <a
     className={`user-short-info${(extractEmailToGetId(userTask.email) in assignedUsers) ? " user-short-info-selected" : ""}`}
-    href={`/user-task/${userTask.id}`}
+    href={`${window.location.pathname}/user-task/${userTask.id}`}
   >
     <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
     <span className="usi-full-name">{userTask.fullName}</span>
     <span className="usi-email">{userTask.email}</span>
+    <span className="usi-dep quick-blue-tag">{userTask.department}</span>
     <span className={`usi-role usi-${userTask.role.toLowerCase().replace("_", "-")}`}>{userTask.role}</span>
     {userTask.wasDone
       ? <span className="usi-status quick-green-tag">Done</span>

@@ -22,6 +22,7 @@ export type ListNumberResponse = ApiResponse<number[]>;
 export interface ErrorResponse {
   response?: {
     data?: unknown;
+    status?: number;
   };
   [key: string]: unknown;
 }
@@ -33,6 +34,19 @@ export class GeneralAPIs {
       if (GlobalValidators.nonNull(err.response?.data) && GlobalValidators.notEmpty(err.response?.data)) {
         const response = err.response!.data as ApiResponse<null>
         toast.error(response.msg)
+        return response
+      }
+      return err
+    }
+    return error;
+  }
+  
+  static extractRawError(error: unknown): unknown {
+    if (typeof error === "object" && error !== null && "response" in error) {
+      const err = error as ErrorResponse;
+      if (GlobalValidators.nonNull(err.response?.data) && GlobalValidators.notEmpty(err.response?.data)) {
+        const response = err.response
+        toast.error("Request failed, try again!")
         return response
       }
       return err
@@ -72,7 +86,6 @@ export class GeneralAPIs {
       const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/authorize-email`)
       return response.data
     } catch (error: unknown) {
-      console.log(error)
       return GeneralAPIs.extractError(error)
     }
   }

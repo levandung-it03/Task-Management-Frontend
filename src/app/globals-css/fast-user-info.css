@@ -59,32 +59,8 @@
     color: var(--main-text-grey);
   }
 
-  .usi-role {
-    width: fit-content;
-    font-size: 13px !important;
-    padding: 2px 8px;
-    text-align: center;
-    border-radius: 10px;
-  }
-
-  .usi-role-admin {
-    color: var(--role-admin-border) !important;
-    background-color: var(--role-admin-bg);
-  }
-
-  .usi-role-pm {
-    color: var(--role-pm-border) !important;
-    background-color: var(--role-pm-bg);
-  }
-
-  .usi-role-lead {
-    color: var(--role-lead-border) !important;
-    background-color: var(--role-lead-bg);
-  }
-
-  .usi-role-emp {
-    color: var(--role-emp-border) !important;
-    background-color: var(--role-emp-bg);
+  .usi-dep {
+    margin-right: 10px;
   }
 }
 
@@ -96,4 +72,33 @@
   .usi-email {
     color: var(--foreground);
   }
+}
+
+
+.usi-role {
+  width: fit-content;
+  font-size: 13px !important;
+  padding: 2px 8px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.usi-role-admin {
+  color: var(--role-admin-border) !important;
+  background-color: var(--role-admin-bg);
+}
+
+.usi-role-pm {
+  color: var(--role-pm-border) !important;
+  background-color: var(--role-pm-bg);
+}
+
+.usi-role-lead {
+  color: var(--role-lead-border) !important;
+  background-color: var(--role-lead-bg);
+}
+
+.usi-role-emp {
+  color: var(--role-emp-border) !important;
+  background-color: var(--role-emp-bg);
 }

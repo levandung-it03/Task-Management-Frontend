@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import "./page.scss"
 
 export default function UserInfo() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [canChangePassword, setCanChangePassword] = useState(false)
 
   useEffect(() => {
@@ -16,8 +16,8 @@ export default function UserInfo() {
       return
     try {
       const claims: Record<string, string> = AuthHelper.extractToken(token)
-      setEmail(claims.sub)
-      setCanChangePassword(claims.IS_OAUTH2 === "false")
+      setUsername(claims.sub)
+      // setCanChangePassword(claims.IS_OAUTH2 === "false")
     } catch {
       AuthHelper.endClientSession()
     }
@@ -28,7 +28,8 @@ export default function UserInfo() {
       <UserInfoForm />
     </div>
     <div className="account-info">
-      {canChangePassword && <AccountForm email={email} />}
+      <AccountForm username={username} />
     </div>
   </div>
 }
+// {canChangePassword && <AccountForm username={username} />}
