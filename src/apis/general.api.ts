@@ -1,4 +1,5 @@
 import { DTO_ChangePasswordRequest, DTO_EmailResponse, DTO_Token, DTO_VerifyEmailRequest } from "@/dtos/general.dto";
+import { DTO_ViewUserResponse } from "@/dtos/view-user.page.dto";
 import { AuthHelper } from "@/util/auth.helper";
 import axiosInstance from "@/util/axios.helper"
 import GlobalValidators from "@/util/global.validators";
@@ -143,6 +144,15 @@ export class GeneralAPIs {
   static async getEmail(): Promise<ApiResponse<DTO_EmailResponse> | unknown> {
     try {
       const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/email`)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async viewUserById(userId: number): Promise<ApiResponse<DTO_ViewUserResponse> | unknown> {
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/user-info/${userId}`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)

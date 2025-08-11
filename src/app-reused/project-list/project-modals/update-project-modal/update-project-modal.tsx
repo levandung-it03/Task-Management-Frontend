@@ -1,8 +1,9 @@
+"use client";
 import React, { useState, useRef, useEffect } from 'react';
-import { DTO_ProjectItem } from '../../../@/dtos/home.page.dto';
-import { ProjectAPIs } from '../../../../apis/emp.project.page.api';
-import { ApiResponse } from '../../../../apis/general.api';
-import { DateValidationHelper, ValidationResult } from '../../../../util/date-validation.helper';
+import { DTO_ProjectItem } from '@/dtos/home.page.dto';
+import { ProjectAPIs } from '@/apis/project.page.api';
+import { ApiResponse } from '@/apis/general.api';
+import { DateValidationHelper, ValidationResult } from '@/util/date-validation.helper';
 import './update-project-modal.scss';
 
 interface UpdateProjectModalProps {
@@ -20,7 +21,19 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
 
   useEffect(() => {
     if (project) {
-      setForm({ ...project });
+      console.log('Project data received:', project);
+      console.log('startDate:', project.startDate, 'type:', typeof project.startDate);
+      console.log('dueDate:', project.dueDate, 'type:', typeof project.dueDate);
+      
+      // Ensure dates are in YYYY-MM-DD format for HTML date inputs
+      const formattedProject = {
+        ...project,
+        startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
+        dueDate: project.dueDate ? new Date(project.dueDate).toISOString().split('T')[0] : ''
+      };
+      
+      console.log('Formatted project:', formattedProject);
+      setForm(formattedProject);
     }
   }, [project]);
 
@@ -41,13 +54,15 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
     e.preventDefault();
     if (!form) return;
     
+    console.log('Starting update process...');
+    
     // Validate form data before submission
     const validation = DateValidationHelper.validateProjectForm(
       form.name || '',
       form.description || '',
       form.startDate || '',
-      form.endDate || '',
-      form.deadline || ''
+      null, // endDate removed
+      (form.dueDate as string) || '' // dueDate maps to deadline parameter in validation
     );
     
     if (!validation.isValid) {
@@ -58,22 +73,35 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
     setValidationErrors([]);
     
     try {
+      console.log('Calling API to update project...');
       const updatedRes = await ProjectAPIs.updateProject(form.id, {
         name: form.name,
         description: form.description,
         startDate: form.startDate,
-        endDate: form.endDate,
-        deadline: form.deadline,
-        status: form.status as 'Pending' | 'Running' | 'Completed' | 'Cancelled',
+        dueDate: form.dueDate
       });
       const updated = (updatedRes as ApiResponse<DTO_ProjectItem>).body;
       if (updated) {
+        console.log('Project updated successfully, closing modal...');
         onUpdate(updated);
         setValidationErrors([]);
+        // Close the modal after successful update
+        onClose();
+        console.log('About to reload page...');
+        window.location.reload(); // Reload lại trang sau khi cập nhật thành công
+      } else {
+        console.log('No updated data received, but closing modal anyway...');
+        onClose();
+        console.log('About to reload page even without updated data...');
+        window.location.reload(); // Reload ngay cả khi không có data mới
       }
     } catch (error) {
       console.error('Error updating project:', error);
       alert('An error occurred while updating the project. Please try again!');
+      // Close modal even on error
+      onClose();
+      console.log('About to reload page after error...');
+      window.location.reload(); // Reload ngay cả khi có lỗi
     }
   };
 
@@ -144,48 +172,20 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
                   disabled={!canUpdateProject}
                 />
               </fieldset>
-
-              <fieldset className="update-project-modal-fieldset">
-                <legend className="update-project-modal-legend">End Date</legend>
-                <input
-                  type="date"
-                  value={form.endDate || ''}
-                  onChange={e => setForm(f => f ? { ...f, endDate: e.target.value } : f)}
-                  className="update-project-modal-input"
-                  min={DateValidationHelper.getMinEndDate(form.startDate || '')}
-                  max={DateValidationHelper.getMaxEndDate(form.deadline || '')}
-                  disabled={!canUpdateProject}
-                />
-              </fieldset>
             </div>
 
             <div className="update-project-modal-column">
               <fieldset className="update-project-modal-fieldset">
-                <legend className="update-project-modal-legend">Deadline</legend>
+                <legend className="update-project-modal-legend">Due Date</legend>
                 <input
                   type="date"
-                  value={form.deadline || ''}
-                  onChange={e => setForm(f => f ? { ...f, deadline: e.target.value } : f)}
+                  value={form.dueDate || ''}
+                  onChange={e => setForm(f => f ? { ...f, dueDate: e.target.value } : f)}
                   className="update-project-modal-input"
-                  min={DateValidationHelper.getMinDeadline(form.startDate || '')}
+                  min={DateValidationHelper.getMinDueDate(form.startDate || '')}
                   required
                   disabled={!canUpdateProject}
                 />
-              </fieldset>
-
-              <fieldset className="update-project-modal-fieldset">
-                <legend className="update-project-modal-legend">Status</legend>
-                <select
-                  value={form.status || ''}
-                  onChange={e => setForm(f => f ? { ...f, status: e.target.value as 'Pending' | 'Running' | 'Completed' | 'Cancelled' } : f)}
-                  className="update-project-modal-select"
-                  required
-                  disabled={!canUpdateProject}
-                >
-                  {['Pending', 'Running', 'Completed', 'Cancelled'].map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
               </fieldset>
             </div>
           </div>

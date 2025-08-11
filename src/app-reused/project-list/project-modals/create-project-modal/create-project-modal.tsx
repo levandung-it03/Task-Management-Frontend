@@ -1,6 +1,6 @@
 import React from 'react';
-import { DTO_ProjectItem } from '../../../@/dtos/home.page.dto';
-import CreateProjectModal from '../../../../app-reused/create-project-modal';
+import { DTO_ProjectItem } from '@/dtos/home.page.dto';
+import CreateProjectModal from '@/app-reused/create-project-modal';
 import './create-project-modal.scss';
 
 interface CreateProjectModalProps {
@@ -21,9 +21,7 @@ export function CreateProjectModalComponent({ open, onClose, onCreate }: CreateP
         name: '',
         description: '',
         startDate: '',
-        endDate: '',
-        deadline: '',
-        status: 'Pending',
+        dueDate: '',
       }}
     />
   );

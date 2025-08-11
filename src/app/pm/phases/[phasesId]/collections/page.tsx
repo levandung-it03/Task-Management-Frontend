@@ -1,1 +1,12 @@
-//-- Đây là trang CollectionList (xem danh sách Collections), cần đưa phaseId cho API, mới lấy được danh sách Collection (của Phase đó)
+'use client'
+
+import { CollectionDetail } from "@/app-reused/collection-detail"; // file hiển thị danh sách collection
+import { useParams } from "next/navigation";
+
+// Đây là trang CollectionListPage: Xem danh sách collections theo phase
+export default function PMCollectionsPage() {
+  const params = useParams<{ phasesId: string }>()
+  const phaseId = Number(params.phasesId)
+
+  return <CollectionDetail phaseId={phaseId} />
+}

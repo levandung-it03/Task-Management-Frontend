@@ -23,13 +23,27 @@ export interface DTO_ProjectItem {
   id: number;
   name: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  deadline: string;
-  status: 'Pending' | 'Running' | 'Completed' | 'Cancelled';
-  active?: boolean;
+  startDate: string;        
+  endDate?: string | null;  
+  dueDate: string;
+  active: boolean;
+  createdTime: string;      
+  updatedTime: string;
+}
+
+export interface DTO_ProjectItem1 {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string;        
+  endDate?: string | null;  
+  dueDate: string;
+  active: boolean;
+  createdTime: string;      
+  updatedTime: string;
   leaders?: Record<string, DTO_Leader>;
 }
+
 
 export interface DTO_Group {
   id: number;

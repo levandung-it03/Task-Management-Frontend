@@ -15,7 +15,7 @@ export class DateValidationHelper {
    * @param description - Mô tả project (có thể null)
    * @param startDate - Ngày bắt đầu (bắt buộc)
    * @param endDate - Ngày kết thúc (có thể null)
-   * @param deadline - Hạn chót (bắt buộc)
+   * @param dueDate - Hạn chót (bắt buộc)
    * @returns ValidationResult
    */
   static validateProjectForm(
@@ -23,7 +23,7 @@ export class DateValidationHelper {
     description: string | null | undefined,
     startDate: string,
     endDate: string | null | undefined,
-    deadline: string
+    dueDate: string
   ): ValidationResult {
     const errors: string[] = [];
 
@@ -37,15 +37,15 @@ export class DateValidationHelper {
       errors.push('Ngày bắt đầu không được để trống');
     }
 
-    // 3. Validate deadline - Bắt buộc
-    if (!deadline || deadline.trim() === '') {
+    // 3. Validate dueDate - Bắt buộc
+    if (!dueDate || dueDate.trim() === '') {
       errors.push('Hạn chót không được để trống');
     }
 
-    // 4. Validate deadline > start_date
-    if (startDate && deadline) {
+    // 4. Validate dueDate > start_date
+    if (startDate && dueDate) {
       const start = new Date(startDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (due <= start) {
         errors.push('Hạn chót phải lớn hơn ngày bắt đầu');
@@ -62,10 +62,10 @@ export class DateValidationHelper {
       }
     }
 
-    // 6. Validate end_date <= deadline (nếu có end_date và deadline)
-    if (endDate && endDate.trim() !== '' && deadline) {
+    // 6. Validate end_date <= dueDate (nếu có end_date và dueDate)
+    if (endDate && endDate.trim() !== '' && dueDate) {
       const end = new Date(endDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (end > due) {
         errors.push('Ngày kết thúc không được vượt quá hạn chót');
@@ -84,7 +84,7 @@ export class DateValidationHelper {
    * @param description - Mô tả phase (có thể null)
    * @param startDate - Ngày bắt đầu (bắt buộc)
    * @param endDate - Ngày kết thúc (có thể null)
-   * @param deadline - Hạn chót (bắt buộc)
+   * @param dueDate - Hạn chót (bắt buộc)
    * @returns ValidationResult
    */
   static validatePhaseForm(
@@ -92,7 +92,7 @@ export class DateValidationHelper {
     description: string | null | undefined,
     startDate: string,
     endDate: string | null | undefined,
-    deadline: string
+    dueDate: string
   ): ValidationResult {
     const errors: string[] = [];
 
@@ -106,15 +106,15 @@ export class DateValidationHelper {
       errors.push('Ngày bắt đầu không được để trống');
     }
 
-    // 3. Validate deadline - Bắt buộc
-    if (!deadline || deadline.trim() === '') {
+    // 3. Validate dueDate - Bắt buộc
+    if (!dueDate || dueDate.trim() === '') {
       errors.push('Hạn chót không được để trống');
     }
 
-    // 4. Validate deadline > start_date
-    if (startDate && deadline) {
+    // 4. Validate dueDate > start_date
+    if (startDate && dueDate) {
       const start = new Date(startDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (due <= start) {
         errors.push('Hạn chót phải lớn hơn ngày bắt đầu');
@@ -131,10 +131,10 @@ export class DateValidationHelper {
       }
     }
 
-    // 6. Validate end_date <= deadline (nếu có end_date và deadline)
-    if (endDate && endDate.trim() !== '' && deadline) {
+    // 6. Validate end_date <= dueDate (nếu có end_date và dueDate)
+    if (endDate && endDate.trim() !== '' && dueDate) {
       const end = new Date(endDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (end > due) {
         errors.push('Ngày kết thúc không được vượt quá hạn chót');
@@ -152,16 +152,14 @@ export class DateValidationHelper {
    * @param name - Tên collection (bắt buộc)
    * @param description - Mô tả collection (có thể null)
    * @param startDate - Ngày bắt đầu (bắt buộc)
-   * @param endDate - Ngày kết thúc (có thể null)
-   * @param deadline - Hạn chót (bắt buộc)
+   * @param dueDate - Hạn chót (bắt buộc)
    * @returns ValidationResult
    */
   static validateCollectionForm(
     name: string,
     description: string | null | undefined,
     startDate: string,
-    endDate: string | null | undefined,
-    deadline: string
+    dueDate: string
   ): ValidationResult {
     const errors: string[] = [];
 
@@ -175,38 +173,18 @@ export class DateValidationHelper {
       errors.push('Ngày bắt đầu không được để trống');
     }
 
-    // 3. Validate deadline - Bắt buộc
-    if (!deadline || deadline.trim() === '') {
+    // 3. Validate dueDate - Bắt buộc
+    if (!dueDate || dueDate.trim() === '') {
       errors.push('Hạn chót không được để trống');
     }
 
-    // 4. Validate deadline > start_date
-    if (startDate && deadline) {
+    // 4. Validate dueDate > start_date
+    if (startDate && dueDate) {
       const start = new Date(startDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (due <= start) {
         errors.push('Hạn chót phải lớn hơn ngày bắt đầu');
-      }
-    }
-
-    // 5. Validate end_date >= start_date (nếu có end_date)
-    if (endDate && endDate.trim() !== '' && startDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      
-      if (end < start) {
-        errors.push('Ngày kết thúc phải bằng hoặc sau ngày bắt đầu');
-      }
-    }
-
-    // 6. Validate end_date <= deadline (nếu có end_date và deadline)
-    if (endDate && endDate.trim() !== '' && deadline) {
-      const end = new Date(endDate);
-      const due = new Date(deadline);
-      
-      if (end > due) {
-        errors.push('Ngày kết thúc không được vượt quá hạn chót');
       }
     }
 
@@ -220,13 +198,13 @@ export class DateValidationHelper {
    * Validate date constraints for project creation/update
    * @param startDate - Ngày bắt đầu (bắt buộc)
    * @param endDate - Ngày kết thúc (có thể null)
-   * @param deadline - Hạn chót (bắt buộc)
+   * @param dueDate - Hạn chót (bắt buộc)
    * @returns DateValidationResult
    */
   static validateProjectDates(
     startDate: string,
     endDate: string | null | undefined,
-    deadline: string
+    dueDate: string
   ): DateValidationResult {
     const errors: string[] = [];
 
@@ -235,15 +213,15 @@ export class DateValidationHelper {
       errors.push('Ngày bắt đầu không được để trống');
     }
 
-    // 2. Validate deadline - Bắt buộc phải có giá trị
-    if (!deadline || deadline.trim() === '') {
+    // 2. Validate dueDate - Bắt buộc phải có giá trị
+    if (!dueDate || dueDate.trim() === '') {
       errors.push('Hạn chót không được để trống');
     }
 
-    // 3. Validate deadline > start_date
-    if (startDate && deadline) {
+    // 3. Validate dueDate > start_date
+    if (startDate && dueDate) {
       const start = new Date(startDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (due <= start) {
         errors.push('Hạn chót phải lớn hơn ngày bắt đầu');
@@ -260,10 +238,10 @@ export class DateValidationHelper {
       }
     }
 
-    // 5. Validate end_date <= deadline (nếu có end_date và deadline)
-    if (endDate && endDate.trim() !== '' && deadline) {
+    // 5. Validate end_date <= dueDate (nếu có end_date và dueDate)
+    if (endDate && endDate.trim() !== '' && dueDate) {
       const end = new Date(endDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (end > due) {
         errors.push('Ngày kết thúc không được vượt quá hạn chót');
@@ -280,13 +258,13 @@ export class DateValidationHelper {
    * Validate date constraints for phase creation/update
    * @param startDate - Ngày bắt đầu (bắt buộc)
    * @param endDate - Ngày kết thúc (có thể null)
-   * @param deadline - Hạn chót (bắt buộc)
+   * @param dueDate - Hạn chót (bắt buộc)
    * @returns DateValidationResult
    */
   static validatePhaseDates(
     startDate: string,
     endDate: string | null | undefined,
-    deadline: string
+    dueDate: string
   ): DateValidationResult {
     const errors: string[] = [];
 
@@ -295,15 +273,15 @@ export class DateValidationHelper {
       errors.push('Ngày bắt đầu không được để trống');
     }
 
-    // 2. Validate deadline - Bắt buộc phải có giá trị
-    if (!deadline || deadline.trim() === '') {
+    // 2. Validate dueDate - Bắt buộc phải có giá trị
+    if (!dueDate || dueDate.trim() === '') {
       errors.push('Hạn chót không được để trống');
     }
 
-    // 3. Validate deadline > start_date
-    if (startDate && deadline) {
+    // 3. Validate dueDate > start_date
+    if (startDate && dueDate) {
       const start = new Date(startDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (due <= start) {
         errors.push('Hạn chót phải lớn hơn ngày bắt đầu');
@@ -320,10 +298,10 @@ export class DateValidationHelper {
       }
     }
 
-    // 5. Validate end_date <= deadline (nếu có end_date và deadline)
-    if (endDate && endDate.trim() !== '' && deadline) {
+    // 5. Validate end_date <= dueDate (nếu có end_date và dueDate)
+    if (endDate && endDate.trim() !== '' && dueDate) {
       const end = new Date(endDate);
-      const due = new Date(deadline);
+      const due = new Date(dueDate);
       
       if (end > due) {
         errors.push('Ngày kết thúc không được vượt quá hạn chót');
@@ -353,9 +331,9 @@ export class DateValidationHelper {
   }
 
   /**
-   * Get minimum date for deadline input (must be > start_date)
+   * Get minimum date for dueDate input (must be > start_date)
    */
-  static getMinDeadline(startDate: string): string {
+  static getMinDueDate(startDate: string): string {
     if (!startDate) return '';
     const start = new Date(startDate);
     start.setDate(start.getDate() + 1);
@@ -363,10 +341,10 @@ export class DateValidationHelper {
   }
 
   /**
-   * Get maximum date for end_date input (must be <= deadline)
+   * Get maximum date for end_date input (must be <= dueDate)
    */
-  static getMaxEndDate(deadline: string): string {
-    if (!deadline) return '';
-    return deadline;
+  static getMaxEndDate(dueDate: string): string {
+    if (!dueDate) return '';
+    return dueDate;
   }
 } 

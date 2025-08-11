@@ -1,10 +1,10 @@
 import React from 'react';
-import { DTO_CollectionItem } from '../../../dtos/emp.collection.page.dto';
+import { DTO_CollectionItem } from '../../../dtos/collection.page.dto';
 import './collection-list.scss';
 
 interface CollectionListProps {
   collections: DTO_CollectionItem[];
-  onCollectionClick: (collectionId: string) => void;
+  onCollectionClick: (collectionId: number) => void;
   onOpenUpdate: (collection: DTO_CollectionItem) => void;
   onDeleteCollection: (collection: DTO_CollectionItem) => void;
   canDeleteCollection?: boolean;
@@ -17,12 +17,15 @@ export default function CollectionList({
   onDeleteCollection,
   canDeleteCollection
 }: CollectionListProps) {
+  // Filter out any null or undefined collections to prevent errors
+  const validCollections = collections.filter(collection => collection != null);
+
   return (
     <div className="collection-list">
-      {collections.map((collection) => (
+      {validCollections.map((collection) => (
         <div 
-          key={collection.id} 
-          className={`collection-item ${collection.active === false ? 'disabled' : ''}`}
+          key={`collection-${collection.id}`} 
+          className="collection-item"
         >
           <div className="collection-info">
             <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -31,36 +34,31 @@ export default function CollectionList({
             </svg>
             <span 
               className="collection-name"
-              onClick={() => collection.active !== false && onCollectionClick(collection.id)}
+              onClick={() => onCollectionClick(collection.id)}
             >
               {collection.name}
-              {collection.active === false && <span className="disabled-label">(Disabled)</span>}
             </span>
           </div>
           <div className="collection-deadline">
-            Deadline: <span className="deadline-value">{collection.deadline}</span>
+            Due Date: <span className="deadline-value">{collection.dueDate}</span>
           </div>
           <button
             className="view-details-btn"
-            onClick={() => collection.active !== false && onOpenUpdate(collection)}
-            disabled={collection.active === false}
+            onClick={() => onOpenUpdate(collection)}
           >
             View Collection Details
           </button>
-          {canDeleteCollection && (
+          {canDeleteCollection ? (
             <button
+              key={`delete-${collection.id}`}
               className="delete-btn"
-              onClick={() => {
-                if (collection.active === false) return;
-                onDeleteCollection(collection);
-              }}
-              disabled={collection.active === false}
+              onClick={() => onDeleteCollection(collection)}
             >
-              <svg width="20" height="20" fill="none" stroke={collection.active === false ? '#ccc' : '#dc2626'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0v2m4-2v2m4-2v2"/>
               </svg>
             </button>
-          )}
+          ) : null}
         </div>
       ))}
     </div>

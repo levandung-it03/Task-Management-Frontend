@@ -48,5 +48,17 @@
       border-color: #22c55e;
       cursor: not-allowed;
     }
+
+    &--early {
+      background: #22c55e;
+      border-color: #22c55e;
+      color: #fff;
+    }
+
+    &--late {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
   }
 } 

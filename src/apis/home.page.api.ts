@@ -32,19 +32,19 @@ export class HomeAPIs {
             status: 200,
             body: [
               {
-                id: '1',
+                id: 1,
                 groupAvatar: '/images/avatar1.png',
                 groupName: 'Dev IT batch 48',
                 role: 'OWNER',
               },
               {
-                id: '2',
+                id: 2,
                 groupAvatar: '/images/avatar2.png',
                 groupName: 'Dev IT batch 45',
                 role: 'MEMBER',
               },
               {
-                id: '3',
+                id: 3,
                 groupAvatar: '/images/avatar3.png',
                 groupName: 'Dev IT batch 30',
                 role: 'MEMBER',

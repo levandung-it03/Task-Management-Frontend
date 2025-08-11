@@ -6,11 +6,11 @@ import PhaseForm from './phase-form/phase-form';
 import PhaseActions from './phase-actions/phase-actions';
 import './phase-detail.scss';
 import { usePermission } from '@/util/usePermission.hook';
-import { PhaseAPIs } from '@/apis/emp.phase.page.api';
+import { PhaseAPIs } from '@/apis/phase.page.api';
 import { ApiResponse } from '@/apis/general.api';
 import { confirm } from '../confirm-alert/confirm-alert';
-import { DTO_CreatePhase, DTO_DeletePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
-
+import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
+import { AuthHelper } from '../../util/auth.helper';
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
   const permissions = usePermission();
@@ -26,25 +26,44 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     name: '',
     description: '',
     startDate: '',
-    endDate: '',
-    deadline: '',
-    status: 'Pending',
+    dueDate: '',
   });
   const createModalRef = useRef<HTMLDivElement>(null);
 
   // Hàm xử lý click vào phase để chuyển đến trang collection
-  const handlePhaseClick = (phaseId: string) => {
-    router.push(`/emp/collection?phaseId=${phaseId}`);
+  const handlePhaseClick = (phaseId: number) => {
+    const role = AuthHelper.getRoleFromToken();
+    
+    const rolePaths: Record<string, string> = {
+      pm: '/pm',
+      lead: '/lead',
+      emp: '/emp'
+    };
+  
+    const basePath = rolePaths[role];
+    if (!basePath) {
+      console.error('Role không hợp lệ:', role);
+      return;
+    }
+  
+    router.push(`${basePath}/phases/${phaseId}/collections`);
   };
+  
 
   useEffect(() => {
-    PhaseAPIs.getPhaseData().then((response) => {
-      const data = (response as ApiResponse<DTO_PhaseItem[]>).body;
-      if (data) {
-        setPhases(data);
-      }
-    });
-  }, []);
+    if (projectId) {
+      PhaseAPIs.getPhasesByProject(Number(projectId)).then((response) => {
+        if (response && typeof response === 'object' && 'body' in response && response.body) {
+          const data = (response as ApiResponse<DTO_PhaseItem[]>).body;
+          setPhases(data);
+        } else {
+          console.error('Invalid response format:', response);
+        }
+      }).catch((error) => {
+        console.error('Error loading phases:', error);
+      });
+    }
+  }, [projectId]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,13 +92,17 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
     if (form) {
-      const { id, name, description, startDate, endDate, deadline, status } = form;
-      PhaseAPIs.updatePhase(id, { name, description, startDate, endDate, deadline, status }).then((res) => {
-        if (res && typeof res === 'object' && 'body' in res) {
-          setPhases((prev) => prev.map((p) => (p.id === id ? (res as any).body : p)));
+      const { id, name, description, startDate, dueDate } = form;
+      PhaseAPIs.updatePhase(id, { name, description, startDate, dueDate }).then((res) => {
+        if (res && typeof res === 'object' && 'status' in res && res.status === 200) {
+          // Update the phase in the local state with the form data
+          setPhases((prev) => prev.map((p) => (p.id === id ? { ...p, name, description, startDate, dueDate, updatedTime: new Date().toISOString().slice(0, 19).replace('T', ' ') } : p)));
           setShowUpdateModal(false);
+        } else {
+          console.error('Invalid response format:', res);
+          alert('Invalid response from server. Please try again!');
         }
-      }).catch((error) => {
+      }).catch((error: unknown) => {
         console.error('Error updating phase:', error);
         alert('An error occurred while updating the phase. Please try again!');
       });
@@ -89,25 +112,17 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   // Hàm xóa phase
   const handleDeletePhase = async (phase: DTO_PhaseItem) => {
     try {
-      const hasCollections = await checkPhaseHasCollections(phase.id);
-      const message = hasCollections 
-        ? 'This phase has child data (collections). Do you want to disable this phase?'
-        : 'Are you sure you want to delete this phase?';
-      const title = hasCollections ? 'Disable Phase' : 'Delete Phase';
-      
-      const ok = await confirm(message, title);
+      const ok = await confirm('Are you sure you want to delete this phase?', 'Delete Phase');
       if (!ok) return;
       
-      const request = new DTO_DeletePhase().bquery(phase.id, !hasCollections);
-      const response = await PhaseAPIs.deletePhase(request);
-      const result = (response as ApiResponse<{ phaseId: string; deleted: boolean; softDeleted: boolean }>).body;
+      const response = await PhaseAPIs.deletePhase(phase.id);
       
-      if (result) {
-        if (result.deleted) {
-          setPhases(prev => prev.filter(p => p.id !== phase.id));
-        } else if (result.softDeleted) {
-          setPhases(prev => prev.map(p => p.id === phase.id ? { ...p, active: false } : p));
-        }
+      if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
+        // Remove the phase from the local state
+        setPhases(prev => prev.filter(p => p.id !== phase.id));
+      } else {
+        console.error('Invalid response format:', response);
+        alert('Invalid response from server. Please try again!');
       }
     } catch (error) {
       console.error('Error deleting phase:', error);
@@ -115,31 +130,33 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     }
   };
 
-  // Hàm kiểm tra phase có collection hay không
-  const checkPhaseHasCollections = async (phaseId: string): Promise<boolean> => {
-    try {
-      const response = await PhaseAPIs.checkPhaseHasCollections(phaseId);
-      const data = (response as ApiResponse<{ count: number }>).body;
-      return data ? data.count > 0 : false;
-    } catch (error) {
-      console.error('Error checking phase collections:', error);
-      return true;
-    }
-  };
-
   const handleCreatePhase = async () => {
     try {
-      const res = await PhaseAPIs.createPhase(projectId, createForm as DTO_CreatePhase);
-      if (res && typeof res === 'object' && 'body' in res) {
-        setPhases(d => [(res as any).body, ...d]);
+      const res = await PhaseAPIs.createPhase(projectId, createForm);
+      if (res && typeof res === 'object' && 'body' in res && res.body) {
+        const response = res as ApiResponse<{id: number}>;
+        // Tạo phase item mới từ response
+        const newPhase: DTO_PhaseItem = {
+          id: response.body.id,
+          name: createForm.name,
+          description: createForm.description,
+          startDate: createForm.startDate,
+          dueDate: createForm.dueDate,
+          endDate: null,
+          createdTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
+          updatedTime: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        };
+        setPhases(d => [newPhase, ...d]);
         setShowCreateModal(false);
         setCreateForm({
           name: '',
           description: '',
           startDate: '',
-          deadline: '',
-          status: 'Pending',
+          dueDate: '',
         });
+      } else {
+        console.error('Invalid response format:', res);
+        alert('Invalid response from server. Please try again!');
       }
     } catch (error) {
       console.error('Error creating phase:', error);

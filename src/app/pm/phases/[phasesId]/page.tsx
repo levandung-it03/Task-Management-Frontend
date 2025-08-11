@@ -1,1 +1,11 @@
-//-- Đây là trang coi chi tiết Phases (tên phase, ngày tạo), không phải danh sách Phases (không có thì xoá page.tsx này đi)
+'use client'
+
+import PhaseDetail from "@/app-reused/phase-detail/phase-detail";
+import { useParams } from "next/navigation";
+
+export default function PMPhasesPage() {
+  const params = useParams<{ phasesId: string }>()
+  const projectId = Number(params.phasesId)
+
+  return <PhaseDetail projectId={projectId} />
+}

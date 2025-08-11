@@ -1,6 +1,8 @@
+"use client";
 import React, { useRef, useEffect, useState } from 'react';
-import { DTO_CreateProject, PROJECT_STATUS, ProjectStatus } from '../dtos/create-project.page.dto';
-import { createProject } from '../apis/create-project.page.api';
+import { DTO_CreateProject, PROJECT_STATUS, ProjectStatus } from '@/dtos/project.page.dto';
+import { ProjectAPIs } from '@/apis/project.page.api';
+import { DateValidationHelper } from '@/util/date-validation.helper';
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -15,24 +17,24 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
       name: '',
       description: '',
       startDate: '',
-      endDate: '',
-      deadline: '',
-      status: 'Pending',
+      dueDate: '',
     }
   );
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open) setForm(
-      initialForm || {
-        name: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        deadline: '',
-        status: 'Pending',
-      }
-    );
+    if (open) {
+      setForm(
+        initialForm || {
+          name: '',
+          description: '',
+          startDate: '',
+          dueDate: '',
+        }
+      );
+      setValidationErrors([]);
+    }
   }, [open, initialForm]);
 
   useEffect(() => {
@@ -44,6 +46,51 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
     if (open) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open, onClose]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setForm(f => ({ ...f, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate form data before submission
+    const validation = DateValidationHelper.validateProjectForm(
+      form.name,
+      form.description,
+      form.startDate,
+      null, // endDate is not used in project creation
+      form.dueDate
+    );
+    
+    if (!validation.isValid) {
+      setValidationErrors(validation.errors);
+      return;
+    }
+    
+    setValidationErrors([]);
+    
+    // Log the data being sent
+    console.log('Sending project data:', form);
+    
+    try {
+      onClose();
+      const newProject = await ProjectAPIs.createProject(form as DTO_CreateProject);
+      console.log('Project creation result:', newProject);
+      onCreate(newProject);
+    } catch (error) {
+      console.error('Failed to create project:', error);
+      alert(`Lỗi tạo project: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      return;
+    }
+    setForm({
+      name: '',
+      description: '',
+      startDate: '',
+      dueDate: '',
+    });
+    setValidationErrors([]);
+  };
 
   if (!open) return null;
 
@@ -85,24 +132,40 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
           <span style={{ fontWeight: 700, fontSize: 20, color: '#166534' }}>Create Project</span>
           <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 30, color: '#222', cursor: 'pointer', lineHeight: 1 }}>&times;</button>
         </div>
-        {/* Form 2 columns */}
+        
+        {/* Form */}
         <form
-          onSubmit={async e => {
-            e.preventDefault();
-            onClose();
-            const newProject = await createProject(form as DTO_CreateProject);
-            onCreate(newProject);
-            setForm({
-              name: '',
-              description: '',
-              startDate: '',
-              endDate: '',
-              deadline: '',
-              status: 'Pending',
-            });
-          }}
+          onSubmit={handleSubmit}
           style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 0 }}
         >
+          {/* Validation Errors */}
+          {validationErrors.length > 0 && (
+            <div style={{
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              marginBottom: '16px',
+            }}>
+              <div style={{
+                color: '#dc2626',
+                fontWeight: '600',
+                marginBottom: '8px',
+              }}>
+                Vui lòng sửa các lỗi sau:
+              </div>
+              <ul style={{
+                margin: 0,
+                paddingLeft: '20px',
+                color: '#dc2626',
+              }}>
+                {validationErrors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
           {/* Project Name full row */}
           <fieldset
             style={{
@@ -134,11 +197,13 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               type="text"
               placeholder="..."
               value={form.name}
-              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+              onChange={e => handleInputChange('name', e.target.value)}
               style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
               required
+              minLength={1}
             />
           </fieldset>
+          
           {/* Description full row */}
           <fieldset
             style={{
@@ -169,13 +234,14 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
             <textarea
               placeholder="..."
               value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              onChange={e => handleInputChange('description', e.target.value)}
               style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent', minHeight: 70, resize: 'vertical' }}
             />
           </fieldset>
-          {/* 4 fields in 2 columns, 2 rows */}
+          
+          {/* 2 fields in 2 columns */}
           <div style={{ display: 'flex', gap: 16 }}>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ flex: 1 }}>
               <fieldset
                 style={{
                   border: '2.5px solid #111',
@@ -204,46 +270,20 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                 <input
                   type="date"
                   value={form.startDate}
-                  onChange={e => setForm(f => ({ ...f, startDate: e.target.value }))}
-                  style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
-                  required
-                />
-              </fieldset>
-              <fieldset
-                style={{
-                  border: '2.5px solid #111',
-                  borderRadius: 8,
-                  padding: '0 8px 0 8px',
-                  margin: 0,
-                  minWidth: 0,
-                  position: 'relative',
-                }}
-              >
-                <legend
-                  style={{
-                    fontSize: 16,
-                    color: '#111',
-                    fontWeight: 500,
-                    padding: '0 8px',
-                    letterSpacing: 0.2,
-                    lineHeight: 1,
-                    background: '#fff',
-                    borderRadius: 4,
-                    marginLeft: 8,
+                  onChange={e => {
+                    const newStartDate = e.target.value;
+                    handleInputChange('startDate', newStartDate);
+                    // Reset dueDate if it's now invalid
+                    if (form.dueDate && new Date(form.dueDate) <= new Date(newStartDate)) {
+                      handleInputChange('dueDate', '');
+                    }
                   }}
-                >
-                  End Date
-                </legend>
-                <input
-                  type="date"
-                  value={form.endDate}
-                  onChange={e => setForm(f => ({ ...f, endDate: e.target.value }))}
                   style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
                   required
                 />
               </fieldset>
             </div>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ flex: 1 }}>
               <fieldset
                 style={{
                   border: '2.5px solid #111',
@@ -267,55 +307,21 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                     marginLeft: 8,
                   }}
                 >
-                  Deadline
+                  Due Date
                 </legend>
                 <input
                   type="date"
-                  value={form.deadline}
-                  onChange={e => setForm(f => ({ ...f, deadline: e.target.value }))}
+                  value={form.dueDate}
+                  onChange={e => handleInputChange('dueDate', e.target.value)}
                   style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
                   required
+                  min={DateValidationHelper.getMinDueDate(form.startDate)}
                 />
-              </fieldset>
-              <fieldset
-                style={{
-                  border: '2.5px solid #111',
-                  borderRadius: 8,
-                  padding: '0 8px 0 8px',
-                  margin: 0,
-                  minWidth: 0,
-                  position: 'relative',
-                }}
-              >
-                <legend
-                  style={{
-                    fontSize: 16,
-                    color: '#111',
-                    fontWeight: 500,
-                    padding: '0 8px',
-                    letterSpacing: 0.2,
-                    lineHeight: 1,
-                    background: '#fff',
-                    borderRadius: 4,
-                    marginLeft: 8,
-                  }}
-                >
-                  Status
-                </legend>
-                <select
-                  value={form.status}
-                  onChange={e => setForm(f => ({ ...f, status: e.target.value as ProjectStatus }))}
-                  style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
-                  required
-                >
-                  {PROJECT_STATUS.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
               </fieldset>
             </div>
           </div>
         </form>
+        
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 18 }}>
           <button
             type="submit"
@@ -335,20 +341,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               letterSpacing: 0.2,
               cursor: 'pointer',
             }}
-            onClick={async (e) => {
-              e.preventDefault();
-              onClose();
-              const newProject = await createProject(form as DTO_CreateProject);
-              onCreate(newProject);
-              setForm({
-                name: '',
-                description: '',
-                startDate: '',
-                endDate: '',
-                deadline: '',
-                status: 'Pending',
-              });
-            }}
+            onClick={handleSubmit}
           >
             Create Project
           </button>

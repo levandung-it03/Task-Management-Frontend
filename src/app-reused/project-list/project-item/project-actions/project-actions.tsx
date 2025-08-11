@@ -1,15 +1,15 @@
 import React from 'react';
-import { DTO_ProjectItem } from '../../../@/dtos/home.page.dto';
-import { confirm } from "../../../confirm-alert/confirm-alert";
-import { ProjectAPIs } from '../../../../apis/emp.project.page.api';
-import { ApiResponse } from '../../../../apis/general.api';
+import { DTO_ProjectItem } from '@/dtos/home.page.dto';
+import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
+import { ProjectAPIs } from '@/apis/project.page.api';
+import { ApiResponse } from '@/apis/general.api';
+import toast from 'react-hot-toast';
 import './project-actions.scss';
 
 interface ProjectActionsProps {
   project: DTO_ProjectItem;
   isDisabled: boolean;
   isCompleting: boolean;
-  isCompleted: boolean;
   onAddLeader: () => void;
   onCompleteProject: () => void;
   permissions?: any;
@@ -19,7 +19,6 @@ export function ProjectActions({
   project,
   isDisabled,
   isCompleting,
-  isCompleted,
   onAddLeader,
   onCompleteProject,
   permissions
@@ -27,27 +26,40 @@ export function ProjectActions({
   const handleCompleteProject = async () => {
     if (isCompleting || isDisabled) return;
     
-    const ok = await confirm('This action cannot be undone. Are you sure?', 'Complete Project');
+    const ok = await confirm('This action cannot be undone. Are you sure?', 'Completed Project');
     if (!ok) return;
     
     try {
-      const updatedRes = await ProjectAPIs.updateProject(project.id, {
-        name: project.name,
-        description: project.description,
-        startDate: project.startDate,
-        endDate: project.endDate,
-        deadline: project.deadline,
-        status: 'Completed',
-      });
-      const updated = (updatedRes as ApiResponse<DTO_ProjectItem>).body;
-      if (updated) {
+      const currentDate = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại
+      const updatedRes = await ProjectAPIs.completeProject(project.id, currentDate);
+      if (updatedRes) {
         onCompleteProject();
+        // Thông báo thành công
+        toast.success('Project completed successfully!');
       }
     } catch (error) {
       console.error('Error completing project:', error);
       alert('An error occurred while completing the project. Please try again!');
     }
   };
+
+  // Kiểm tra project có hoàn thành sớm hay trễ
+  const getCompletionStatus = () => {
+    if (!project.endDate) return null;
+    
+    const endDate = new Date(project.endDate);
+    const dueDate = new Date(project.dueDate);
+    
+    if (endDate > dueDate) {
+      return 'late'; // Trễ
+    } else if (endDate <= dueDate) {
+      return 'early'; // Sớm hoặc đúng hạn
+    }
+    return null;
+  };
+
+  const completionStatus = getCompletionStatus();
+  const isCompleted = !!project.endDate;
 
   return (
     <div className="project-actions">
@@ -64,10 +76,14 @@ export function ProjectActions({
       {permissions?.canCompleteProject && (
         isCompleted ? (
           <button
-            className="project-actions-complete-btn project-actions-complete-btn--completed"
+            className={`project-actions-complete-btn project-actions-complete-btn--completed ${
+              completionStatus === 'late' ? 'project-actions-complete-btn--late' : 
+              completionStatus === 'early' ? 'project-actions-complete-btn--early' : ''
+            }`}
             disabled
           >
-            Complete
+            {completionStatus === 'late' ? 'Completed ' : 
+             completionStatus === 'early' ? 'Completed ' : 'Completed'}
           </button>
         ) : (
           <button
@@ -75,7 +91,7 @@ export function ProjectActions({
             onClick={handleCompleteProject}
             disabled={!!isCompleting || isDisabled}
           >
-            Complete
+            {isCompleting ? 'Completing...' : 'Completed'}
           </button>
         )
       )}

@@ -1,5 +1,5 @@
-import { ProjectAPIs } from '../../apis/emp.project.page.api';
-import { DTO_ProjectItem } from '../@/dtos/home.page.dto';
+import { ProjectAPIs } from '../../apis/project.page.api';
+import { DTO_ProjectItem } from '../../dtos/home.page.dto';
 import { ApiResponse } from '../../apis/general.api';
 
 export class ProjectListService {

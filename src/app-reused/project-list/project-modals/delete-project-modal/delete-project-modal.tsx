@@ -1,8 +1,9 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 import './delete-project-modal.scss';
 import { DTO_ProjectItem } from '@/dtos/home.page.dto';
-import { ProjectAPIs } from '@/apis/emp.project.page.api';
-import { DTO_DeleteProject } from '@/dtos/emp.project.page.dto';
+import { ProjectAPIs } from '@/apis/project.page.api';
+import { DTO_DeleteProject } from '@/dtos/project.page.dto';
 
 interface DeleteProjectModalProps {
   open: boolean;
@@ -13,52 +14,30 @@ interface DeleteProjectModalProps {
 
 export function DeleteProjectModal({ open, project, onClose, onDelete }: DeleteProjectModalProps) {
   const [isDeleting, setIsDeleting] = useState(false);
-  const [hasChildPhases, setHasChildPhases] = useState(false);
-
-  useEffect(() => {
-    if (open && project) {
-      // Check if project has child phases
-      ProjectAPIs.checkProjectHasPhases(project.id)
-        .then(response => {
-          if (response && typeof response === 'object' && 'body' in response) {
-            const apiResponse = response as any;
-            setHasChildPhases(apiResponse.body.count > 0);
-          } else {
-            setHasChildPhases(false);
-          }
-        })
-        .catch(() => {
-          setHasChildPhases(false);
-        });
-    }
-  }, [open, project]);
 
   const handleDelete = async () => {
     if (!project) return;
 
     setIsDeleting(true);
     try {
-      // Create delete request using DTO
-      const deleteRequest = new DTO_DeleteProject().bquery(
-        project.id, 
-        !hasChildPhases // Force delete if no phases, otherwise soft delete
-      );
-
-      // Call delete API
-      const response = await ProjectAPIs.deleteProject(deleteRequest);
+      // Call delete API with project ID
+      const response = await ProjectAPIs.deleteProject(project.id);
       
-      if (response && typeof response === 'object' && 'body' in response) {
+      // The delete API returns ApiResponse<void>, so body is null/void
+      // We consider the deletion successful if we get a response without error
+      if (response && typeof response === 'object' && 'code' in response) {
         const apiResponse = response as any;
-        const deleted = apiResponse.body.deleted;
-        onDelete(project.id, deleted);
+        // Check if the response indicates success (typically code 200 or similar)
+        const isSuccess = apiResponse.code >= 200 && apiResponse.code < 300;
+        onDelete(project.id, isSuccess);
       } else {
         // Fallback if API response is unexpected
-        onDelete(project.id, !hasChildPhases);
+        onDelete(project.id, true);
       }
     } catch (error) {
       console.error('Error deleting project:', error);
       // Fallback on error
-      onDelete(project.id, !hasChildPhases);
+      onDelete(project.id, false);
     } finally {
       setIsDeleting(false);
     }
@@ -86,11 +65,6 @@ export function DeleteProjectModal({ open, project, onClose, onDelete }: DeleteP
           <p className="delete-project-modal-message">
             Are you sure you want to delete the project '{project.name}'?
           </p>
-          {hasChildPhases && (
-            <p className="delete-project-modal-warning">
-              This project has child phases. It will be disabled instead of deleted.
-            </p>
-          )}
           <p className="delete-project-modal-caution">This action cannot be undone.</p>
         </div>
 

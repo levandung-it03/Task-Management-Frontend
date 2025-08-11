@@ -1,10 +1,10 @@
 import React from 'react';
-import { DTO_PhaseItem } from '../../../dtos/emp.phase.page.dto';
+import { DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import './phase-list.scss';
 
 interface PhaseListProps {
   phases: DTO_PhaseItem[];
-  onPhaseClick: (phaseId: string) => void;
+  onPhaseClick: (phaseId: number) => void;
   onUpdateClick: (phase: DTO_PhaseItem) => void;
   onDeleteClick: (phase: DTO_PhaseItem) => void;
   permissions?: any;
@@ -16,7 +16,7 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
       {phases.map((phase) => (
         <div 
           key={phase.id} 
-          className={`phase-card ${phase.active === false ? 'phase-card--disabled' : ''}`}
+          className="phase-card"
         >
           <div className="phase-card__info">
             <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -25,22 +25,20 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
             </svg>
             <span 
               className="phase-card__name"
-              onClick={() => phase.active !== false && onPhaseClick(phase.id)}
+              onClick={() => onPhaseClick(phase.id)}
             >
               {phase.name}
-              {phase.active === false && <span className="phase-card__disabled-text">(Disabled)</span>}
             </span>
           </div>
           
           <div className="phase-card__deadline">
-            Deadline: <span className="phase-card__deadline-text">{phase.deadline}</span>
+            Due Date: <span className="phase-card__deadline-text">{phase.dueDate}</span>
           </div>
           
           {permissions?.canViewPhaseDetails && (
             <button
               className="phase-card__button"
-              onClick={() => phase.active !== false && onUpdateClick(phase)}
-              disabled={phase.active === false}
+              onClick={() => onUpdateClick(phase)}
             >
               View Phase Details
             </button>
@@ -49,11 +47,7 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
           {permissions?.canDeletePhase && (
             <button
               className="phase-card__delete-button"
-              onClick={() => {
-                if (phase.active === false) return;
-                onDeleteClick(phase);
-              }}
-              disabled={phase.active === false}
+              onClick={() => onDeleteClick(phase)}
             >
               <svg width="20" height="20" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0v2m4-2v2m4-2v2"/>

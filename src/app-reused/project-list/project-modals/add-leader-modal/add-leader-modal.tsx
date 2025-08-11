@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import './add-leader-modal.scss';
 import { DTO_FastUserInfo } from '@/dtos/create-task.page.dto';
-import { ProjectAPIs } from '@/apis/emp.project.page.api';
+import { ProjectAPIs } from '@/apis/project.page.api';
 import { ApiResponse } from '@/apis/general.api';
 
 interface AddLeaderModalProps {
@@ -75,8 +75,7 @@ export function AddLeaderModal({ open, projectId, onClose, onAddLeader }: AddLea
     }
     setSearching(true);
     try {
-      const req = new (require('../../../../dtos/create-project.page.dto').DTO_SearchFastUserInfo_Project)().bquery(value);
-      const res = await ProjectAPIs.searchLeadersForProject(req);
+      const res = await ProjectAPIs.searchLeadersForProject(projectId!, value);
       setSearchedLeaders(((res as ApiResponse<DTO_FastUserInfo[]>).body) || []);
     } catch (error) {
       console.error('Error searching leaders:', error);
@@ -103,7 +102,7 @@ export function AddLeaderModal({ open, projectId, onClose, onAddLeader }: AddLea
     if (!leaderEmails.length) return;
     
     try {
-      await ProjectAPIs.addLeadersToProject({ projectId, leaderEmails });
+      await ProjectAPIs.addLeadersToProject(projectId, { assignedEmails: leaderEmails });
       const leaders = Object.fromEntries(
         leaderEmails.map(email => [
           email, 

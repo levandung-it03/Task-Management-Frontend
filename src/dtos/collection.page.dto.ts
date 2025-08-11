@@ -1,37 +1,31 @@
-export const COLLECTION_STATUS = ['Pending', 'Running', 'Completed', 'Cancelled'] as const;
-export type CollectionStatus = typeof COLLECTION_STATUS[number];
-
 export interface DTO_CreateCollection {
   name: string;
   description: string;
   startDate: string;
-  endDate: string;
-  deadline: string;
-  status: CollectionStatus;
+  dueDate: string;
 } 
 
 export interface DTO_CollectionItem {
-    id: string;
-    name: string;
-    description: string;
-    startDate: string;
-    endDate: string;
-    deadline: string;
-    status: string;
-    active?: boolean;
-    leaders?: Record<string, { username: string; fullName: string; role: string }>;
+  id: number;
+  name: string;
+  description: string;
+  startDate: string; 
+  endDate?: string | null; 
+  dueDate: string; 
+  createdTime: string; 
+  updatedTime: string; 
   } 
 
 export class DTO_DeleteCollection {
-  collectionId: string;
+  collectionId: number;
   forceDelete: boolean;
 
   constructor() {
-    this.collectionId = '';
+    this.collectionId = 0;
     this.forceDelete = false;
   }
 
-  bquery(collectionId: string, forceDelete: boolean = false): DTO_DeleteCollection {
+  bquery(collectionId: number, forceDelete: boolean = false): DTO_DeleteCollection {
     this.collectionId = collectionId;
     this.forceDelete = forceDelete;
     return this;

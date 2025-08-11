@@ -20,8 +20,8 @@ interface ProjectModalsProps {
   onCloseDeleteModal: () => void;
   onCreateProject: (newProject: DTO_ProjectItem) => void;
   onUpdateProject: (updatedProject: DTO_ProjectItem) => void;
-  onAddLeader: (projectId: number, leaders: Record<number, any>) => void;
-  onUpdateLeader: (projectId: number, leaders: Record<number, any>) => void;
+  onAddLeader: (projectId: number, leaders: Record<string, any>) => void;
+  onUpdateLeader: (projectId: number, leaders: Record<string, any>) => void;
   onDeleteProject: (projectId: number, deleted: boolean) => void;
   canUpdateProject?: boolean;
   canAddLeader?: boolean;

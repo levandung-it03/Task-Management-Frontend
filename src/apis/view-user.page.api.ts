@@ -1,4 +1,3 @@
-import { DTO_GetUserProfileResponse, UserProfileData } from "@/dtos/emp.user-profile.page.dto"
 import axiosInstance from "@/util/axios.helper"
 import { GeneralAPIs, RecordResponse } from "./general.api"
 
@@ -12,7 +11,4 @@ export class UserProfileAPIs {
       return GeneralAPIs.extractError(error)
     }
   }
-
-
-
 } 

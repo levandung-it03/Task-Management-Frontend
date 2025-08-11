@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { DTO_CreatePhase, CREATE_PHASE_STATUS, CreatePhaseStatus, DTO_PhaseItem } from '../../../dtos/emp.phase.page.dto';
-import { DateValidationHelper, ValidationResult } from '../../../util/date-validation.helper';
+import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
+import { DateValidationHelper, ValidationResult } from '@/util/date-validation.helper';
 import './phase-form.scss';
 
 interface PhaseFormProps {
@@ -8,7 +8,7 @@ interface PhaseFormProps {
   setForm: (form: DTO_CreatePhase | DTO_PhaseItem) => void;
   onSubmit: (e: React.FormEvent) => void;
   onClose: () => void;
-  modalRef: React.RefObject<HTMLDivElement | null>;
+  modalRef: React.RefObject<HTMLDivElement>;
   isUpdate: boolean;
   canUpdatePhase?: boolean;
 }
@@ -24,8 +24,8 @@ export default function PhaseForm({ form, setForm, onSubmit, onClose, modalRef, 
       form.name || '',
       form.description || '',
       form.startDate || '',
-      form.endDate || '',
-      form.deadline || ''
+      null, // endDate removed
+      form.dueDate || ''
     );
     
     if (!validation.isValid) {
@@ -106,48 +106,20 @@ export default function PhaseForm({ form, setForm, onSubmit, onClose, modalRef, 
                   disabled={isUpdate && !canUpdatePhase}
                 />
               </fieldset>
-
-              <fieldset className="phase-form-fieldset">
-                <legend className="phase-form-legend">End Date</legend>
-                <input
-                  type="date"
-                  value={form.endDate || ''}
-                  onChange={e => handleFormChange({ endDate: e.target.value })}
-                  className="phase-form-input"
-                  min={DateValidationHelper.getMinEndDate(form.startDate || '')}
-                  max={DateValidationHelper.getMaxEndDate(form.deadline || '')}
-                  disabled={isUpdate && !canUpdatePhase}
-                />
-              </fieldset>
             </div>
 
             <div className="phase-form-column">
               <fieldset className="phase-form-fieldset">
-                <legend className="phase-form-legend">Deadline</legend>
+                <legend className="phase-form-legend">Due Date</legend>
                 <input
                   type="date"
-                  value={form.deadline || ''}
-                  onChange={e => handleFormChange({ deadline: e.target.value })}
+                  value={form.dueDate || ''}
+                  onChange={e => handleFormChange({ dueDate: e.target.value })}
                   className="phase-form-input"
-                  min={DateValidationHelper.getMinDeadline(form.startDate || '')}
+                  min={DateValidationHelper.getMinDueDate(form.startDate || '')}
                   required
                   disabled={isUpdate && !canUpdatePhase}
                 />
-              </fieldset>
-
-              <fieldset className="phase-form-fieldset">
-                <legend className="phase-form-legend">Status</legend>
-                <select
-                  value={form.status || ''}
-                  onChange={e => handleFormChange({ status: e.target.value as CreatePhaseStatus })}
-                  className="phase-form-select"
-                  required
-                  disabled={isUpdate && !canUpdatePhase}
-                >
-                  {CREATE_PHASE_STATUS.map((status: CreatePhaseStatus) => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
               </fieldset>
             </div>
           </div>

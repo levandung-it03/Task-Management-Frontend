@@ -3,22 +3,48 @@ export type ProjectStatus = typeof PROJECT_STATUS[number];
 
 export interface DTO_CreateProject {
   name: string;
-  description: string;
+  description?: string;
   startDate: string;
+  dueDate: string;
+}
+
+export interface DTO_Leader {
+  id: number
+  username: string;
+  fullName: string;
+  role: string;
+}
+
+export interface DTO_UpdateProject {
+  name: string;
+  description?: string;
+  startDate: string;
+  dueDate: string;
+}
+
+export interface DTO_CompleteProject {
   endDate: string;
-  deadline: string;
-  status: ProjectStatus;
 }
 
 export interface DTO_AddLeaderToProjectRequest {
-  projectId: number;
-  leaderEmails: string[];
+  assignedEmails: string[];
 }
 
 export class DTO_SearchFastUserInfo_Project {
-  private query!: string;
-  public static withBuilder() { return new DTO_SearchFastUserInfo_Project(); }
-  public bquery(query: string): DTO_SearchFastUserInfo_Project { this.query = query; return this; }
+  email!: string;
+  fullName!: string;
+  role!: string;
+}
+
+export interface DTO_ProjectRoleResponse {
+  fullName: string;
+  email: string;
+  role: string;
+  projectRole: "OWNER" | "MEMBER";
+}
+
+export interface DTO_KickedLeaderRequest {
+  kickedEmail: string;
 }
 
 export class DTO_RemoveLeaderFromProject {
@@ -47,7 +73,7 @@ export class DTO_DeleteProject {
   }
 
   bquery(projectId: number, forceDelete: boolean = false): DTO_DeleteProject {
-    this.projectId = 0;
+    this.projectId = projectId;
     this.forceDelete = forceDelete;
     return this;
   }

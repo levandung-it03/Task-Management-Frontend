@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { DTO_ProjectItem } from '../../../@/dtos/home.page.dto';
+import { DTO_ProjectItem } from '@/dtos/home.page.dto';
 import './project-context-menu.scss';
 
 interface ProjectContextMenuProps {

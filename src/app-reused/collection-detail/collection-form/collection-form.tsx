@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { DTO_CreateCollection, DTO_CollectionItem, COLLECTION_STATUS, CollectionStatus } from '../../../dtos/emp.collection.page.dto';
-import { DateValidationHelper, ValidationResult } from '../../../util/date-validation.helper';
+import { DTO_CreateCollection, DTO_CollectionItem } from '@/dtos/collection.page.dto';
+import { DateValidationHelper, ValidationResult } from '@/util/date-validation.helper';
 import './collection-form.scss';
 
 interface CollectionFormProps {
@@ -34,8 +34,7 @@ export default function CollectionForm({
       form.name || '',
       form.description || '',
       form.startDate || '',
-      form.endDate || '',
-      form.deadline || ''
+      form.dueDate || ''
     );
     
     if (!validation.isValid) {
@@ -118,48 +117,20 @@ export default function CollectionForm({
                   disabled={!isCreate && !canUpdateCollection}
                 />
               </fieldset>
-
-              <fieldset className="form-fieldset">
-                <legend className="field-legend">End Date</legend>
-                <input
-                  type="date"
-                  value={form.endDate || ''}
-                  onChange={e => handleInputChange('endDate', e.target.value)}
-                  className="form-input"
-                  min={DateValidationHelper.getMinEndDate(form.startDate || '')}
-                  max={DateValidationHelper.getMaxEndDate(form.deadline || '')}
-                  disabled={!isCreate && !canUpdateCollection}
-                />
-              </fieldset>
             </div>
 
             <div className="form-column">
               <fieldset className="form-fieldset">
-                <legend className="field-legend">Deadline</legend>
+                <legend className="field-legend">Due Date</legend>
                 <input
                   type="date"
-                  value={form.deadline || ''}
-                  onChange={e => handleInputChange('deadline', e.target.value)}
+                  value={form.dueDate || ''}
+                  onChange={e => handleInputChange('dueDate', e.target.value)}
                   className="form-input"
-                  min={DateValidationHelper.getMinDeadline(form.startDate || '')}
+                  min={DateValidationHelper.getMinDueDate(form.startDate || '')}
                   required
                   disabled={!isCreate && !canUpdateCollection}
                 />
-              </fieldset>
-
-              <fieldset className="form-fieldset">
-                <legend className="field-legend">Status</legend>
-                <select
-                  value={form.status || ''}
-                  onChange={e => handleInputChange('status', e.target.value)}
-                  className="form-select"
-                  required
-                  disabled={!isCreate && !canUpdateCollection}
-                >
-                  {COLLECTION_STATUS.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
               </fieldset>
             </div>
           </div>

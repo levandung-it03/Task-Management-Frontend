@@ -1,6 +1,15 @@
+"use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { ProjectActions } from './project-actions/project-actions';
 import { ProjectContextMenu } from './project-context-menu/project-context-menu';
+import { prettierDate } from '@/app-reused/task-detail/task-detail.service';
+
+// Helper function to format date as YYYY-MM-DD
+const formatDateAsYYYYMMDD = (dateStr: string | undefined): string => {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  return date.toISOString().split('T')[0];
+};
 import './project-item.scss';
 import { DTO_ProjectItem } from '@/dtos/home.page.dto';
 
@@ -49,7 +58,7 @@ export function ProjectItem({
 
   const isDisabled = project.active === false;
   const isCompleting = completingProjectId === project.id;
-  const isCompleted = project.status === 'Completed' || completedProjects[project.id];
+  const isCompleted = !!project.endDate;
   const isDeleting = deletingProjectId === project.id;
 
   return (
@@ -70,14 +79,13 @@ export function ProjectItem({
         </div>
         
         <div className="project-item-deadline">
-          Deadline: <span className="project-item-deadline-date">{project.deadline}</span>
+          Due Date: <span className="project-item-deadline-date">{formatDateAsYYYYMMDD(project.dueDate)}</span>
         </div>
 
         <ProjectActions
           project={project}
           isDisabled={isDisabled}
           isCompleting={isCompleting}
-          isCompleted={isCompleted}
           onAddLeader={() => onAddLeader(project.id)}
           onCompleteProject={() => onCompleteProject(project)}
           permissions={permissions}

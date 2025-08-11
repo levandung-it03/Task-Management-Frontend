@@ -6,13 +6,14 @@ import { ProjectHeader } from './project-header/project-header';
 import { ProjectItem } from './project-item/project-item';
 import { ProjectModals } from './project-modals/project-modals';
 import { usePermission } from '../../util/usePermission.hook';
+import { AuthHelper } from '../../util/auth.helper';
 import './project-list.scss';
-import { DTO_ProjectItem } from '@/dtos/home.page.dto';
+import { DTO_ProjectItem, DTO_ProjectItem1 } from '@/dtos/home.page.dto';
 
 export default function ProjectListPage() {
   const router = useRouter();
   const permissions = usePermission();
-  const [projects, setProjects] = useState<DTO_ProjectItem[]>([]);
+  const [projects, setProjects] = useState<DTO_ProjectItem1[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAddLeaderModal, setShowAddLeaderModal] = useState<number | null>(null);
@@ -25,7 +26,25 @@ export default function ProjectListPage() {
 
   // Hàm xử lý click vào project để chuyển đến trang phase
   const handleProjectClick = (projectId: number) => {
-    router.push(`/emp/phase?projectId=${projectId}`);
+    const role = AuthHelper.getRoleFromToken();
+    let basePath = '';
+
+    switch (role) {
+      case 'pm':
+        basePath = '/pm';
+        break;
+      case 'lead':
+        basePath = '/lead';
+        break;
+      case 'emp':
+        basePath = '/emp';
+        break;
+      default:
+        console.error('Role không hợp lệ:', role);
+        return;
+    }
+
+    router.push(`${basePath}/projects/${projectId}/phases`);
   };
 
   useEffect(() => {
@@ -47,6 +66,7 @@ export default function ProjectListPage() {
               project={project}
               onProjectClick={handleProjectClick}
               onUpdateProject={(project) => {
+                console.log('Opening update modal with project:', project);
                 setSelectedProject(project);
                 setShowUpdateModal(true);
               }}
@@ -63,7 +83,13 @@ export default function ProjectListPage() {
               onCompleteProject={async (project) => {
                 setCompletingProjectId(project.id);
                 try {
-                  // Logic complete project sẽ được implement trong ProjectItem
+                  // Reload toàn bộ danh sách projects để đảm bảo dữ liệu mới nhất
+                  const updatedProjects = await ProjectListService.fetchProjects();
+                  setProjects(updatedProjects);
+                  setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
+                } catch (error) {
+                  console.error('Error reloading projects after completion:', error);
+                  // Fallback: cập nhật state local nếu reload thất bại
                   setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
                 } finally {
                   setCompletingProjectId(null);
@@ -90,9 +116,27 @@ export default function ProjectListPage() {
         onCloseAddLeaderModal={() => setShowAddLeaderModal(null)}
         onCloseUpdateLeaderModal={() => setShowUpdateLeaderModal(null)}
         onCloseDeleteModal={() => setShowDeleteModal(false)}
-        onCreateProject={(newProject) => setProjects(prev => [newProject, ...prev])}
-        onUpdateProject={(updatedProject) => {
-          setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+        onCreateProject={async (newProject) => {
+          // Reload toàn bộ danh sách projects để đảm bảo dữ liệu mới nhất
+          try {
+            const updatedProjects = await ProjectListService.fetchProjects();
+            setProjects(updatedProjects);
+          } catch (error) {
+            console.error('Error reloading projects:', error);
+            // Fallback: thêm project mới vào đầu danh sách nếu reload thất bại
+            setProjects(prev => [newProject, ...prev]);
+          }
+        }}
+        onUpdateProject={async (updatedProject) => {
+          // Reload toàn bộ danh sách projects để đảm bảo dữ liệu mới nhất
+          try {
+            const updatedProjects = await ProjectListService.fetchProjects();
+            setProjects(updatedProjects);
+          } catch (error) {
+            console.error('Error reloading projects:', error);
+            // Fallback: cập nhật project trong state local nếu reload thất bại
+            setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+          }
           setShowUpdateModal(false);
         }}
         onAddLeader={(projectId, leaders) => {
