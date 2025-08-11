@@ -33,26 +33,11 @@ export class LoginValidators {
     return GlobalValidators.FULLNAME_REGEX.test(value.trim()) ? "" : "Full Name is invalid"
   }
 
-  static isValidDob(value: string): string {
-    if (!value) return "Date of birth is required";
-
-    const dob = new Date(value);
-    const now = new Date();
-
-    if (dob > now) return "Date of birth must be in the past";
-
-    const ageDiffMs = now.getTime() - dob.getTime();
-    const ageDate = new Date(ageDiffMs);
-    const age = Math.abs(ageDate.getUTCFullYear() - 1970);
-
-    if (age < 14) return "Require 14 years old as minimum";
-
-    return "";
+  static isValidPhone(value: string): string {
+    return /^\d+$/.test(value) ? "" : "Require Phone numbers"
   }
   
-  static isValidDeadline(value: string): string {
-    if (!value) return "Date is required";
-    if (new Date(value) < new Date()) return "Date must be in current or future";
-    return "";
+  static isValidIdentity(value: string): string {
+    return /^\d+$/.test(value) ? "" : "Require Identity numbers"
   }
 }

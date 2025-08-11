@@ -16,9 +16,10 @@ export default function CreateTask({ rootId }: { rootId?: number }) {
     setCanUndo(true)
   }, [])
 
-  return <div className="pm-create-task">
+  return <div className="create-task">
     <TaskCreationForm
       rootId={rootId}
+      collectionId={1}
       assignedUsers={assignedUsers}
       setAssignedUsers={setAssignedUsers}
       setOpenDialog={setOpenDialog}

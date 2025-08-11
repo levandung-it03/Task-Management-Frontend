@@ -4,7 +4,7 @@ import './home-detail.scss';
 import React, { useEffect, useState } from 'react';
 import HomeStats from './home-stats/home-stats';
 import { HomeAPIs } from '@/apis/home.page.api';
-import { DTO_DashboardStats, DTO_Group } from '@/dtos/home.page.dto';
+import { DTO_DashboardStats } from '@/dtos/home.page.dto';
 import { ApiResponse } from '@/apis/general.api';
 import { LayoutDashboard } from 'lucide-react';
 import Calendar from './calendar/calendar';
@@ -13,22 +13,18 @@ import UndoneTasks from './home-tasks/home-tasks';
 
 export default function HomeDetail() {
   const [stats, setStats] = useState<DTO_DashboardStats>();
-  const [groups, setGroups] = useState<DTO_Group[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsResponse, groupsResponse] = await Promise.all([
+        const [statsResponse] = await Promise.all([
           HomeAPIs.getHomeStats(),
-          HomeAPIs.getUserGroups(),
         ]);
 
         const statsData = (statsResponse as ApiResponse<DTO_DashboardStats>).body;
-        const groupsData = (groupsResponse as ApiResponse<DTO_Group[]>).body;
 
         if (statsData) setStats(statsData);
-        if (groupsData) setGroups(groupsData);
       } catch (error) {
         console.error('Error fetching home data:', error);
       } finally {

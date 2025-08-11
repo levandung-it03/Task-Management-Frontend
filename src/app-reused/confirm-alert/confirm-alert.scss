@@ -17,6 +17,7 @@
     overflow: hidden;
     border-color: 2px solid var(--main-green);
     padding: 5px;
+    border-radius: 8px;
 
     .alert-title,
     .alert-msg {
@@ -31,6 +32,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      border-radius: 4px;
 
       .alert-title-icon {
         margin-right: 10px;

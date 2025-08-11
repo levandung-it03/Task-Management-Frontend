@@ -52,7 +52,7 @@ export default function ForgotPassForm() {
       }, 1000);
     }
     getOtp()
-  }, [email, otpTypes]);
+  }, [email, otpTypes, formTouched]);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
@@ -71,7 +71,7 @@ export default function ForgotPassForm() {
       }
     }
     register()
-  }, [email, otpCode, formValidation])
+  }, [email, otpCode, formValidation, formTouched])
 
   useEffect(() => {
     async function init() {

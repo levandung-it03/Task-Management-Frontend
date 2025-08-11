@@ -57,7 +57,7 @@ export interface DTO_TaskOverview {
   id: number
   name: string
   taskType: string
-  taskPriority: string
+  priority: string
   startDate: string
   endDate: string
   deadline: string

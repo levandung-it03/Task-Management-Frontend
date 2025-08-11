@@ -1,0 +1,196 @@
+.accounts-creation {
+  padding: 0 15px;
+
+  &>.form-caption {
+    padding: 25px;
+    background-color: var(--background);
+    border-radius: 15px;
+  }
+
+  .file-creation {
+    background-color: var(--background);
+    border-radius: 15px;
+
+    &>.form-caption {
+      padding: 15px;
+      padding-bottom: 5px;
+      padding-top: 5px;
+
+      .caption-content {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+
+        .instruction {
+          display: block;
+          margin-left: 15px;
+          font-size: 20px;
+          color: var(--border-color);
+          background-color: var(--background);
+          border: 3px solid var(--border-color);
+          font-weight: 600;
+          padding: 0 6px;
+          border-radius: 15px;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+
+  .file-creation {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+
+    .file-inp-block,
+    .submit-btn-block,
+    .download-btn-block,
+    .delete-btn-block {
+      min-width: 200px;
+      width: 23%;
+      margin: 10px;
+      margin-top: 0;
+    }
+
+    .fc-btn {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 17px;
+      margin-top: 10px;
+      border-radius: 10px;
+      transition: all ease 0.3s;
+      font-weight: 100;
+      border: 2px solid;
+
+      .fcb-icon {
+        margin-left: 10px;
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .delete-btn {
+      background-color: var(--main-dark-red);
+      color: #fff;
+      border-color: var(--main-dark-red);
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--background);
+        color: var(--main-dark-red);
+      }
+    }
+
+    .download-btn {
+      background-color: var(--main-green);
+      color: #fff;
+      border-color: var(--main-green);
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--background);
+        color: var(--main-green);
+      }
+    }
+
+    .submit-btn {
+      background-color: var(--foreground);
+      color: var(--background);
+      border-color: var(--foreground);
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--background);
+        color: var(--foreground);
+      }
+    }
+  }
+}
+
+.dialog-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 2;
+}
+
+.instruction-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  background-color: var(--background);
+  padding: 25px;
+
+  .dialog-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .form-caption {
+      flex: 1;
+    }
+
+    .dialog-close-btn {
+      padding-top: 15px;
+
+      .dcb-icon {
+        color: var(--main-text-err-red);
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .exel-exam {
+    display: flex;
+    flex-wrap: wrap;
+
+    .ee-img {
+      flex: 1;
+      padding: 10px;
+      background-color: var(--main-green);
+    }
+  }
+
+  .download-ex-btn {
+    margin-top: 15px;
+    padding: 15px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    transition: all ease 0.3s;
+    border-radius: 10px;
+    background-color: var(--main-green);
+    color: #fff;
+    border: 1px solid var(--main-green);
+
+    &:hover {
+      cursor: pointer;
+      background-color: var(--background);
+      color: var(--main-green);
+    }
+
+    .deb-icon {
+      width: 18px;
+      height: 18px;
+      margin-left: 10px;
+    }
+  }
+}

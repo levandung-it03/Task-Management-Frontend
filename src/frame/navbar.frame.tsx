@@ -79,7 +79,7 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
   } = {
     admin: {
       ["manage-users"]: <><Users className="nav-item-icon" /><span className="nav-item-name"> Manage Users</span></>,
-      reports: <><Files className="nav-item-icon" /><span className="nav-item-name"> Reports</span></>,
+      accounts: <><Files className="nav-item-icon" /><span className="nav-item-name"> Accounts</span></>,
     },
     pm: {
       home: <><House className="nav-item-icon" /><span className="nav-item-name"> Home</span></>,

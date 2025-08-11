@@ -53,7 +53,7 @@ export default function LoginForm() {
       window.location.href = `/${AuthHelper.getRoleFromToken()}/home`
     }
     send()
-  }, [formValidation, username, password])
+  }, [formValidation, username, password, formTouched])
 
   return (
     <form className="login-form" onSubmit={handleSubmit}>

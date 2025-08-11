@@ -265,7 +265,7 @@ export default function UsersTable() {
             <TableDataLoading />
           ) : (
             displayedList.map((userInfo, index) => (
-              <TableRowWrapper key={`tbrw-${index}`}>
+              <TableRowWrapper key={`tbrw-${index}`}  >
                 <td className="table-cell tb-cell-ava">
                   <span className="virtual-ava">
                     {userInfo.fullname[0].toUpperCase()}
@@ -279,25 +279,7 @@ export default function UsersTable() {
                 </td>
                 <td className="table-cell">{userInfo.phone}</td>
                 <td className="table-cell">{userInfo.department}</td>
-                <td className="table-cell">
-                  <select
-                    className="user-role-select"
-                    value={userInfo.authorities}
-                    onChange={(e) => handleRoleChange(userInfo, e.target.value)}
-                    disabled={!userInfo.status}
-                    title={
-                      !userInfo.status
-                        ? "Cannot change role when account is disabled"
-                        : ""
-                    }
-                  >
-                    {ROLE_OPTIONS.map((role) => (
-                      <option key={role.value} value={role.value}>
-                        {role.label}
-                      </option>
-                    ))}
-                  </select>
-                </td>
+                <td className={`usi-role usi-${userInfo.authorities.toLowerCase().replace("_", "-")}`}>{userInfo.authorities}</td>
                 <td className="table-cell">
                   <label className="switch">
                     <input

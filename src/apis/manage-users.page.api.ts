@@ -1,7 +1,7 @@
 import { DTO_PaginationRequest } from "@/dtos/general.dto";
 import { ApiResponse, GeneralAPIs } from "./general.api";
 import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page.dto";
-import { DTO_UpdateAccountStatusRequest, DTO_UpdateAccountRolesRequest } from "@/dtos/manage-users.page.dto";
+import { DTO_UpdateAccountStatusRequest } from "@/dtos/manage-users.page.dto";
 import { AuthHelper } from "@/util/auth.helper";
 import axiosInstance from "@/util/axios.helper";
 
@@ -61,7 +61,7 @@ export class ManageUsersAPIs {
                 email: "ethan.vo@example.com",
                 phone: "0905678901",
                 department: "Engineering",
-                authorities:"ROLE_LD",
+                authorities:"ROLE_LEAD",
                 status: false,
               },
               {
@@ -97,7 +97,7 @@ export class ManageUsersAPIs {
                 email: "ivan.dinh@example.com",
                 phone: "0909012345",
                 department: "Design",
-                authorities: "ROLE_LD",
+                authorities: "ROLE_LEAD",
                 status: false,
               },
               {
@@ -124,7 +124,7 @@ export class ManageUsersAPIs {
                 email: "linda.trinh@example.com",
                 phone: "0912345678",
                 department: "QA",
-                authorities: "ROLE_LD",
+                authorities: "ROLE_LEAD",
                 status: true,
               },
               {
@@ -151,7 +151,7 @@ export class ManageUsersAPIs {
                 email: "oscar.le@example.com",
                 phone: "0915678901",
                 department: "HR",
-                authorities: "ROLE_LD",
+                authorities: "ROLE_LEAD",
                 status: false,
               },
             ],
@@ -182,8 +182,9 @@ export class ManageUsersAPIs {
     }
   }
 
+  ///--Đổi thành API switch User role
   static async updateAccountRole(
-    request: DTO_UpdateAccountRolesRequest
+    request: Record<string, string>
   ): Promise<ApiResponse<void> | unknown> {
     try {
       // const response = await axiosInstance.post(

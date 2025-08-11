@@ -31,22 +31,13 @@ export interface DTO_OverviewSubTask {
   deadline: string;
 }
 
-export class DTO_UpdateTaskDescription {
+export class DTO_UpdateContentRequest {
   id!: number
-  description!: string
+  content!: string
   
-  public static withBuilder() { return new DTO_UpdateTaskDescription() }
-  public bid(id: number): DTO_UpdateTaskDescription { this.id = id; return this }
-  public bdescription(description: string): DTO_UpdateTaskDescription { this.description = description; return this }
-}
-
-export class DTO_UpdateTaskReportFormat {
-  id!: number
-  reportFormat!: string
-  
-  public static withBuilder() { return new DTO_UpdateTaskReportFormat() }
-  public bid(id: number): DTO_UpdateTaskReportFormat { this.id = id; return this }
-  public breportFormat(reportFormat: string): DTO_UpdateTaskReportFormat { this.reportFormat = reportFormat; return this }
+  public static withBuilder() { return new DTO_UpdateContentRequest() }
+  public bid(id: number): DTO_UpdateContentRequest { this.id = id; return this }
+  public bcontent(content: string): DTO_UpdateContentRequest { this.content = content; return this }
 }
 
 export class DTO_UpdateBasicTask {
@@ -70,6 +61,7 @@ export interface DTO_TaskUser {
   id: number
   email: string
   fullName: string
+  department: string
   role: string
   userTaskStatus: string
   wasDone: boolean

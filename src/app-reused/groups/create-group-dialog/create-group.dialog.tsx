@@ -55,7 +55,7 @@ export function GroupCreationDialog({ openDialog, setOpenDialog }: {
       window.location.href = `/${role}/groups/${response.body.id}`
     }
     createGroup();
-  }, [formValidation, name, addedUsers])
+  }, [formValidation, name, addedUsers, formTouched])
 
   return <div className={`group-creation-dialog ${openDialog ? "" : "hidden"}`}>
     <div ref={overlayRef} className="dialog-overlay"></div>
@@ -191,6 +191,7 @@ function SearchUserToAdd({ addedUsers, setAddedUsers }: {
               <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
               <td className="usi-full-name">{user.fullName}</td>
               <td className="usi-email">{user.email}</td>
+              <td className="usi-dep quick-blue-tag">{user.department}</td>
               <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
             </tr>
           })

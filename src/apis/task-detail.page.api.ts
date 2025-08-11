@@ -1,4 +1,4 @@
-import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateTaskDescription, DTO_UpdateTaskReportFormat } from "@/dtos/task-detail.page.dto"
+import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest } from "@/dtos/task-detail.page.dto"
 import { ApiResponse, GeneralAPIs } from "./general.api"
 import { AuthHelper } from "@/util/auth.helper"
 import axiosInstance from "@/util/axios.helper"
@@ -9,56 +9,12 @@ export class TaskDetailPageAPIs {
     try {
       const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}`)
       return response.data
-      // return {
-      //   code: 11001,
-      //   msg: "Thành công",
-      //   status: 200,
-      //   body: {
-      //     id: 1,
-      //     userInfo: {
-      //       id: 101,
-      //       name: 'Jane Doe',
-      //       // email: "",
-      //       email: "pm@gmail.com"
-      //       // email: "duongminh.18062001.29062025@tmakes.company.vn"
-      //     },
-      //     rootTaskId: null,
-      //     hasSubTask: true,
-      //     hasAtLeastOneReport: false,
-      //     name: 'Design Landing Page',
-      //     description: 'Create a responsive design for the marketing landing page.',
-      //     reportFormat: `
-      //       \nDear Mr. Duy,
-      //       \nToday I've been done:
-      //       \n    + Refactor Java OOP
-      //       \n    + Refactor JUnit with Spring Boot Test on small Project
-      //       \n    + Watched video about microservices technologies
-      //       \nTomorrow I'll
-      //       \n    + Keep going Refactor JUnit with Spring Boot Test on small Project
-      //       \n    + Fix Java OOP Exercises
-      //       \nFinally, thank you for supporting me in these lessions.
-      //       \nRegard,
-      //       \nDung
-      //     `,
-      //     level: 'ADVANCED',
-      //     taskType: 'DEPLOY',
-      //     priority: 'HIGH',
-      //     isLocked: false,
-      //     startDate: "12/12/2025",
-      //     // endDate: "12/12/2025",
-      //     endDate: null,
-      //     deadline: "12/12/2024",
-      //     createdTime: "13:00:00 12/12/2025",
-      //     updatedTime: "13:00:00 12/12/2025",
-      //   },
-      //   time: "12:00:20 30/06/2025"
-      // }
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
   }
 
-  static async updateTaskDescription(request: DTO_UpdateTaskDescription): Promise<ApiResponse<void> | unknown> {
+  static async updateTaskDescription(request: DTO_UpdateContentRequest): Promise<ApiResponse<void> | unknown> {
     try {
       const { id, ...restParams } = request
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}/update-description`
@@ -76,7 +32,7 @@ export class TaskDetailPageAPIs {
     }
   }
 
-  static async updateTaskReportFormat(request: DTO_UpdateTaskReportFormat): Promise<ApiResponse<void> | unknown> {
+  static async updateTaskReportFormat(request: DTO_UpdateContentRequest): Promise<ApiResponse<void> | unknown> {
     try {
       const { id, ...restParams } = request
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}/update-report-format`
@@ -98,6 +54,7 @@ export class TaskDetailPageAPIs {
   static async updateBasicTaskInfo(request: DTO_UpdateBasicTask): Promise<ApiResponse<void> | unknown> {
     try {
       const { id, ...restParams } = request
+      console.log(restParams)
       const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}`, restParams)
       return response.data
       // return {
@@ -146,7 +103,7 @@ export class TaskDetailPageAPIs {
 
   static async updateDoneTask(taskId: number): Promise<ApiResponse<void> | unknown> {
     try {
-      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/done`)
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${taskId}/done`)
       return response.data
       // return {
       //   code: 11001,
@@ -327,6 +284,15 @@ export class TaskDetailPageAPIs {
       //   ],
       //   time: "12:00:20 30/06/2025"
       // }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async deleteTask(taskId: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.delete(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${taskId}`)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

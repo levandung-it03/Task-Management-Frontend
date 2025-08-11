@@ -45,11 +45,13 @@ export default function TaskDialog({
 
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
+    setFormTouched(true)
     setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
   }, [])
 
   const onChangeLevel = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setLevel(e.target.value)
+    setFormTouched(true)
   }, [])
 
   const onChangePriority = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -82,7 +84,7 @@ export default function TaskDialog({
         .blevel(level)
         .btaskType(taskType)
         .bdeadline(deadline)
-        .baddedUserEmail(Object.values(addedUsers)[0].email)
+        .baddedUserEmail(GlobalValidators.notEmpty(addedUsers) ? Object.values(addedUsers)[0].email : "")
       const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<void>
       if (String(response.status)[0] === "2") {
         toast.success(response.msg)
@@ -93,13 +95,15 @@ export default function TaskDialog({
           taskType: taskType,
           deadline: deadline
         }))
+        window.location.reload()
       }
       setOpenDialog(false)
     }
     submitUpdating()
   }, [
     taskInfo.id, taskInfo.deadline, taskInfo.level, taskInfo.taskType, taskInfo.priority,
-    priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo
+    priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo,
+    formTouched
   ])
 
   useEffect(() => {
@@ -140,7 +144,7 @@ export default function TaskDialog({
   useEffect(() => setLevel(taskInfo.level), [taskInfo.level])
   useEffect(() => setPriority(taskInfo.priority), [taskInfo.priority])
   useEffect(() => setTaskType(taskInfo.taskType), [taskInfo.taskType])
-  useEffect(() => setDeadline(taskInfo.deadline && GeneralTools.formatedDateToDateInput(taskInfo.deadline)), [taskInfo.deadline])
+  useEffect(() => setDeadline(taskInfo.deadline), [taskInfo.deadline])
 
   return openDialog
     ? <div className="task-dialog">
@@ -204,14 +208,15 @@ export default function TaskDialog({
                   rootId={taskInfo.rootTaskId}
                   mainId={taskInfo.id}
                   addedUsers={addedUsers}
-                  setAddedUsers={setAddedUsers} />
+                  setAddedUsers={setAddedUsers}
+                  setFormTouched={setFormTouched} />
               </fieldset>
             </div>
 
             <div className="form-group-container added-for-container">
               <fieldset className="form-group">
                 <legend className="form-label">Added Users</legend>
-                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
+                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers}/>
               </fieldset>
             </div>
 
@@ -227,11 +232,12 @@ export default function TaskDialog({
     : <></>
 }
 
-function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers }: {
+function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers, setFormTouched }: {
   rootId: number | null,
   mainId: number,
   addedUsers: Record<string, Record<string, string>>,
-  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>
+  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>,
+  setFormTouched: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const searchUserRef = useRef<HTMLInputElement>(null)
   const searchedUsersRef = useRef<HTMLTableElement>(null)
@@ -268,14 +274,16 @@ function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers }: {
   const onFocusSearchUser = useCallback(() => setIsOpenSearchUser(true), [])
 
   const toggleAddRemoveAddedUser = useCallback((user: DTO_FastUserInfo) => {
+    setFormTouched(true)
     setAddedUsers({
       [extractEmailToGetId(user.email)]: {
         email: user.email,
         fullName: user.fullName,
-        role: user.role
+        role: user.role,
+        department: user.department
       }
     })
-  }, [setAddedUsers])
+  }, [setAddedUsers, setFormTouched])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -309,6 +317,7 @@ function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers }: {
               <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
               <td className="usi-full-name">{user.fullName}</td>
               <td className="usi-email">{user.email}</td>
+              <td className="usi-dep quick-blue-tag">{user.department}</td>
               <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
             </tr>
           })
@@ -320,7 +329,7 @@ function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers }: {
 
 function AddedUser({ addedUsers, setAddedUsers }: {
   addedUsers: Record<string, Record<string, string>>,
-  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>
+  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>,
 }) {
   const [shownInfoMap, setShownInfoMap] = useState<Record<string, boolean>>({})
 
@@ -356,6 +365,7 @@ function AddedUser({ addedUsers, setAddedUsers }: {
               <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
               <span className="usi-full-name">{user.fullName}</span>
               <span className="usi-email">{user.email}</span>
+              <span className="usi-dep quick-blue-tag">{user.department}</span>
               <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
             </div>
           </div>

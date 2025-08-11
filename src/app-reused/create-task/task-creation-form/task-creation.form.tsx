@@ -13,6 +13,7 @@ import HelpContainer from "@/app-reused/help-container/page"
 import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { GeneralTools } from "@/util/general.helper"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.dto"
+import { AuthHelper } from "@/util/auth.helper"
 
 export interface TaskInfo {
   deadline: string,
@@ -26,7 +27,8 @@ export interface UserSelectedTag {
   data: {
     email: string,
     fullName: string,
-    role: string
+    role: string,
+    deparment: string
   }
 }
 
@@ -39,6 +41,7 @@ interface SearchUserToAssignProps {
 
 interface TaskCreationFormProps {
   rootId: number | undefined;
+  collectionId: number;
   assignedUsersHist: Record<string, Record<string, string>>;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
   assignedUsers: Record<string, Record<string, string>>;
@@ -50,6 +53,7 @@ interface TaskCreationFormProps {
 
 export function TaskCreationForm({
   rootId,
+  collectionId,
   assignedUsers,
   setAssignedUsers,
   setOpenDialog,
@@ -139,6 +143,7 @@ export function TaskCreationForm({
 
       const request = DTO_TaskRequest.withBuilder()
         .bname(name)
+        .bcollectionId(collectionId)
         .bdeadline(deadline)
         .bstartDate(startDate)
         .blevel(level)
@@ -151,28 +156,33 @@ export function TaskCreationForm({
       const response = !rootId
         ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
         : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
-      // if (String(response.status)[0] === "2") {
-      // toast.success(response.msg)
-      // const role = AuthHelper.getRoleFromToken()
-      // window.location.href = `${role}/task/${response.body.id}`
-      // }
+
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        const role = AuthHelper.getRoleFromToken()
+        window.location.href = `${role}/task/${response.body.id}`
+      }
     }
     createTask();
-  }, [rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation])
+  }, [rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation, formTouched])
 
   useEffect(() => {
     async function initValues() {
       const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<string[]>
-      if (String(levelsResponse.status)[0] === "2")
+      if (String(levelsResponse.status)[0] === "2"){
+        setLevel(levelsResponse.body[0])
         setLevelList(levelsResponse.body)
-
+      }
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
-      if (String(prioritiesResponse.status)[0] === "2")
+      if (String(prioritiesResponse.status)[0] === "2"){
+        setPriority(prioritiesResponse.body[0])
         setPriorityList(prioritiesResponse.body)
-
+      }
       const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
-      if (String(taskTypesResponse.status)[0] === "2")
+      if (String(taskTypesResponse.status)[0] === "2"){
+        setTaskType(taskTypesResponse.body[0])
         setTaskTypeList(taskTypesResponse.body)
+      }
     }
     initValues()
   }, [])
@@ -354,7 +364,8 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
           ...prev, [key]: {
             email: user.email,
             fullName: user.fullName,
-            role: user.role
+            role: user.role,
+            department: user.department
           }
         }
     })
@@ -392,6 +403,7 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
               <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
               <td className="usi-full-name">{user.fullName}</td>
               <td className="usi-email">{user.email}</td>
+              <td className="usi-dep quick-blue-tag">{user.department}</td>
               <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
             </tr>
           })
@@ -483,6 +495,7 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: {
               <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
               <span className="usi-full-name">{user.fullName}</span>
               <span className="usi-email">{user.email}</span>
+              <spane className="usi-dep quick-blue-tag">{user.department}</spane>
               <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
             </div>
           </div>

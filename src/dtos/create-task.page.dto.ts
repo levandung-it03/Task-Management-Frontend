@@ -3,6 +3,7 @@ export interface DTO_FastUserInfo {
   email: string
   fullName: string
   role: string
+  department: string
 }
 
 export interface DTO_GroupOverview {
@@ -42,4 +43,14 @@ export class DTO_TaskRequest {
   public bassignedEmails(emails: string[]): DTO_TaskRequest { this.assignedEmails = emails; return this }
   public bdescription(description: string): DTO_TaskRequest { this.description = description; return this }
   public breportFormat(format: string): DTO_TaskRequest { this.reportFormat = format; return this }
+}
+
+export interface DTO_AccountCreation {
+    username: string;
+    email: string;
+    password: string;
+    fullName: string;
+    identity: string;
+    phone: string;
+    departmentId: number;
 }
