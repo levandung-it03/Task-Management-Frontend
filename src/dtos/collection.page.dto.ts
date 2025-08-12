@@ -45,4 +45,10 @@ export interface DTO_PhaseDetail {
   status: string;
 
   userInfoCreated: DTO_FastUserInfo;
+  projectInfo: DTO_EntityDelegator;
+}
+
+export interface DTO_EntityDelegator {
+  id: number;
+  name: string;
 }

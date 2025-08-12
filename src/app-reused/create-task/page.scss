@@ -6,6 +6,11 @@
 
 .create-task {
   padding: var(--component-padding);
+  
+  .general-detail {
+    margin: 0!important;
+    margin-bottom: 15px!important;
+  }
 
   .task-info-form {
     padding: var(--component-padding);

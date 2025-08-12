@@ -26,8 +26,8 @@ export interface DTO_ProjectItem {
   startDate: string;        
   endDate?: string | null;  
   dueDate: string;
-  active: boolean;
-  createdTime: string;      
+  status: string;
+  createdTime: string;
   updatedTime: string;
 }
 
@@ -38,7 +38,7 @@ export interface DTO_ProjectItem1 {
   startDate: string;        
   endDate?: string | null;  
   dueDate: string;
-  active: boolean;
+  status: string;
   createdTime: string;      
   updatedTime: string;
   leaders?: Record<string, DTO_Leader>;

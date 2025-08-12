@@ -27,7 +27,7 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
               <rect x="4" y="4" width="12" height="12" rx="2" />
               <path d="M8 8h4M8 12h4" />
             </svg>
-            View Project Details
+            Update
           </div>
         )}
         

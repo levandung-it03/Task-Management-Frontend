@@ -58,7 +58,8 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
               acc[leader.email] = {
                 email: leader.email,
                 fullName: leader.fullName,
-                role: leader.role
+                role: leader.role,
+                department: leader.department
               };
               return acc;
             }, {});
@@ -126,7 +127,6 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
         message: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined
       });
-      alert('Có lỗi xảy ra khi xóa leader. Vui lòng thử lại!');
     }
   };
 
@@ -147,7 +147,6 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
       onUpdateLeader(project.id, leaders);
     } catch (error) {
       console.error('Error updating leaders:', error);
-      alert('An error occurred while updating leaders. Please try again!');
     }
   };
 

@@ -80,7 +80,6 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
       onCreate(newProject);
     } catch (error) {
       console.error('Failed to create project:', error);
-      alert(`Lỗi tạo project: ${error instanceof Error ? error.message : 'Unknown error'}`);
       return;
     }
     setForm({

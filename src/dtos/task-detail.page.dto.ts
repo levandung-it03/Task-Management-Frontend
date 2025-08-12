@@ -1,5 +1,10 @@
 import { DTO_FastUserInfo } from "./create-task.page.dto";
 
+export interface DTO_EntityDelegator {
+  id: number;
+  name: string
+}
+
 export interface DTO_TaskDetail {
   id: number;
   userInfo: DTO_FastUserInfo;
@@ -18,6 +23,10 @@ export interface DTO_TaskDetail {
   updatedTime: string;
 
   hasAtLeastOneReport: boolean;
+
+  projectInfo: DTO_EntityDelegator,
+  phaseInfo: DTO_EntityDelegator,
+  collectionInfo: DTO_EntityDelegator
 }
 
 export interface DTO_OverviewSubTask {
@@ -34,7 +43,7 @@ export interface DTO_OverviewSubTask {
 export class DTO_UpdateContentRequest {
   id!: number
   content!: string
-  
+
   public static withBuilder() { return new DTO_UpdateContentRequest() }
   public bid(id: number): DTO_UpdateContentRequest { this.id = id; return this }
   public bcontent(content: string): DTO_UpdateContentRequest { this.content = content; return this }
@@ -70,8 +79,15 @@ export interface DTO_TaskUser {
 export class DTO_LockTaskStatus {
   id!: number
   locked!: boolean
-  
+
   public static withBuilder() { return new DTO_LockTaskStatus() }
   public bid(id: number): DTO_LockTaskStatus { this.id = id; return this }
   public blocked(locked: boolean): DTO_LockTaskStatus { this.locked = locked; return this }
+}
+
+export interface DTO_TaskDelegator {
+  taskInfo: DTO_EntityDelegator | null;
+  projectInfo: DTO_EntityDelegator;
+  phaseInfo: DTO_EntityDelegator;
+  collectionInfo: DTO_EntityDelegator;
 }

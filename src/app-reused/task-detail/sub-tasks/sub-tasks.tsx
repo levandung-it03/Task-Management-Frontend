@@ -3,36 +3,39 @@
 import "./sub-tasks.scss"
 import { ApiResponse } from "@/apis/general.api"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
-import { DTO_OverviewSubTask } from "@/dtos/task-detail.page.dto"
+import { DTO_OverviewSubTask, DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
 import { ClipboardList } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import { checkOverDue } from "../task-detail.service"
 import { GeneralTools } from "@/util/general.helper"
 
-export default function SubTasks({ taskId }: { taskId: number }) {
+export default function SubTasks({ taskInfo: taskInfo }: { taskInfo: DTO_TaskDetail }) {
   const [subTasks, setSubTasks] = useState<DTO_OverviewSubTask[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     async function fetchSubTasks() {
       setIsLoading(true)
-      const response = await TaskDetailPageAPIs.getOverviewSubTasks(taskId) as ApiResponse<DTO_OverviewSubTask[]>
+      const response = await TaskDetailPageAPIs.getOverviewSubTasks(taskInfo.id) as ApiResponse<DTO_OverviewSubTask[]>
       if (String(response.status).startsWith("2")) {
         setSubTasks(response.body)
       }
       setIsLoading(false)
     }
     fetchSubTasks()
-  }, [taskId])
+  }, [taskInfo])
 
   return isLoading
     ? <div className="loading-row">Loading...</div>
     : <div className="sub-tasks">
-      {subTasks.map((subTask, ind) => <SubTask key={"st-" + ind} subTask={subTask} />)}
+      {subTasks.map((subTask, ind) => <SubTask key={"st-" + ind} subTask={subTask} rootTask={taskInfo} />)}
     </div>
 }
 
-function SubTask({ subTask }: { subTask: DTO_OverviewSubTask }) {
+function SubTask({ subTask, rootTask }: { 
+  subTask: DTO_OverviewSubTask,
+  rootTask: DTO_TaskDetail
+ }) {
   const pathname = useMemo(() => {
     let extractedPaths = window.location.pathname.split("/")
     extractedPaths.pop()
@@ -44,7 +47,7 @@ function SubTask({ subTask }: { subTask: DTO_OverviewSubTask }) {
         <ClipboardList className="stn-icon" />
         {subTask.name}
       </span>
-      <i className="sth-desc">Sub task</i>
+      <i className="sth-desc">Sub task of <b>"{rootTask.name}"</b></i>
     </div>
     <div className="st-info">
       <span className={`st-level tag-data task-level-${subTask.level.toLowerCase()}`}>

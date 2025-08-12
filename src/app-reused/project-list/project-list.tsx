@@ -24,29 +24,6 @@ export default function ProjectListPage() {
   const [completedProjects, setCompletedProjects] = useState<Record<string, boolean>>({});
   const [deletingProjectId, setDeletingProjectId] = useState<number | null>(null);
 
-  // Hàm xử lý click vào project để chuyển đến trang phase
-  const handleProjectClick = (projectId: number) => {
-    const role = AuthHelper.getRoleFromToken();
-    let basePath = '';
-
-    switch (role) {
-      case 'pm':
-        basePath = '/pm';
-        break;
-      case 'lead':
-        basePath = '/lead';
-        break;
-      case 'emp':
-        basePath = '/emp';
-        break;
-      default:
-        console.error('Role không hợp lệ:', role);
-        return;
-    }
-
-    router.push(`${basePath}/projects/${projectId}/phases`);
-  };
-
   useEffect(() => {
     ProjectListService.fetchProjects().then(setProjects).catch(console.error);
   }, []);
@@ -64,7 +41,6 @@ export default function ProjectListPage() {
             <ProjectItem
               key={project.id}
               project={project}
-              onProjectClick={handleProjectClick}
               onUpdateProject={(project) => {
                 console.log('Opening update modal with project:', project);
                 setSelectedProject(project);

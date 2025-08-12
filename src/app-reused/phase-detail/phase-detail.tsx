@@ -16,7 +16,7 @@ import ProjectDetail from './project-detail/project-detail';
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
   const permissions = usePermission();
-  
+
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [form, setForm] = useState<DTO_PhaseItem | null>(null);
@@ -35,22 +35,22 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   // Hàm xử lý click vào phase để chuyển đến trang collection
   const handlePhaseClick = (phaseId: number) => {
     const role = AuthHelper.getRoleFromToken();
-    
+
     const rolePaths: Record<string, string> = {
       pm: '/pm',
       lead: '/lead',
       emp: '/emp'
     };
-  
+
     const basePath = rolePaths[role];
     if (!basePath) {
       console.error('Role không hợp lệ:', role);
       return;
     }
-  
+
     router.push(`${basePath}/phases/${phaseId}/collections`);
   };
-  
+
 
   useEffect(() => {
     if (projectId) {
@@ -102,11 +102,9 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
           setShowUpdateModal(false);
         } else {
           console.error('Invalid response format:', res);
-          alert('Invalid response from server. Please try again!');
         }
       }).catch((error: unknown) => {
         console.error('Error updating phase:', error);
-        alert('An error occurred while updating the phase. Please try again!');
       });
     }
   }
@@ -116,19 +114,17 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     try {
       const ok = await confirm('Are you sure you want to delete this phase?', 'Delete Phase');
       if (!ok) return;
-      
+
       const response = await PhaseAPIs.deletePhase(phase.id);
-      
+
       if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
         // Remove the phase from the local state
         setPhases(prev => prev.filter(p => p.id !== phase.id));
       } else {
         console.error('Invalid response format:', response);
-        alert('Invalid response from server. Please try again!');
       }
     } catch (error) {
       console.error('Error deleting phase:', error);
-      alert('An error occurred while deleting the phase. Please try again!');
     }
   };
 
@@ -158,11 +154,9 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
         });
       } else {
         console.error('Invalid response format:', res);
-        alert('Invalid response from server. Please try again!');
       }
     } catch (error) {
       console.error('Error creating phase:', error);
-      alert('An error occurred while creating the phase. Please try again!');
     }
   };
 
@@ -176,62 +170,62 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   };
 
   return (
-      <>
+    <>
       <ProjectDetail projectId={projectId} />
-    <div className="phase-detail-container">
-      <div className="phase-detail-content">
-        <div className="phase-detail-header">
-          <div className="phase-detail-title">
-            <div className="phase-detail-title-main">
-              <svg width="32" height="32" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="4" y="4" width="24" height="24" rx="6" fill="#e6f4ea" stroke="var(--main-green)" />
-                <path d="M10 12h12M10 18h12" stroke="var(--main-green)" />
-              </svg>
-              <span className="phase-detail-title-text">Phase List</span>
+      <div className="phase-detail-container">
+        <div className="phase-detail-content">
+          <div className="phase-detail-header">
+            <div className="phase-detail-title">
+              <div className="phase-detail-title-main">
+                <svg width="32" height="32" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="4" y="4" width="24" height="24" rx="6" fill="#e6f4ea" stroke="var(--main-green)" />
+                  <path d="M10 12h12M10 18h12" stroke="var(--main-green)" />
+                </svg>
+                <span className="phase-detail-title-text">Phase List</span>
+              </div>
+              <div className="phase-detail-subtitle">
+                See full Phase information
+              </div>
             </div>
-            <div className="phase-detail-subtitle">
-              See full Phase information
-            </div>
+            <PhaseActions
+              onCreateClick={() => setShowCreateModal(true)}
+              canCreatePhase={permissions.canCreatePhase}
+            />
           </div>
-          <PhaseActions 
-            onCreateClick={() => setShowCreateModal(true)}
-            canCreatePhase={permissions.canCreatePhase}
+
+          <PhaseList
+            phases={phases}
+            onPhaseClick={handlePhaseClick}
+            onUpdateClick={handleOpenUpdate}
+            onDeleteClick={handleDeletePhase}
+            permissions={permissions}
           />
         </div>
-        
-        <PhaseList 
-          phases={phases}
-          onPhaseClick={handlePhaseClick}
-          onUpdateClick={handleOpenUpdate}
-          onDeleteClick={handleDeletePhase}
-          permissions={permissions}
-        />
+
+        {showUpdateModal && form && (
+          <PhaseForm
+            form={form}
+            setForm={handleSetForm}
+            onSubmit={handleUpdate}
+            onClose={() => setShowUpdateModal(false)}
+            modalRef={modalRef}
+            isUpdate={true}
+            canUpdatePhase={permissions.canUpdatePhase}
+          />
+        )}
+
+        {showCreateModal && (
+          <PhaseForm
+            form={createForm}
+            setForm={handleSetCreateForm}
+            onSubmit={handleCreatePhase}
+            onClose={() => setShowCreateModal(false)}
+            modalRef={createModalRef}
+            isUpdate={false}
+            canUpdatePhase={permissions.canUpdatePhase}
+          />
+        )}
       </div>
-
-      {showUpdateModal && form && (
-        <PhaseForm
-          form={form}
-          setForm={handleSetForm}
-          onSubmit={handleUpdate}
-          onClose={() => setShowUpdateModal(false)}
-          modalRef={modalRef}
-          isUpdate={true}
-          canUpdatePhase={permissions.canUpdatePhase}
-        />
-      )}
-
-      {showCreateModal && (
-        <PhaseForm
-          form={createForm}
-          setForm={handleSetCreateForm}
-          onSubmit={handleCreatePhase}
-          onClose={() => setShowCreateModal(false)}
-          modalRef={createModalRef}
-          isUpdate={false}
-          canUpdatePhase={permissions.canUpdatePhase}
-        />
-      )}
-    </div>
-      </>
+    </>
   );
 } 

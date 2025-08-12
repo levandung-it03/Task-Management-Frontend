@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ProjectActions } from './project-actions/project-actions';
 import { ProjectContextMenu } from './project-context-menu/project-context-menu';
-import { prettierDate } from '@/app-reused/task-detail/task-detail.service';
 
 // Helper function to format date as YYYY-MM-DD
 const formatDateAsYYYYMMDD = (dateStr: string | undefined): string => {
@@ -16,7 +15,6 @@ import { Container, EllipsisVertical } from 'lucide-react';
 
 interface ProjectItemProps {
   project: DTO_ProjectItem;
-  onProjectClick: (projectId: number) => void;
   onUpdateProject: (project: DTO_ProjectItem) => void;
   onAddLeader: (projectId: number) => void;
   onUpdateLeader: (project: DTO_ProjectItem) => void;
@@ -30,7 +28,6 @@ interface ProjectItemProps {
 
 export function ProjectItem({
   project,
-  onProjectClick,
   onUpdateProject,
   onAddLeader,
   onUpdateLeader,
@@ -57,7 +54,7 @@ export function ProjectItem({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openMenu]);
 
-  const isDisabled = project.active === false;
+  const isDisabled = project.status === "CLOSED" || project.status === "PAUSED";
   const isCompleting = completingProjectId === project.id;
   const isCompleted = !!project.endDate;
   const isDeleting = deletingProjectId === project.id;
@@ -65,7 +62,7 @@ export function ProjectItem({
   return (
     <div className={`project-item overview-list-item ${isDisabled ? 'project-item--disabled' : ''}`}>
       <div className="project-item-content">
-        <div className="project-item-info" onClick={() => !isDisabled && onProjectClick(project.id)}>
+        <a className="project-item-info" href={`${window.location.href}/${project.id}/phases`}>
           <Container className="oli-icon"/>
           <span 
             className={`oli-title project-item-name ${isDisabled ? 'project-item-name--disabled' : ''}`}
@@ -73,7 +70,7 @@ export function ProjectItem({
             {project.name}
             {isDisabled && <span className="project-item-disabled-text">(Disabled)</span>}
           </span>
-        </div>
+        </a>
         
         <div className="oli-due-date quick-blue-tag">
           Due Date: {formatDateAsYYYYMMDD(project.dueDate)}

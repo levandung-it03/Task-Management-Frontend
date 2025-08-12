@@ -35,7 +35,7 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
               className="oli-quick-btn"
               onClick={() => onUpdateClick(phase)}
             >
-              Update Phase
+              Update
             </button>
           )}
           

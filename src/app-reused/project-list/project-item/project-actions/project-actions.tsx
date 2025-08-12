@@ -37,7 +37,6 @@ export function ProjectActions({
       }
     } catch (error) {
       console.error('Error completing project:', error);
-      alert('An error occurred while completing the project. Please try again!');
     }
   };
 
@@ -61,7 +60,7 @@ export function ProjectActions({
 
   return (
     <div className="project-actions">
-      {permissions?.canAddLeader && (
+      {(permissions?.canAddLeader && project.status === "IN_PROGRESS") && (
         <button
           className={`project-actions-add-leader-btn ${isDisabled ? 'project-actions-add-leader-btn--disabled' : ''}`}
           onClick={onAddLeader}
@@ -71,7 +70,7 @@ export function ProjectActions({
         </button>
       )}
 
-      {permissions?.canCompleteProject && (
+      {(permissions?.canCompleteProject && project.status === "IN_PROGRESS") && (
         isCompleted ? (
           <button
             className={`project-actions-complete-btn project-actions-complete-btn--completed ${
@@ -95,4 +94,4 @@ export function ProjectActions({
       )}
     </div>
   );
-} 
+}

@@ -1,3 +1,4 @@
+import { DTO_EntityDelegator } from "./collection.page.dto";
 import { DTO_FastUserInfo } from "./create-task.page.dto";
 export interface DTO_CreateTaskList {
   name: string;
@@ -63,4 +64,6 @@ export interface DTO_CollectionDetail {
   status: string;
 
   userInfoCreated: DTO_FastUserInfo;
+  phaseInfo: DTO_EntityDelegator;
+  projectInfo: DTO_EntityDelegator;
 }

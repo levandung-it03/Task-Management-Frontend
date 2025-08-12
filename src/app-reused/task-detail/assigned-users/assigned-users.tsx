@@ -112,6 +112,7 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserKicked(true)
+        window.location.reload()
         return
       }
     }

@@ -1,4 +1,4 @@
-import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest } from "@/dtos/task-detail.page.dto"
+import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest } from "@/dtos/task-detail.page.dto"
 import { ApiResponse, GeneralAPIs } from "./general.api"
 import { AuthHelper } from "@/util/auth.helper"
 import axiosInstance from "@/util/axios.helper"
@@ -292,6 +292,15 @@ export class TaskDetailPageAPIs {
   static async deleteTask(taskId: number): Promise<ApiResponse<void> | unknown> {
     try {
       const response = await axiosInstance.delete(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${taskId}`)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async getTaskDelegator(taskId: number): Promise<ApiResponse<DTO_TaskDelegator> | unknown> {
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${taskId}/delegator`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)

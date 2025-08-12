@@ -116,7 +116,6 @@ export function AddLeaderModal({ open, projectId, onClose, onAddLeader }: AddLea
       onAddLeader(projectId, leaders);
     } catch (error) {
       console.error('Error adding leaders:', error);
-      alert('An error occurred while adding leaders. Please try again!');
     }
   };
 

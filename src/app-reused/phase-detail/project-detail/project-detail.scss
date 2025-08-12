@@ -138,6 +138,27 @@
         margin-right: 5px;
       }
     }
+
+    .project-status {
+      .ps-icon {
+        font-size: 13px;
+        padding: 2px 4px;
+        border-radius: 5px;
+        color: #fff;
+      }
+      .ps-in-progress {
+        background-color: var(--blue-in-env);
+      }
+      .ps-in-created {
+        background-color: var(--main-green);
+      }
+      .ps-in-paused,
+      .ps-in-closed {
+        border: 1px solid #000;
+        background-color: var(--main-component-grey);
+        color: #000;
+      }
+    }
   }
 
   .project-id {

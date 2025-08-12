@@ -14,7 +14,7 @@ export interface DTO_GroupOverview {
 
 export class DTO_SearchFastUserInfo {
   query!: string
-  
+
   public static withBuilder() { return new DTO_SearchFastUserInfo() }
   public bquery(query: string): DTO_SearchFastUserInfo { this.query = query; return this }
 }
@@ -30,9 +30,9 @@ export class DTO_TaskRequest {
   assignedEmails!: string[]
   description!: string
   reportFormat!: string
-  
+
   public static withBuilder() { return new DTO_TaskRequest() }
-  
+
   public bname(name: string): DTO_TaskRequest { this.name = name; return this }
   public bcollectionId(collectionId: number): DTO_TaskRequest { this.collectionId = collectionId; return this }
   public bdeadline(deadline: string): DTO_TaskRequest { this.deadline = deadline; return this }
@@ -46,11 +46,20 @@ export class DTO_TaskRequest {
 }
 
 export interface DTO_AccountCreation {
-    username: string;
-    email: string;
-    password: string;
-    fullName: string;
-    identity: string;
-    phone: string;
-    departmentId: number;
+  username: string;
+  email: string;
+  password: string;
+  fullName: string;
+  identity: string;
+  phone: string;
+  departmentId: number;
+}
+
+export interface DTO_CollectionDetailOnTask {
+  id: number
+  name: string
+  dueDate: string
+  startDate: string
+  createdTime: string
+  updatedTime: string
 }

@@ -10,6 +10,7 @@ import TaskListActions from './task-list-actions/task-list-actions';
 import TaskListList from './task-list-list/task-list-list';
 import './task-list-detail.scss';
 import CollectionDetail from './collection-detail/collection-detail';
+import { AuthHelper } from '@/util/auth.helper';
 
 interface TaskListDetailProps {
   collectionId: number;
@@ -20,11 +21,6 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
   const permissions = usePermission();
   
   const [tasks, setTasks] = useState<DTO_TaskListItem[]>([]);
-
-  // Hàm xử lý click vào task để chuyển đến trang task detail
-  const handleTaskClick = (taskId: string) => {
-    router.push(`pm/task-detail/${taskId}`);
-  };
 
   // Load tasks theo collectionId
   useEffect(() => {
@@ -46,23 +42,16 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
     }
   }, [collectionId]);
 
-
-
-
-
   return (
     <>
     <CollectionDetail collectionId={collectionId} />
     <div className="task-list-detail-container">
       <div className="task-list-detail-content">
         <TaskListActions 
-          canCreateTask={permissions.canCreateTask}
+          canCreateTask={permissions.canCreateTask} collectionId={collectionId}
         />
         
-        <TaskListList
-          taskLists={tasks}
-          onTaskListClick={handleTaskClick}
-        />
+        <TaskListList taskLists={tasks} />
       </div>
     </div>
     </>

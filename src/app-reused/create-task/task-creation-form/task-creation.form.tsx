@@ -160,7 +160,7 @@ export function TaskCreationForm({
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         const role = AuthHelper.getRoleFromToken()
-        window.location.href = `${role}/task/${response.body.id}`
+        window.location.href = `${window.location.origin}/${role}/task-detail/${response.body.id}`
       }
     }
     createTask();

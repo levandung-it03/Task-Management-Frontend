@@ -2,12 +2,15 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Container, ScrollText } from "lucide-react";
+import { Check, Container, ScrollText } from "lucide-react";
 import "./phase-detail.scss";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CollectionAPIs } from "@/apis/collection.page.api";
 import { ApiResponse } from "@/apis/general.api";
 import { DTO_PhaseDetail } from "@/dtos/collection.page.dto";
+import { AuthHelper } from "@/util/auth.helper";
+import toast from "react-hot-toast";
+import GlobalValidators from "@/util/global.validators";
 
 export default function PhaseDetail({ phaseId }: { phaseId: number }) {
   const [phase, setPhase] = useState<DTO_PhaseDetail>({
@@ -26,14 +29,25 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
       department: "",
       role: ""
     },
-    // project: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // },
-    // phase: {
-    //   id: 1,
-    //   name: "fsdfsd"
+    projectInfo: {
+      id: 1,
+      name: ""
+    }
   })
+
+  const onClickComplete = useCallback(() => {
+    async function complete() {
+      const response = await CollectionAPIs.completePhase(phase.id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setPhase(prev => ({
+          ...prev,
+          endDate: new Date().toDateString()
+        }))
+      }
+    }
+    complete()
+  }, [phase])
 
   useEffect(() => {
     async function fetchPhase() {
@@ -46,6 +60,13 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
   }, [phaseId])
 
   return <div className="phase-overview general-detail">
+    <div className="detail-delegator">
+      <a href={`/${AuthHelper.getRoleFromToken()}/projects/${phase.projectInfo.id}/phases`}>
+        {phase.projectInfo.name}
+      </a>
+      <span>&gt;</span>
+      <a>{phase.name}</a>
+    </div>
     <div className="form-caption">
       <Container className="caption-icon" />
       <span className="caption-content">
@@ -118,6 +139,15 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
           </span>
         </div>
       </div>
+    </div>
+    <div className="complete-btn-block">
+      <button
+        className={`complete-btn ${GlobalValidators.nonNull(phase.endDate) ? "btn-disabled" : ""}`}
+        disabled={GlobalValidators.nonNull(phase.endDate)}
+        onClick={onClickComplete}>
+        <Check className="cb-icon" />
+        Complete
+      </button>
     </div>
   </div>
 

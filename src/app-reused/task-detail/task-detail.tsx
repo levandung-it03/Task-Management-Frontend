@@ -43,6 +43,18 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     createdTime: "",
     updatedTime: "",
     hasAtLeastOneReport: false,
+    projectInfo: {
+      id: 0,
+      name: ""
+    },
+    phaseInfo: {
+      id: 0,
+      name: ""
+    },
+    collectionInfo: {
+      id: 0,
+      name: ""
+    }
   })
 
   useEffect(() => {
@@ -70,7 +82,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     ? <div className="loading-row">Loading...</div>
     : <div className="task-detail-container">
       <TaskBasicInfo taskInfo={taskInfo} setTaskInfo={setTaskInfo} totalUsers={totalUsers} />
-      <SubTasks taskId={taskInfo.id} />
+      <SubTasks taskInfo={taskInfo} />
       <AssignedUsers taskInfo={taskInfo} isTaskOwner={isOwner} setTotalUsers={setTotalUsers} />
       {isOwner && <TaskDetailInteractBtns taskInfo={taskInfo} />}
     </div>

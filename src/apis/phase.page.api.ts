@@ -71,28 +71,8 @@ export class PhaseAPIs {
 
   static async getProjecDetail(projectId: number): Promise<ApiResponse<DTO_ProjectDetail> | unknown> {
     try {
-      // const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/detail`);
-      // return response.data;
-      return {
-        status: 200,
-        body: {
-          id: 0,
-          name: "fdsafas",
-          description: "ádfasdfasdf",
-          startDate: "11/12/2003",
-          endDate: null,
-          dueDate: "11/12/2003",
-          status: "PENDING",
-          createdTime: "11/12/2003",
-          updatedTime: "11/12/2003",
-          userInfoCreated: {
-            fullName: "fasfasd",
-            email: "fasdfasdf",
-            department: "ádfasdf",
-            role: "ROLE_EMP"
-          }
-        }
-      }
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/detail`);
+      return response.data;
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error);
     }

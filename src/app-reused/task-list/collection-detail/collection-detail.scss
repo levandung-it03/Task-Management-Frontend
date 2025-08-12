@@ -1,6 +1,7 @@
 :root {
   --component-padding: 15px;
 }
+
 .collection-overview {
   padding: calc(1.5*var(--component-padding));
   background-color: var(--background);
@@ -147,5 +148,42 @@
 
   .collection-id {
     margin-left: 10px;
+  }
+
+  .complete-btn-block {
+    width: 100%;
+    margin-top: 15px;
+
+    .complete-btn {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid var(--foreground);
+      background-color: var(--foreground);
+      color: var(--background);
+      border-radius: 15px;
+      transition: all ease 0.3s;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        cursor: pointer;
+        color: var(--foreground);
+        background-color: var(--background);
+      }
+
+      .cb-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+      }
+    }
+
+    .btn-disabled {
+      background-color: var(--main-component-grey) !important;
+      color: #000 !important;
+      cursor: not-allowed !important;
+    }
   }
 }

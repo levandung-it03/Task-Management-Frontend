@@ -20,6 +20,7 @@ export interface DTO_UpdateProject {
   description?: string;
   startDate: string;
   dueDate: string;
+  status: string;
 }
 
 export interface DTO_CompleteProject {

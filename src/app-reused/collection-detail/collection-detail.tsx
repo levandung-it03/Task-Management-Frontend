@@ -4,13 +4,13 @@ import { CollectionAPIs } from '../../apis/collection.page.api';
 import { DTO_CreateCollection, DTO_CollectionItem } from '@/dtos/collection.page.dto';
 import { ApiResponse } from '../../apis/general.api';
 import { AuthHelper } from '../../util/auth.helper';
-import { confirm } from '../confirm-alert/confirm-alert';
 import { usePermission } from '../../util/usePermission.hook';
 import CollectionActions from './collection-actions/collection-actions';
 import CollectionList from './collection-list/collection-list';
 import CollectionForm from './collection-form/collection-form';
 import './collection-detail.scss';
 import PhaseDetail from './phase-detail/phase-detail';
+import { confirm } from '../confirm-alert/confirm-alert';
 
 interface CollectionDetailProps {
   phaseId: number;
@@ -115,11 +115,9 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
           setShowUpdateModal(false);
         } else {
           console.error('Invalid response format:', response);
-          alert('Invalid response from server. Please try again!');
         }
       }).catch((error: unknown) => {
         console.error('Error updating collection:', error);
-        alert('An error occurred while updating the collection. Please try again!');
       });
     }
   };
@@ -145,11 +143,9 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
             });
           } else {
             console.error('Invalid ID response structure:', idResponse);
-            alert('An error occurred while creating the collection. Please try again!');
           }
         } else {
           console.error('Invalid response structure:', response);
-          alert('An error occurred while creating the collection. Please try again!');
         }
         
         setShowCreateModal(false);
@@ -161,7 +157,6 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
         });
       }).catch((error) => {
         console.error('Error creating collection:', error);
-        alert('An error occurred while creating the collection. Please try again!');
       });
     }
   };
@@ -200,27 +195,9 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
         setCollections(prev => prev.filter(c => c.id !== collection.id));
       } else {
         console.error('Invalid response format:', response);
-        alert('An error occurred while deleting the collection. Please try again!');
       }
     } catch (error: any) {
       console.error('Error deleting collection:', error);
-      
-      // Handle specific backend error for collection deletion
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as any;
-        if (axiosError.response?.status === 400) {
-          const errorData = axiosError.response?.data;
-          if (errorData && errorData.code === 17000) {
-            alert('Cannot delete collection: This collection cannot be deleted due to system constraints. Please contact your administrator.');
-          } else {
-            alert('An error occurred while deleting the collection. Please try again!');
-          }
-        } else {
-          alert('An error occurred while deleting the collection. Please try again!');
-        }
-      } else {
-        alert('An error occurred while deleting the collection. Please try again!');
-      }
     }
   };
 

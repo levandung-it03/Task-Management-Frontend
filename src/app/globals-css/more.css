@@ -71,6 +71,12 @@
   color: #fff;
   transition: all ease 0.3s;
 
+  .oli-icon,
+  .oli-title,
+  .oli-menu {
+    color: #fff;
+  }
+
   &:hover {
     background-color: var(--background);
     cursor: pointer;
@@ -90,7 +96,7 @@
 
   .oli-due-date {
     background-color: var(--foreground);
-    color: var(--background)!important;
+    color: var(--background) !important;
   }
 
   .oli-menu {
@@ -110,6 +116,7 @@
       padding-top: 2px;
       padding-right: 2px;
       padding-left: 2px;
+      color: #fff;
     }
 
     &:hover:not(:disabled) {
@@ -144,5 +151,16 @@
       border-color: #ccc;
       cursor: not-allowed;
     }
+  }
+}
+
+.detail-delegator {
+  padding-bottom: 10px;
+
+  a {
+    color: var(--main-green);
+    font-style: italic;
+    text-decoration: underline;
+    margin: 5px;
   }
 }

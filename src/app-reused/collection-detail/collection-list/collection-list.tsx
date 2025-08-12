@@ -41,7 +41,7 @@ export default function CollectionList({
             className="view-details-btn oli-quick-btn"
             onClick={() => onOpenUpdate(collection)}
           >
-            View Collection Details
+            Update
           </button>
           {canDeleteCollection ? (
             <button

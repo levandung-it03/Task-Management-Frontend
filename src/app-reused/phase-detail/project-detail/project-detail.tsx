@@ -25,19 +25,7 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
       email: "",
       department: "",
       role: ""
-    },
-    // project: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // },
-    // phase: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // },
-    // collection: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // }
+    }
   })
 
   useEffect(() => {
@@ -119,6 +107,16 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
           <span className="project-info-value">
             <span className="project-date">
               <span className="task-time-content quick-blue-tag tag-data">{prettierTime(project.updatedTime)}</span>
+            </span>
+          </span>
+        </div>
+        <div className="project-info-item">
+          <span className="project-info-label">Status</span>
+          <span className="project-info-value">
+            <span className={`project-status `}>
+              <span className={`ps-icon ps-${project.status.replaceAll("_", "-").toLocaleLowerCase()}`}>
+                {project.status}
+              </span>
             </span>
           </span>
         </div>

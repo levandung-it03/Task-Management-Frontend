@@ -18,7 +18,7 @@ export default function CollectionActions({ onShowCreateModal, canCreateCollecti
             </svg>
           </div>
           <div className="header-text">
-            <span className="title">Collection Information</span>
+            <span className="title">Collection List</span>
             <div className="subtitle">See full Collection information</div>
           </div>
         </div>

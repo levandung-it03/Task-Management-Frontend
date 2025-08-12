@@ -234,7 +234,6 @@ export default function UsersTable() {
       // }
     } catch (error) {
       console.error(error);
-      alert("Error occurred while updating role.");
     }
   };
 

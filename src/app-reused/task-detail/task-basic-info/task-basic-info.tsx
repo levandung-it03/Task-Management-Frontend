@@ -9,7 +9,7 @@ import TextDialog from './text-dialog/text.dialog'
 import TaskDialog from './task-dialog/task.dialog'
 import "./task-basic-info.scss"
 import { AuthHelper } from '@/util/auth.helper'
-import { DTO_TaskDetail, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
+import { DTO_TaskDelegator, DTO_TaskDetail, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
 import { GeneralTools } from '@/util/general.helper'
 
 interface TaskBasicInfoProps {
@@ -19,6 +19,21 @@ interface TaskBasicInfoProps {
 }
 
 export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicInfoProps) {
+  const [taskDelegator, setTaskDelegator] = useState<DTO_TaskDelegator>({
+    taskInfo: null,
+    projectInfo: {
+      id: 0,
+      name: ""
+    },
+    phaseInfo: {
+      id: 0,
+      name: ""
+    },
+    collectionInfo: {
+      id: 0,
+      name: ""
+    }
+  })
   const [isOwner, setIsOwner] = useState(false)
   const [openTextDialog, setOpenTextDialog] = useState(false)
   const [openTaskDialog, setOpenTaskDialog] = useState(false)
@@ -88,8 +103,37 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
     checkIsOwner()
   }, [taskInfo.userInfo.email])
 
+  useEffect(() => {
+    async function fetchTaskDelegator() {
+      const response = await TaskDetailPageAPIs.getTaskDelegator(taskInfo.id) as ApiResponse<DTO_TaskDelegator>
+      if (String(response.status).startsWith("2")) {
+        setTaskDelegator(response.body)
+      }
+    }
+    fetchTaskDelegator()
+  }, [])
+
   return <>
     <div className="task-basic-info">
+      <div className="detail-delegator">
+        <a href={`/${AuthHelper.getRoleFromToken()}/projects/${taskDelegator.projectInfo.id}/phases`}>
+          {taskDelegator.projectInfo.name}
+        </a>
+        <span>&gt;</span>
+        <a href={`/${AuthHelper.getRoleFromToken()}/phases/${taskDelegator.phaseInfo.id}/collections`}>
+          {taskDelegator.phaseInfo.name}
+        </a>
+        <span>&gt;</span>
+        <a href={`/${AuthHelper.getRoleFromToken()}/collections/${taskDelegator.collectionInfo.id}/tasks`}>
+          {taskDelegator.collectionInfo.name}
+        </a>
+        {taskDelegator.taskInfo !== null && <>
+          <span>&gt;</span>
+          <a href={`/${AuthHelper.getRoleFromToken()}/task-detail/${taskDelegator.taskInfo.id}`}>
+            {taskDelegator.taskInfo.name}
+          </a>
+        </>}
+      </div>
       <div className="form-caption">
         <ClipboardList className="caption-icon" />
         <span className="caption-content">

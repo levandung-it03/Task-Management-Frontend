@@ -2,12 +2,15 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Container, ScrollText } from "lucide-react";
+import { Check, Container, ScrollText } from "lucide-react";
 import "./collection-detail.scss";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { TaskListAPIs } from "@/apis/task-list.page.api";
 import { ApiResponse } from "@/apis/general.api";
 import { DTO_CollectionDetail } from "@/dtos/task-list.page.dto";
+import { AuthHelper } from "@/util/auth.helper";
+import GlobalValidators from "@/util/global.validators";
+import toast from "react-hot-toast";
 
 export default function CollectionDetail({ collectionId }: { collectionId: number }) {
   const [collection, setCollection] = useState<DTO_CollectionDetail>({
@@ -26,19 +29,29 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
       department: "",
       role: ""
     },
-    // project: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // },
-    // phase: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // },
-    // collection: {
-    //   id: 1,
-    //   name: "fsdfsd"
-    // }
+    projectInfo: {
+      id: 0,
+      name: ""
+    },
+    phaseInfo: {
+      id: 0,
+      name: ""
+    }
   })
+
+  const onClickComplete = useCallback(() => {
+    async function complete() {
+      const response = await TaskListAPIs.completeCollection(collection.id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setCollection(prev => ({
+          ...prev,
+          endDate: new Date().toDateString()
+        }))
+      }
+    }
+    complete()
+  }, [collection])
 
   useEffect(() => {
     async function fetchCollection() {
@@ -51,6 +64,19 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
   }, [collectionId])
 
   return <div className="collection-overview general-detail">
+    <div className="detail-delegator">
+      <a href={`/${AuthHelper.getRoleFromToken()}/projects/${collection.projectInfo.id}/phases`}>
+        {collection.projectInfo.name}
+      </a>
+      <span>&gt;</span>
+      <a href={`/${AuthHelper.getRoleFromToken()}/phases/${collection.phaseInfo.id}/collections`}>
+        {collection.phaseInfo.name}
+      </a>
+      <span>&gt;</span>
+      <a href={`/${AuthHelper.getRoleFromToken()}/collections/${collection.id}/tasks`}>
+        {collection.name}
+      </a>
+    </div>
     <div className="form-caption">
       <Container className="caption-icon" />
       <span className="caption-content">
@@ -123,6 +149,15 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
           </span>
         </div>
       </div>
+    </div>
+    <div className="complete-btn-block">
+      <button
+        className={`complete-btn ${GlobalValidators.nonNull(collection.endDate) ? "btn-disabled" : ""}`}
+        disabled={GlobalValidators.nonNull(collection.endDate)}
+        onClick={onClickComplete}>
+        <Check className="cb-icon" />
+        Complete
+      </button>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-import { DTO_CreateCollection, DTO_CollectionItem, DTO_DeleteCollection,DTO_PhaseDetail } from '@/dtos/collection.page.dto';
+import { DTO_CreateCollection, DTO_CollectionItem, DTO_DeleteCollection, DTO_PhaseDetail } from '@/dtos/collection.page.dto';
 import { ApiResponse, GeneralAPIs } from './general.api';
 import axiosInstance from '../util/axios.helper';
 import { AuthHelper } from '@/util/auth.helper';
@@ -26,7 +26,7 @@ export class CollectionAPIs {
   }
 
   // API: Tạo collection mới trong phase
-  static async createCollection(phaseId: number, collectionData: DTO_CreateCollection):  Promise<ApiResponse<DTO_IdResponse> | unknown> {
+  static async createCollection(phaseId: number, collectionData: DTO_CreateCollection): Promise<ApiResponse<DTO_IdResponse> | unknown> {
     try {
       const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/phase/${phaseId}/create-collection`, collectionData);
       return response.data;
@@ -55,8 +55,6 @@ export class CollectionAPIs {
     }
   }
 
-
-
   // API: Tạo task trong collection
   static async createTaskInCollection(collectionId: number, taskData: any): Promise<ApiResponse<any> | unknown> {
     try {
@@ -68,32 +66,20 @@ export class CollectionAPIs {
   }
 
   static async getPhaseDetail(phaseId: number): Promise<ApiResponse<DTO_PhaseDetail> | unknown> {
-      try {
-        // const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/detail`);
-        // return response.data;
-        return {
-          status: 200,
-          body: {
-            id: 0,
-            name: "fdsafas",
-            description: "ádfasdfasdf",
-            startDate: "11/12/2003",
-            endDate: null,
-            dueDate: "11/12/2003",
-            status: "PENDING",
-            createdTime: "11/12/2003",
-            updatedTime: "11/12/2003",
-            userInfoCreated: {
-              fullName: "fasfasd",
-              email: "fasdfasdf",
-              department: "ádfasdf",
-              role: "ROLE_EMP"
-            }
-          }
-        }
-      } catch (error: unknown) {
-        return GeneralAPIs.extractError(error);
-      }
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/phase/${phaseId}/detail`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
     }
-  
+  }
+
+  static async completePhase(phaseId: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/phase/${phaseId}/complete-phase`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
 }

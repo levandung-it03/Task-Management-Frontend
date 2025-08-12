@@ -5,12 +5,10 @@ import { AuthHelper } from '@/util/auth.helper';
 
 interface TaskListListProps {
   taskLists: DTO_TaskListItem[];
-  onTaskListClick: (taskListId: string) => void;
 }
 
 export default function TaskListList({ 
-  taskLists, 
-  onTaskListClick
+  taskLists
 }: TaskListListProps) {
   // Filter out any null or undefined taskLists to prevent errors
   const validTaskLists = taskLists.filter(taskList => taskList != null);
@@ -84,18 +82,18 @@ export default function TaskListList({
           key={`task-list-${taskList.id}`} 
           className="task-list-item"
         >
-          <a className="task-list-info" href={`/${AuthHelper.getRoleFromToken()}/task-detail/${taskList.id}`}>
+          <a className="task-list-info" href={`${window.location.origin}/${AuthHelper.getRoleFromToken()}/task-detail/${taskList.id}`}>
             <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="4" y="4" width="20" height="20" rx="5" fill="#e6f4ea" stroke="var(--main-green)" />
               <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
             </svg>
             <div className="task-list-content">
-              <span 
+              <a
                 className="task-list-name"
-                onClick={() => onTaskListClick(taskList.id.toString())}
+                href={`${window.location.origin}/${AuthHelper.getRoleFromToken()}/task-detail/${taskList.id}`}
               >
                 {taskList.name}
-              </span>
+              </a>
               <span className="task-list-subtitle">Sub task</span>
             </div>
           </a>

@@ -13,7 +13,7 @@
 }
 
 .phase-form-modal {
-  background: #fff !important;
+  background: var(--background);
   border-radius: 18px !important;
   box-shadow: 0 4px 32px #0002 !important;
   padding: 32px 32px 24px 32px !important;
@@ -50,7 +50,7 @@
   background: none !important;
   border: none !important;
   font-size: 30px !important;
-  color: #222 !important;
+  color: var(--foreground) !important;
   cursor: pointer !important;
   line-height: 1 !important;
   transition: color 0.2s !important;
@@ -119,6 +119,7 @@
   width: 100% !important;
   background: transparent !important;
   font-family: inherit !important;
+  color: var(--foreground);
 }
 
 .phase-form-textarea {
