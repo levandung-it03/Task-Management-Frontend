@@ -1,0 +1,151 @@
+:root {
+  --component-padding: 15px;
+}
+.collection-overview {
+  padding: calc(1.5*var(--component-padding));
+  background-color: var(--background);
+  border-radius: var(--component-padding);
+  padding: 25px;
+  margin: 30px;
+  margin-bottom: 0;
+  border-radius: 15px;
+
+  .form-caption {
+    .caption-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-self: flex-start;
+    }
+  }
+
+  .collection-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .collection-info-right,
+    .collection-info-left {
+      width: 50%;
+      min-width: fit-content;
+    }
+
+    .collection-header {
+      width: 100%;
+      border: 1px solid var(--main-green);
+      padding-left: 0 !important;
+      background: linear-gradient(110deg,
+          var(--background) 0%,
+          #5ac8a1 70%,
+          var(--background) 100%);
+      padding: var(--component-padding) !important;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 10px;
+
+      .collection-name,
+      .collection-more-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        width: fit-content;
+        padding: 15px;
+      }
+
+      .collection-name {
+        flex: 1;
+      }
+
+      .collection-name-icon {
+        color: #fff;
+        background-color: var(--main-green);
+        width: 25px;
+        height: 25px;
+        padding: 3px;
+        margin-right: 15px;
+        border-radius: 5px;
+      }
+
+      .collection-info-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--main-green);
+        max-width: 90%;
+        line-break: auto;
+      }
+
+      .update-info-btn,
+      .description-btn,
+      .report-format-btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        margin-left: 10px;
+        transition: background-color ease 0.3s;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        .collection-header-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 5px;
+        }
+      }
+
+      .description-btn {
+        background-color: var(--main-green);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--main-hovered-green);
+          cursor: pointer;
+        }
+      }
+    }
+
+    .collection-info-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: 55px;
+      padding-top: var(--component-padding);
+
+      .collection-info-label {
+        width: 150px;
+        display: flex;
+        color: var(--main-text-grey);
+      }
+    }
+
+    .collection-type {
+      background-color: var(--focusing-fieldset-color);
+      color: #fff;
+    }
+
+    .collection-date {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+
+      .collection-date-content {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .collection-id {
+    background-color: var(--main-green);
+    color: #fff;
+  }
+
+  .collection-id {
+    margin-left: 10px;
+  }
+}

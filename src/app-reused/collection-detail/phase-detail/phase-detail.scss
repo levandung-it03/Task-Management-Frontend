@@ -1,0 +1,151 @@
+:root {
+  --component-padding: 15px;
+}
+.phase-overview {
+  padding: calc(1.5*var(--component-padding));
+  background-color: var(--background);
+  border-radius: var(--component-padding);
+  padding: 25px;
+  margin: 30px;
+  margin-bottom: 0;
+  border-radius: 15px;
+
+  .form-caption {
+    .caption-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-self: flex-start;
+    }
+  }
+
+  .phase-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    .phase-info-right,
+    .phase-info-left {
+      width: 50%;
+      min-width: fit-content;
+    }
+
+    .phase-header {
+      width: 100%;
+      border: 1px solid var(--main-green);
+      padding-left: 0 !important;
+      background: linear-gradient(110deg,
+          var(--background) 0%,
+          #5ac8a1 70%,
+          var(--background) 100%);
+      padding: var(--component-padding) !important;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 10px;
+
+      .phase-name,
+      .phase-more-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        width: fit-content;
+        padding: 15px;
+      }
+
+      .phase-name {
+        flex: 1;
+      }
+
+      .phase-name-icon {
+        color: #fff;
+        background-color: var(--main-green);
+        width: 25px;
+        height: 25px;
+        padding: 3px;
+        margin-right: 15px;
+        border-radius: 5px;
+      }
+
+      .phase-info-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--main-green);
+        max-width: 90%;
+        line-break: auto;
+      }
+
+      .update-info-btn,
+      .description-btn,
+      .report-format-btn {
+        padding: 10px 20px;
+        border-radius: 6px;
+        margin-left: 10px;
+        transition: background-color ease 0.3s;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        .phase-header-icon {
+          width: 20px;
+          height: 20px;
+          margin-right: 5px;
+        }
+      }
+
+      .description-btn {
+        background-color: var(--main-green);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--main-hovered-green);
+          cursor: pointer;
+        }
+      }
+    }
+
+    .phase-info-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding-left: 55px;
+      padding-top: var(--component-padding);
+
+      .phase-info-label {
+        width: 150px;
+        display: flex;
+        color: var(--main-text-grey);
+      }
+    }
+
+    .phase-type {
+      background-color: var(--focusing-fieldset-color);
+      color: #fff;
+    }
+
+    .phase-date {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+
+      .phase-date-content {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .phase-id {
+    background-color: var(--main-green);
+    color: #fff;
+  }
+
+  .phase-id {
+    margin-left: 10px;
+  }
+}

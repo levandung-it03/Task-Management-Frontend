@@ -12,6 +12,7 @@ import { confirm } from '../confirm-alert/confirm-alert';
 import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import { AuthHelper } from '../../util/auth.helper';
 import { DTO_IdResponse } from '@/dtos/general.dto';
+import ProjectDetail from './project-detail/project-detail';
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
   const permissions = usePermission();
@@ -175,6 +176,8 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   };
 
   return (
+      <>
+      <ProjectDetail projectId={projectId} />
     <div className="phase-detail-container">
       <div className="phase-detail-content">
         <div className="phase-detail-header">
@@ -184,7 +187,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
                 <rect x="4" y="4" width="24" height="24" rx="6" fill="#e6f4ea" stroke="var(--main-green)" />
                 <path d="M10 12h12M10 18h12" stroke="var(--main-green)" />
               </svg>
-              <span className="phase-detail-title-text">Phase Information</span>
+              <span className="phase-detail-title-text">Phase List</span>
             </div>
             <div className="phase-detail-subtitle">
               See full Phase information
@@ -229,5 +232,6 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
         />
       )}
     </div>
+      </>
   );
 } 

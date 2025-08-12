@@ -9,6 +9,7 @@ import { usePermission } from '../../util/usePermission.hook';
 import TaskListActions from './task-list-actions/task-list-actions';
 import TaskListList from './task-list-list/task-list-list';
 import './task-list-detail.scss';
+import CollectionDetail from './collection-detail/collection-detail';
 
 interface TaskListDetailProps {
   collectionId: number;
@@ -50,6 +51,8 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
 
 
   return (
+    <>
+    <CollectionDetail collectionId={collectionId} />
     <div className="task-list-detail-container">
       <div className="task-list-detail-content">
         <TaskListActions 
@@ -62,5 +65,6 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
         />
       </div>
     </div>
+    </>
   );
 } 

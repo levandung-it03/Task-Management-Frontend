@@ -1,3 +1,4 @@
+import { DTO_FastUserInfo } from "./create-task.page.dto";
 export interface DTO_CreateTaskList {
   name: string;
   description: string;
@@ -50,3 +51,16 @@ export class DTO_DeleteTaskList {
   }
 }
 
+export interface DTO_CollectionDetail {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string; 
+  endDate?: string | null; 
+  dueDate: string; 
+  createdTime: string; 
+  updatedTime: string; 
+  status: string;
+
+  userInfoCreated: DTO_FastUserInfo;
+}

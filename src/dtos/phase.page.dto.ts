@@ -1,3 +1,5 @@
+import { DTO_FastUserInfo } from "./create-task.page.dto";
+
 export interface DTO_CreatePhase {
   name: string;
   description: string;
@@ -58,4 +60,18 @@ export class DTO_DeletePhase {
     this.forceDelete = forceDelete;
     return this;
   }
-} 
+}
+
+export interface DTO_ProjectDetail {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string; 
+  endDate?: string | null; 
+  dueDate: string; 
+  createdTime: string; 
+  updatedTime: string; 
+  status: string;
+
+  userInfoCreated: DTO_FastUserInfo;
+}

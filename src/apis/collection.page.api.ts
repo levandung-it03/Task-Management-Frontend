@@ -1,4 +1,4 @@
-import { DTO_CreateCollection, DTO_CollectionItem, DTO_DeleteCollection } from '@/dtos/collection.page.dto';
+import { DTO_CreateCollection, DTO_CollectionItem, DTO_DeleteCollection,DTO_PhaseDetail } from '@/dtos/collection.page.dto';
 import { ApiResponse, GeneralAPIs } from './general.api';
 import axiosInstance from '../util/axios.helper';
 import { AuthHelper } from '@/util/auth.helper';
@@ -67,5 +67,33 @@ export class CollectionAPIs {
     }
   }
 
+  static async getPhaseDetail(phaseId: number): Promise<ApiResponse<DTO_PhaseDetail> | unknown> {
+      try {
+        // const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/detail`);
+        // return response.data;
+        return {
+          status: 200,
+          body: {
+            id: 0,
+            name: "fdsafas",
+            description: "ádfasdfasdf",
+            startDate: "11/12/2003",
+            endDate: null,
+            dueDate: "11/12/2003",
+            status: "PENDING",
+            createdTime: "11/12/2003",
+            updatedTime: "11/12/2003",
+            userInfoCreated: {
+              fullName: "fasfasd",
+              email: "fasdfasdf",
+              department: "ádfasdf",
+              role: "ROLE_EMP"
+            }
+          }
+        }
+      } catch (error: unknown) {
+        return GeneralAPIs.extractError(error);
+      }
+    }
   
 }

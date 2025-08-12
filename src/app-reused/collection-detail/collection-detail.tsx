@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { CollectionAPIs } from '../../apis/collection.page.api';
 import { DTO_CreateCollection, DTO_CollectionItem } from '@/dtos/collection.page.dto';
 import { ApiResponse } from '../../apis/general.api';
-import { PhaseAPIs } from '../../apis/phase.page.api';
 import { AuthHelper } from '../../util/auth.helper';
 import { confirm } from '../confirm-alert/confirm-alert';
 import { usePermission } from '../../util/usePermission.hook';
@@ -11,6 +10,7 @@ import CollectionActions from './collection-actions/collection-actions';
 import CollectionList from './collection-list/collection-list';
 import CollectionForm from './collection-form/collection-form';
 import './collection-detail.scss';
+import PhaseDetail from './phase-detail/phase-detail';
 
 interface CollectionDetailProps {
   phaseId: number;
@@ -227,6 +227,8 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
 
 
   return (
+      <>
+      <PhaseDetail phaseId={phaseId} />
     <div className="collection-detail-container">
       <div className="collection-detail-content">
         <CollectionActions 
@@ -265,5 +267,6 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
         canUpdateCollection={permissions.canUpdateCollection}
       />
     </div>
+    </>
   );
 } 

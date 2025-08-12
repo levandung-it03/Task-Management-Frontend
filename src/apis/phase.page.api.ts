@@ -1,12 +1,12 @@
 import { ApiResponse, GeneralAPIs } from './general.api';
 import axiosInstance from '../util/axios.helper';
 import { AuthHelper } from '@/util/auth.helper';
-import { DTO_CreatePhase, DTO_DeletePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
+import { DTO_CreatePhase, DTO_DeletePhase, DTO_PhaseItem, DTO_ProjectDetail } from '@/dtos/phase.page.dto';
 import { DTO_IdResponse } from '@/dtos/general.dto';
 
 export class PhaseAPIs {
   // ===== PHASE CRUD OPERATIONS =====
-  
+
   // Tạo phase mới
   static async createPhase(projectId: number, phaseData: DTO_CreatePhase): Promise<ApiResponse<DTO_IdResponse> | unknown> {
     try {
@@ -69,4 +69,32 @@ export class PhaseAPIs {
     }
   }
 
+  static async getProjecDetail(projectId: number): Promise<ApiResponse<DTO_ProjectDetail> | unknown> {
+    try {
+      // const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/detail`);
+      // return response.data;
+      return {
+        status: 200,
+        body: {
+          id: 0,
+          name: "fdsafas",
+          description: "ádfasdfasdf",
+          startDate: "11/12/2003",
+          endDate: null,
+          dueDate: "11/12/2003",
+          status: "PENDING",
+          createdTime: "11/12/2003",
+          updatedTime: "11/12/2003",
+          userInfoCreated: {
+            fullName: "fasfasd",
+            email: "fasdfasdf",
+            department: "ádfasdf",
+            role: "ROLE_EMP"
+          }
+        }
+      }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
 } 
