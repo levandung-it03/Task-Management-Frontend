@@ -9,13 +9,14 @@ import { ApiResponse, GeneralAPIs } from "@/apis/general.api"
 import toast from "react-hot-toast"
 import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { BookmarkX, Check, CircleCheckBig, CircleSlash, ClipboardMinus, Pencil, Send, SendHorizontal, X } from "lucide-react"
-import { AuthHelper } from "@/util/auth.helper"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
-import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
+import { DTO_TaskDelegator, DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
 import GlobalValidators from "@/util/global.validators"
 import { UserTaskService } from "./user-task.service"
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
 import { DTO_EmailResponse } from "@/dtos/general.dto"
+import { AuthHelper } from "@/util/auth.helper"
+import { FileIcon } from "@/assets/file.icon"
 
 interface Comment {
   rootComment: DTO_CommentOfReport
@@ -29,6 +30,10 @@ interface Comment {
  * Why do we need to query taskInfo? To check if this is owner (to show Reject/Approve buttons).
  */
 export default function UserTask({ userTaskId, taskId }: { userTaskId: number, taskId: number }) {
+  const [reportComments, setReportComments] = useState<DTO_ReportsComments[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isReportOwner, setIsReportOwner] = useState(false)
+  const [canReviewReport, setCanReviewReport] = useState(false)
   const [taskInfo, setTaskInfo] = useState<DTO_TaskDetail>({
     id: 0,
     userInfo: {
@@ -51,35 +56,27 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     createdTime: "",
     updatedTime: "",
     hasAtLeastOneReport: false,
+    projectInfo: { id: 0, name: "" },
+    phaseInfo: { id: 0, name: "" },
+    collectionInfo: { id: 0, name: "" }
   })
 
   useEffect(() => {
     async function getDetail() {
+      let result = {}
       const response = await TaskDetailPageAPIs.getTaskDetail(taskId) as ApiResponse<DTO_TaskDetail>
       if (String(response.status)[0] !== "2")
         return
 
-      setTaskInfo(response.body)
+      result = { ...response.body }
+      const delegatorRes = await TaskDetailPageAPIs.getTaskDelegator(taskId) as ApiResponse<DTO_TaskDelegator>
+      if (String(delegatorRes.status).startsWith("2")) {
+        result = { ...result, ...delegatorRes.body }
+      }
+      setTaskInfo(prev => ({ ...prev, ...result }))
     }
     getDetail()
   }, [taskId])
-
-  return <div className="main-user-task">
-    <CreateReportForm userTaskId={userTaskId} taskId={taskId} />
-    <ReportList
-      userTaskId={userTaskId}
-      taskInfo={taskInfo} />
-  </div>
-}
-
-function ReportList({ userTaskId, taskInfo }: {
-  userTaskId: number,
-  taskInfo: DTO_TaskDetail
-}) {
-  const [reportComments, setReportComments] = useState<DTO_ReportsComments[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [isReportOwner, setIsReportOwner] = useState(false)
-  const [canReviewReport, setCanReviewReport] = useState(false)
 
   useEffect(() => {
     if (!taskInfo.userInfo.email)
@@ -94,33 +91,88 @@ function ReportList({ userTaskId, taskInfo }: {
       if (String(emailRes.status)[0] !== "2")
         return
 
+      const assignedRes = await UserTaskPageAPIs.isAssignedUser(userTaskId) as ApiResponse<Record<string, boolean>>
+      if (String(assignedRes.status)[0] !== "2")
+        return
+
       setIsLoading(false)
       if (response.body.length === 0)
         return
-      
       const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
-      const isAssignedUser = emailRes.body.email === response.body[0].report.createdBy.email
-      
+      const isAssignedUser = assignedRes.body.result
+
       //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
-      setReportComments(response.body)
       setIsReportOwner(isAssignedUser)
       setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
+
+      setReportComments(response.body)
     }
     fetchReports()
   }, [userTaskId, taskInfo.userInfo.email])
 
-  return <div className="report-list">
+  return <div className="main-user-task">
+    <div className="introduction">
+      <Delegator taskInfo={taskInfo} />
+      {isReportOwner
+        ? <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} />
+        : <div className="form-caption">
+          <FileIcon className="caption-icon" />
+          <span className="caption-content">Reports</span>
+          <i className="desc-content">All report of Assigned User <b>{taskInfo.userInfo.fullName}</b> shown here.</i>
+        </div>}
+    </div>
     {isLoading
       ? <span className="loading-row">Loading...</span>
-      : reportComments.map((reportInfo, ind) =>
-        <ReportFrame
-          key={"rf-" + ind}
-          reportInd={ind}
-          reportInfo={reportInfo}
+      : (reportComments.length === 0
+        ? <div className="loading-row">There are no Report submitted</div>
+        : <ReportList
+          reportComments={reportComments}
           isReportOwner={isReportOwner}
           canReviewReport={canReviewReport}
           setReportComments={setReportComments} />
       )}
+  </div>
+}
+
+function Delegator({ taskInfo }: { taskInfo: DTO_TaskDetail }) {
+  return <div className="detail-delegator">
+    <a href={`/${AuthHelper.getRoleFromToken()}/projects/${taskInfo.projectInfo.id}/phases`}>
+      {taskInfo.projectInfo.name}
+    </a>
+    <span>&gt;</span>
+    <a href={`/${AuthHelper.getRoleFromToken()}/phases/${taskInfo.phaseInfo.id}/collections`}>
+      {taskInfo.phaseInfo.name}
+    </a>
+    <span>&gt;</span>
+    <a href={`/${AuthHelper.getRoleFromToken()}/collections/${taskInfo.collectionInfo.id}/tasks`}>
+      {taskInfo.collectionInfo.name}
+    </a>
+    {taskInfo !== null && <>
+      <span>&gt;</span>
+      <a href={`/${AuthHelper.getRoleFromToken()}/task-detail/${taskInfo.id}`}>
+        {taskInfo.name}
+      </a>
+    </>}
+  </div>
+}
+
+function ReportList({ reportComments, isReportOwner, canReviewReport, setReportComments }: {
+  reportComments: DTO_ReportsComments[],
+  isReportOwner: boolean,
+  canReviewReport: boolean,
+  setReportComments: React.Dispatch<React.SetStateAction<DTO_ReportsComments[]>>
+}) {
+
+  return <div className="report-list">
+    {reportComments.map((reportInfo, ind) =>
+      <ReportFrame
+        key={"rf-" + ind}
+        reportInd={ind}
+        reportInfo={reportInfo}
+        isReportOwner={isReportOwner}
+        canReviewReport={canReviewReport}
+        setReportComments={setReportComments} />
+    )}
   </div>
 }
 

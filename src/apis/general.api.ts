@@ -56,7 +56,7 @@ export class GeneralAPIs {
 
   static async getOtpEnumTypes(): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/public/v1/enums/otp-type`)
+      const response = await axiosInstance.get(`/api/public/v1/enum/otp-type`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
@@ -65,7 +65,7 @@ export class GeneralAPIs {
 
   static async getOauth2ServiceEnums(): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/public/v1/enums/get-oauth2-service-enums`)
+      const response = await axiosInstance.get(`/api/public/v1/enum/get-oauth2-service-enums`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)

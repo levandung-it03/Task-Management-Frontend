@@ -4,7 +4,7 @@ export class GeneralTools {
   static capitalize(str: string): string {
     return str[0].toUpperCase() + str.slice(1).toLowerCase()
   }
-  
+
   static convertEnum(enumValue: string): string {
     return enumValue.split("_").map((str: string) => GeneralTools.capitalize(str)).join(" ");
   }
@@ -43,9 +43,15 @@ export class GeneralTools {
     let existsHistories: string[]
     if (existsCookies === undefined) return
     else existsHistories = JSON.parse(existsCookies)
-    
+
     const newHistories = existsHistories.filter(h => h !== hist)
-    if (newHistories.length === 0)  Cookies.remove(cookieName)
-    else  Cookies.set(cookieName, JSON.stringify(newHistories))
+    if (newHistories.length === 0) Cookies.remove(cookieName)
+    else Cookies.set(cookieName, JSON.stringify(newHistories))
+  }
+  
+  static reloadAfterDelay() {
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   }
 }

@@ -29,6 +29,7 @@ export default function TaskDialog({
 }: TaskDialogProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [isOwner, setIsOwner] = useState(false)
+  const [startDate, setStartDate] = useState("")
   const [deadline, setDeadline] = useState("")
   const [levelList, setLevelList] = useState<string[]>([])
   const [level, setLevel] = useState("")
@@ -39,9 +40,16 @@ export default function TaskDialog({
   const [formTouched, setFormTouched] = useState(false)
   const [formValidation, setFormValidation] = useState({
     deadline: "",
+    startDate: ""
   })
   const [addedUsers, setAddedUsers] = useState<Record<string, Record<string, string>>>({})
   const isUpdatable = useMemo(() => isOwner && !taskInfo.hasAtLeastOneReport, [isOwner, taskInfo.hasAtLeastOneReport])
+
+  const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setStartDate(e.target.value)
+    setFormTouched(true)
+    setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
+  }, [])
 
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDeadline(e.target.value)
@@ -71,9 +79,14 @@ export default function TaskDialog({
         return
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
+      if (new Date(startDate) > new Date(deadline)) {
+        toast.error("Invalid Start-date or Deadline!")
+        return
+      }
       if (priority === taskInfo.priority
         && level === taskInfo.level
         && taskType === taskInfo.taskType
+        && startDate === GeneralTools.formatedDateToDateInput(taskInfo.startDate)
         && deadline === GeneralTools.formatedDateToDateInput(taskInfo.deadline)) {
         toast.error("Change data before update!")
         return
@@ -93,7 +106,8 @@ export default function TaskDialog({
           priority: priority,
           level: level,
           taskType: taskType,
-          deadline: deadline
+          deadline: deadline,
+          startDate: startDate
         }))
         window.location.reload()
       }
@@ -145,6 +159,7 @@ export default function TaskDialog({
   useEffect(() => setPriority(taskInfo.priority), [taskInfo.priority])
   useEffect(() => setTaskType(taskInfo.taskType), [taskInfo.taskType])
   useEffect(() => setDeadline(taskInfo.deadline), [taskInfo.deadline])
+  useEffect(() => setDeadline(taskInfo.startDate), [taskInfo.startDate])
 
   return openDialog
     ? <div className="task-dialog">
@@ -160,6 +175,15 @@ export default function TaskDialog({
         <div className="input-container">
           <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
+              <legend className="form-label">Start Date</legend>
+              <input type="date" id="startDate" className="form-input" placeholder="Type Start Date" required
+                value={startDate} onChange={onChangeStartDate} readOnly={!isUpdatable} />
+            </fieldset>
+            {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
+          </div>
+
+          <div className="form-group-container half-form-right-container">
+            <fieldset className="form-group">
               <legend className="form-label">Deadline</legend>
               <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
                 value={deadline} onChange={onChangeDeadline} readOnly={!isUpdatable} />
@@ -167,7 +191,7 @@ export default function TaskDialog({
             {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
           </div>
 
-          <div className="form-group-container half-form-right-container">
+          <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
               <legend className="form-label">Level</legend>
               <select id="level" className="form-input" value={level} onChange={onChangeLevel} disabled={!isUpdatable}>
@@ -178,7 +202,7 @@ export default function TaskDialog({
             </fieldset>
           </div>
 
-          <div className="form-group-container half-form-left-container">
+          <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Priority</legend>
               <select id="priority" className="form-input" value={priority} onChange={onChangePriority} disabled={!isUpdatable}>
@@ -189,7 +213,7 @@ export default function TaskDialog({
             </fieldset>
           </div>
 
-          <div className="form-group-container half-form-right-container">
+          <div className="form-group-container">
             <fieldset className="form-group">
               <legend className="form-label">Task Type</legend>
               <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType} disabled={!isUpdatable}>
@@ -216,7 +240,7 @@ export default function TaskDialog({
             <div className="form-group-container added-for-container">
               <fieldset className="form-group">
                 <legend className="form-label">Added Users</legend>
-                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers}/>
+                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
               </fieldset>
             </div>
 

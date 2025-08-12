@@ -111,7 +111,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       }
     }
     fetchTaskDelegator()
-  }, [])
+  }, [taskInfo.id])
 
   return <>
     <div className="task-basic-info">

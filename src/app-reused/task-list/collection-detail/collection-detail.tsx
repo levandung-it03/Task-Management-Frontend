@@ -6,13 +6,15 @@ import { Check, Container, ScrollText } from "lucide-react";
 import "./collection-detail.scss";
 import { useCallback, useEffect, useState } from "react";
 import { TaskListAPIs } from "@/apis/task-list.page.api";
-import { ApiResponse } from "@/apis/general.api";
+import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
 import { DTO_CollectionDetail } from "@/dtos/task-list.page.dto";
 import { AuthHelper } from "@/util/auth.helper";
 import GlobalValidators from "@/util/global.validators";
 import toast from "react-hot-toast";
+import { DTO_EmailResponse } from "@/dtos/general.dto";
 
 export default function CollectionDetail({ collectionId }: { collectionId: number }) {
+  const [isOwner, setIsOwner] = useState(false)
   const [collection, setCollection] = useState<DTO_CollectionDetail>({
     id: 0,
     name: "",
@@ -59,6 +61,12 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
       if (String(response.status).startsWith("2")) {
         setCollection(response.body)
       }
+      
+      const emailRes = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
+      if (String(emailRes.status)[0] !== "2")
+        return
+
+      setIsOwner(emailRes.body.email === response.body.userInfoCreated.email)
     }
     fetchCollection()
   }, [collectionId])
@@ -150,7 +158,7 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
         </div>
       </div>
     </div>
-    <div className="complete-btn-block">
+    {isOwner && <div className="complete-btn-block">
       <button
         className={`complete-btn ${GlobalValidators.nonNull(collection.endDate) ? "btn-disabled" : ""}`}
         disabled={GlobalValidators.nonNull(collection.endDate)}
@@ -158,7 +166,7 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
         <Check className="cb-icon" />
         Complete
       </button>
-    </div>
+    </div>}
   </div>
 
 }

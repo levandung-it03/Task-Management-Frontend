@@ -6,13 +6,15 @@ import { Check, Container, ScrollText } from "lucide-react";
 import "./phase-detail.scss";
 import { useCallback, useEffect, useState } from "react";
 import { CollectionAPIs } from "@/apis/collection.page.api";
-import { ApiResponse } from "@/apis/general.api";
+import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
 import { DTO_PhaseDetail } from "@/dtos/collection.page.dto";
 import { AuthHelper } from "@/util/auth.helper";
 import toast from "react-hot-toast";
 import GlobalValidators from "@/util/global.validators";
+import { DTO_EmailResponse } from "@/dtos/general.dto";
 
 export default function PhaseDetail({ phaseId }: { phaseId: number }) {
+  const [isOwner, setIsOwner] = useState(false)
   const [phase, setPhase] = useState<DTO_PhaseDetail>({
     id: 0,
     name: "",
@@ -55,6 +57,12 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
       if (String(response.status).startsWith("2")) {
         setPhase(response.body)
       }
+
+      const emailRes = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
+      if (String(emailRes.status)[0] !== "2")
+        return
+
+      setIsOwner(emailRes.body.email === response.body.userInfoCreated.email)
     }
     fetchPhase()
   }, [phaseId])
@@ -140,7 +148,7 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
         </div>
       </div>
     </div>
-    <div className="complete-btn-block">
+    {isOwner && <div className="complete-btn-block">
       <button
         className={`complete-btn ${GlobalValidators.nonNull(phase.endDate) ? "btn-disabled" : ""}`}
         disabled={GlobalValidators.nonNull(phase.endDate)}
@@ -148,7 +156,7 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
         <Check className="cb-icon" />
         Complete
       </button>
-    </div>
+    </div>}
   </div>
 
 }

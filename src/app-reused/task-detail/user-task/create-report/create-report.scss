@@ -1,0 +1,14 @@
+.report-creation {
+  display: flex;
+  flex-wrap: wrap;
+
+  .desc-container {
+    .desc-textarea {
+      height: 250px;
+    }
+
+    .form-group {
+      border: none !important;
+    }
+  }
+}

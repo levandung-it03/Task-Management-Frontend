@@ -1,119 +1,93 @@
 'use client'
 
-import { DTO_LLMCompleteion, LLMSentMsgAndRole, UserTaskPageAPIs } from "@/apis/user-task.page.api";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import { useCallback, useState } from "react";
+import { TextEditor } from "@/app-reused/text-editor/text-editor";
+import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto";
+import React, { useCallback, useEffect, useState } from "react";
+import "./create-report.scss";
+import HelpContainer from "@/app-reused/help-container/page";
+import GlobalValidators from "@/util/global.validators";
+import CreateReportService from "./create-report.service";
+import { FileIcon } from "@/assets/file.icon";
+import { UserTaskPageAPIs } from "@/apis/user-task.page.api";
+import { DTO_ReportRequest } from "@/dtos/user-task.page.dto";
+import { ApiResponse } from "@/apis/general.api";
+import { DTO_IdResponse } from "@/dtos/general.dto";
+import toast from "react-hot-toast";
+import { GeneralTools } from "@/util/general.helper";
 
 export interface CreateReportFormProps {
   userTaskId: number;
-  taskId: number;
+  taskInfo: DTO_TaskDetail;
 }
 
-export default function CreateReportForm({ userTaskId, taskId }: CreateReportFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: "<p>Hello world</p>",
-    editorProps: {},
-    immediatelyRender: false,
-  });
+export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportFormProps) {
+  const [format, setFormat] = useState("")
+  const [report, setReport] = useState("")
+  const [title, setTitle] = useState("")
+  const [formTouched, setFormTouched] = useState(false)
+  const [formValidation, setFormValidation] = useState({
+    title: ""
+  })
 
-  const description = `
-1. Create a responsive design for the marketing landing page.
-2. Create HTML & CSS Frame as first to be reviewed by customer (refer from Dribbble).
-3. Refactor the code into NextJS.
-4. Run the code with "npx next build" to ensure there is no error.
-5. Push the code on to git branch "ui/page/landing".
-  `;
+  const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value)
+    setFormTouched(true)
+    setFormValidation(prev => ({ ...prev, title: CreateReportService.isValidName(e.target.value) }))
+  }, [])
 
-  const reportFormat = `
-Dear Mr. Duy,  
-Today I've been done:  
-  + Created responsive design for landing page  
-  + Built initial HTML/CSS frame from Dribbble  
-  + Refactored layout into NextJS  
-  + Ran code with "npx next build" successfully  
-  + Pushed code to git branch "ui/page/landing"  
-
-Tomorrow I'll  
-  + Start integrating backend API  
-
-Finally, thank you for supporting me in these lessons.  
-Regards,  
-Dung
-  `;
-
-  const generateReport = useCallback(() => {
-    async function complete() {
-      if (!editor) return;
-      setIsLoading(true);
-
-      // STEP 1: Extract only the current line where the user is typing
-      const fullText = editor.getText();
-      const selection = editor.state.selection.from;
-      const lines = fullText.split("\n");
-
-      let charCount = 0;
-      let currentLine = "";
-      for (const line of lines) {
-        charCount += line.length + 1; // +1 for newline
-        if (charCount >= selection) {
-          currentLine = line.trim();
-          break;
-        }
+  const onClickSubmitReport = useCallback(() => {
+    async function submitReport() {
+      if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
+        return
+      if (report.trim().length === 0) {
+        toast.error("Report cannot be empty")
+        return
       }
-
-      const prompt = getDefaultPrompt(description, reportFormat, currentLine);
-      const request = DTO_LLMCompleteion.withBuilder()
-        .bmodel("phi-3.1-mini-4k-instruct")
-        .bmessages([
-          LLMSentMsgAndRole.withBuilder()
-            .brole("user")
-            .bcontent(prompt),
-        ])
-        .bmaxTokens(400);
-
-      try {
-        const response = await UserTaskPageAPIs.getCompletion(request) as any;
-        const result = response.data?.choices?.[0]?.message?.content ?? "No completion received.";
-        editor.commands.insertContent(result.trim());
-      } catch (err) {
-        alert("Failed to get completion.");
+      const request = DTO_ReportRequest.withBuilder()
+        .btitle(title)
+        .bcontent(report)
+        .btaskUserId(userTaskId)
+      const response = await UserTaskPageAPIs.createReport(request) as ApiResponse<DTO_IdResponse>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        GeneralTools.reloadAfterDelay();
       }
-      setIsLoading(false);
-    };
-    complete()
-  }, [editor])
+    }
+    submitReport()
+  }, [title, report, userTaskId])
 
-  return (
-    <div className="create-report-form">
-      <EditorContent editor={editor} className="border p-4 min-h-[150px]" />
-      <button
-        onClick={generateReport}
-        disabled={isLoading}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        {isLoading ? "Generating..." : "AI Complete"}
-      </button>
+  useEffect(() => setFormat(taskInfo.reportFormat), [taskInfo.reportFormat])
+
+  return <div className="report-creation">
+    <div className="form-caption">
+      <FileIcon className="caption-icon" />
+      <span className="caption-content">Submit Report</span>
+      <i className="desc-content">Fill these information to submit Report to complete the Task.</i>
     </div>
-  );
-}
-
-function getDefaultPrompt(description: string, reportFormat: string, userTypedLine: string): string {
-  return `
-You are a helpful assistant generating daily software development report lines.
-
-Only complete this sentence fragment. Do not include headers. Do not repeat the "+" sign. Only return the rest of the sentence.
-
-The user's task description:
-${description.trim()}
-
-The report format:
-${reportFormat.trim()}
-
-Now complete the following partial line:
-
-"${userTypedLine.trim()}"
-`.trim();
+    <div className="form-group-container">
+      <fieldset className="form-group">
+        <legend className="form-label">Report Title</legend>
+        <input type="text" id="title" className="form-input" placeholder="Type Report title" required
+          value={title} onChange={onChangeName} />
+      </fieldset>
+      {GlobalValidators.notEmpty(formValidation.title) && <span className="input-err-msg">{formValidation.title}</span>}
+    </div>
+    <div className="form-group-container desc-container half-form-left-container">
+      <fieldset className="form-group">
+        <legend className="form-label">
+          <HelpContainer title="Your Report" description="Prepare your Report that related to your Task and submit" />
+        </legend>
+        <TextEditor state={report} setState={setReport} />
+      </fieldset>
+    </div>
+    <div className="form-group-container desc-container half-form-right-container">
+      <fieldset className="form-group">
+        <legend className="form-label">
+          <HelpContainer title="Format Example" description="From Task Owner, to support your Report writing" />
+        </legend>
+        <TextEditor state={format} setState={setFormat} />
+      </fieldset>
+    </div>
+    <button className="submit-btn" onClick={onClickSubmitReport}>Submit</button>
+  </div>
 }

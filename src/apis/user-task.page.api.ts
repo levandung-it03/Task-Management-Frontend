@@ -54,160 +54,6 @@ export class UserTaskPageAPIs {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${userTaskId}/all-reports`
       const response = await axiosInstance.get(url)
       return response.data
-      // console.log(AuthHelper.extractToken(AuthHelper.getAccessTokenFromCookie() || ""))
-      // return {
-      //   code: 11000,
-      //   msg: "Lấy thành công",
-      //   status: 200,
-      //   body: [
-      //     {
-      //       report: {
-      //         id: 1,
-      //         createdBy: {
-      //           id: 1,
-      //           email: "emp@gmail.com",
-      //           fullName: "Le Van Dung"
-      //         },
-      //         title: "Báo cáo phân tích yêu cầu",
-      //         content: "Phân tích yêu cầu hệ thống quản lý kho\n\n- Module quản lý đơn hàng\n- Module theo dõi tồn kho",
-      //         rejectedReason: null,
-      //         reportStatus: "APPROVED",
-      //         reviewedTime: "2025-07-08 08:30:00",
-      //         createdTime: "2025-07-07 10:15:00",
-      //         updatedTime: "2025-07-07 10:15:00"
-      //       },
-      //       comments: [
-      //         {
-      //           id: 1,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "pm@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: null,
-      //           comment: "Báo cáo khá chi tiết, nên bổ sung thêm phân tích rủi ro.",
-      //           createdTime: "2025-07-08 09:00:00"
-      //         },
-      //         {
-      //           id: 2,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: 1,
-      //           comment: "Đồng ý, phần đó đang còn thiếu.",
-      //           createdTime: "2025-07-08 09:30:00"
-      //         },
-      //         {
-      //           id: 3,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: 1,
-      //           comment: "Đồng ý, phần đó đang còn thiếu.",
-      //           createdTime: "2025-07-08 09:30:00"
-      //         },
-      //         {
-      //           id: 4,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "pm@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: null,
-      //           comment: "Báo cáo khá chi tiết, nên bổ sung thêm phân tích rủi ro.",
-      //           createdTime: "2025-07-08 09:00:00"
-      //         },
-      //         {
-      //           id: 5,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: 4,
-      //           comment: "Đồng ý, phần đó đang còn thiếu.",
-      //           createdTime: "2025-07-08 09:30:00"
-      //         },
-      //         {
-      //           id: 6,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: null,
-      //           comment: "Đồng ý, phần đó đang còn thiếu.",
-      //           createdTime: "2025-07-08 09:30:00"
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       report: {
-      //         id: 2,
-      //         createdBy: {
-      //           id: 1,
-      //           email: "emp@gmail.com",
-      //           fullName: "Le Van Dung"
-      //         },
-      //         title: "Báo cáo thiết kế cơ sở dữ liệu",
-      //         content: "Thiết kế ERD bao gồm các bảng:\n  - Users\n  - Projects\n  - Tasks\n\nMối quan hệ:\n  - User - Task: N-N\n  - Project - Task: 1-N",
-      //         rejectedReason: "Thiếu mô tả bảng trung gian.",
-      //         reportStatus: "REJECTED",
-      //         reviewedTime: "2025-07-08 11:45:00",
-      //         createdTime: "2025-07-06 14:20:00",
-      //         updatedTime: "2025-07-08 11:00:00"
-      //       },
-      //       comments: [
-      //         {
-      //           id: 3,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: 0,
-      //           comment: "Bạn cần mô tả rõ hơn về bảng task_assignment.",
-      //           createdTime: "2025-07-08 11:50:00"
-      //         }
-      //       ]
-      //     },
-      //     {
-      //       report: {
-      //         id: 3,
-      //         createdBy: {
-      //           id: 1,
-      //           email: "emp@gmail.com",
-      //           fullName: "Le Van Dung"
-      //         },
-      //         title: "Báo cáo thiết kế cơ sở dữ liệu",
-      //         content: "Thiết kế ERD bao gồm các bảng:\n  - Users\n  - Projects\n  - Tasks\n\nMối quan hệ:\n  - User - Task: N-N\n  - Project - Task: 1-N",
-      //         rejectedReason: null,
-      //         reportStatus: "WAITING",
-      //         reviewedTime: null,
-      //         createdTime: "2025-07-06 14:20:00",
-      //         updatedTime: "2025-07-06 14:20:00"
-      //       },
-      //       comments: [
-      //         {
-      //           id: 4,
-      //           createdBy: {
-      //             id: 1,
-      //             email: "emp@gmail.com",
-      //             fullName: "Le Van Dung"
-      //           },
-      //           repliedCommendId: 0,
-      //           comment: "Bạn cần mô tả rõ hơn về bảng task_assignment.",
-      //           createdTime: "2025-07-08 11:50:00"
-      //         }
-      //       ]
-      //     }
-      //   ],
-      //   time: "2025-07-14 13:00:00"
-      // }
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
@@ -239,13 +85,6 @@ export class UserTaskPageAPIs {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${reportId}/approve-report`
       const response = await axiosInstance.put(url)
       return response.data
-      // return {
-      //   code: 11000,
-      //   msg: "Approve thành công",
-      //   status: 200,
-      //   body: null,
-      //   time: "2025/11/12"
-      // }
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
@@ -256,13 +95,15 @@ export class UserTaskPageAPIs {
       const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/${request.reportId}/reject-report`
       const response = await axiosInstance.put(url, { rejectedReason: request.rejectedReason })
       return response.data
-      // return {
-      //   code: 11000,
-      //   msg: "Reject thành công",
-      //   status: 200,
-      //   body: null,
-      //   time: "2025/11/12"
-      // }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+  
+  static async isAssignedUser(userTaskId: number): Promise<ApiResponse<Record<string, boolean>> | unknown> {
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${userTaskId}/is-assigned`)
+      return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

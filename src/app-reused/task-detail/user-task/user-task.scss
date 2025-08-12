@@ -7,6 +7,12 @@
   padding: var(--component-padding);
   width: 100%;
 
+  .introduction {
+    background-color: var(--background);
+    padding: 15px;
+    border-radius: 15px;
+  }
+
   .report-list {
     width: 100%;
     margin-top: 25px;
@@ -101,7 +107,7 @@
       .report-header-rejected {
         background: linear-gradient(155deg, var(--background) 60%, #af5959 100%);
       }
-      
+
       .report-header-waiting {
         background: linear-gradient(155deg, var(--background) 60%, #7274de 100%);
       }
@@ -408,6 +414,7 @@
 
     .reject-content {
       box-sizing: border-box;
+
       .form-group {
         border-radius: 5px;
       }
