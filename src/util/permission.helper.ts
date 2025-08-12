@@ -45,7 +45,7 @@ export class PermissionHelper {
     createProject: { PM: true, LD: false, EMP: false },
     viewProjectDetails: { PM: true, LD: true, EMP: true },
     updateProject: { PM: true, LD: false, EMP: false },
-    viewLeaders: { PM: true, LD: true, EMP: false },
+    viewLeaders: { PM: true, LD: false, EMP: false },
     addLeader: { PM: true, LD: false, EMP: false },
     removeLeader: { PM: true, LD: false, EMP: false },
     completeProject: { PM: true, LD: false, EMP: false },
@@ -53,16 +53,16 @@ export class PermissionHelper {
     deleteProject: { PM: true, LD: false, EMP: false },
 
     // PHASE
-    createPhase: { PM: true, LD: true, EMP: false },
+    createPhase: { PM: true, LD: false, EMP: false },
     viewPhaseDetails: { PM: true, LD: true, EMP: true },
-    updatePhase: { PM: true, LD: true, EMP: false },
-    deletePhase: { PM: true, LD: true, EMP: false },
+    updatePhase: { PM: true, LD: false, EMP: false },
+    deletePhase: { PM: true, LD: false, EMP: false },
 
     // COLLECTION
-    createCollection: { PM: true, LD: true, EMP: false },
+    createCollection: { PM: true, LD: false, EMP: false },
     viewCollection: { PM: true, LD: true, EMP: true },
-    updateCollection: { PM: true, LD: true, EMP: false },
-    deleteCollection: { PM: true, LD: true, EMP: false },
+    updateCollection: { PM: true, LD: false, EMP: false },
+    deleteCollection: { PM: true, LD: false, EMP: false },
 
     // TASK
     createTask: { PM: true, LD: true, EMP: false },

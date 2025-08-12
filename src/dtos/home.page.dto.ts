@@ -23,7 +23,7 @@ export interface DTO_ProjectItem {
   id: number;
   name: string;
   description: string;
-  startDate: string;        
+  expectedStartDate: string;     
   endDate?: string | null;  
   dueDate: string;
   status: string;

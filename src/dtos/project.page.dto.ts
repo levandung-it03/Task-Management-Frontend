@@ -4,7 +4,7 @@ export type ProjectStatus = typeof PROJECT_STATUS[number];
 export interface DTO_CreateProject {
   name: string;
   description?: string;
-  startDate: string;
+  expectedStartDate: string;
   dueDate: string;
 }
 
@@ -18,9 +18,8 @@ export interface DTO_Leader {
 export interface DTO_UpdateProject {
   name: string;
   description?: string;
-  startDate: string;
+  expectedStartDate: string;
   dueDate: string;
-  status: string;
 }
 
 export interface DTO_CompleteProject {

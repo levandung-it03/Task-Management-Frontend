@@ -189,7 +189,7 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
                   >
                     {user.role}
                   </span>
-                  {canRemoveLeader && (
+                  {canRemoveLeader && user.role !== 'ROLE_PM' && (
                     <button
                       className="update-leader-modal-assigned-kick"
                       onClick={(e) => {
@@ -206,7 +206,7 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
           </div>
         </div>
 
-        {canAddLeader && (
+        {/* {canAddLeader && (
           <button
             className="update-leader-modal-submit"
             onClick={handleUpdateLeaders}
@@ -214,7 +214,7 @@ export function UpdateLeaderModal({ open, project, onClose, onUpdateLeader, canA
           >
             {loading ? 'Loading...' : 'Update Leader'}
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

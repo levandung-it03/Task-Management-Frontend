@@ -28,13 +28,13 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
   useEffect(() => {
     if (project) {
       console.log('Project data received:', project);
-      console.log('startDate:', project.startDate, 'type:', typeof project.startDate);
+      console.log('expectedStartDate:', project.expectedStartDate, 'type:', typeof project.expectedStartDate);
       console.log('dueDate:', project.dueDate, 'type:', typeof project.dueDate);
 
       // Ensure dates are in YYYY-MM-DD format for HTML date inputs
       const formattedProject = {
         ...project,
-        startDate: project.startDate ? formattedDate(project.startDate) : '',
+        expectedStartDate: project.expectedStartDate ? formattedDate(project.expectedStartDate) : '',
         dueDate: project.dueDate ? formattedDate(project.dueDate) : ''
       };
 
@@ -66,7 +66,7 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
     const validation = DateValidationHelper.validateProjectForm(
       form.name || '',
       form.description || '',
-      form.startDate || '',
+      form.expectedStartDate || '',
       null, // endDate removed
       (form.dueDate as string) || '' // dueDate maps to deadline parameter in validation
     );
@@ -83,31 +83,31 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
       const updatedRes = await ProjectAPIs.updateProject(form.id, {
         name: form.name,
         description: form.description,
-        startDate: form.startDate,
+        expectedStartDate: form.expectedStartDate,
         dueDate: form.dueDate,
-        status: form.status
       });
-      const updated = (updatedRes as ApiResponse<DTO_ProjectItem>).body;
-      if (updated) {
-        console.log('Project updated successfully, closing modal...');
-        onUpdate(updated);
-        setValidationErrors([]);
-        // Close the modal after successful update
-        onClose();
-        console.log('About to reload page...');
-        window.location.reload(); // Reload lại trang sau khi cập nhật thành công
-      } else {
-        console.log('No updated data received, but closing modal anyway...');
-        onClose();
-        console.log('About to reload page even without updated data...');
-        window.location.reload(); // Reload ngay cả khi không có data mới
-      }
+      
+             // Kiểm tra xem response có thành công không
+       if (updatedRes && typeof updatedRes === 'object' && 'status' in updatedRes && updatedRes.status === 200) {
+         console.log('Project updated successfully, closing modal...');
+         const updated = (updatedRes as ApiResponse<DTO_ProjectItem>).body;
+         if (updated) {
+           onUpdate(updated);
+         }
+         setValidationErrors([]);
+         onClose();
+         console.log('About to reload page...');
+         window.location.reload(); // Chỉ reload khi thành công
+       } else {
+         console.log('Update failed, showing error...');
+         const errorMsg = (updatedRes as any)?.msg || 'Cập nhật project thất bại. Vui lòng thử lại.';
+         setValidationErrors([errorMsg]);
+         // Không đóng modal và không reload khi thất bại
+       }
     } catch (error) {
       console.error('Error updating project:', error);
-      // Close modal even on error
-      onClose();
-      console.log('About to reload page after error...');
-      window.location.reload(); // Reload ngay cả khi có lỗi
+      setValidationErrors(['Đã xảy ra lỗi khi cập nhật project. Vui lòng thử lại.']);
+      // Không đóng modal và không reload khi có lỗi
     }
   };
 
@@ -168,11 +168,11 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
           <div className="update-project-modal-row">
             <div className="update-project-modal-column">
               <fieldset className="update-project-modal-fieldset">
-                <legend className="update-project-modal-legend">Start Date</legend>
+                <legend className="update-project-modal-legend">Expected Start Date</legend>
                 <input
                   type="date"
-                  value={form.startDate || ''}
-                  onChange={e => setForm(f => f ? { ...f, startDate: e.target.value } : f)}
+                  value={form.expectedStartDate || ''}
+                  onChange={e => setForm(f => f ? { ...f, expectedStartDate: e.target.value } : f)}
                   className="update-project-modal-input"
                   required
                   disabled={!canUpdateProject}
@@ -188,7 +188,7 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
                   value={form.dueDate || ''}
                   onChange={e => setForm(f => f ? { ...f, dueDate: e.target.value } : f)}
                   className="update-project-modal-input"
-                  min={DateValidationHelper.getMinDueDate(form.startDate || '')}
+                  min={DateValidationHelper.getMinDueDate(form.expectedStartDate || '')}
                   required
                   disabled={!canUpdateProject}
                 />
@@ -196,21 +196,7 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
             </div>
           </div>
 
-          <fieldset className="update-project-modal-fieldset">
-            <legend className="update-project-modal-legend">Project Status</legend>
-            <select
-              value={form.status}
-              onChange={e => setForm(f => f ? { ...f, status: e.target.value } : f)}
-              className="update-project-modal-input"
-              required
-              disabled={!canUpdateProject || form.status !== "IN_PROGRESS"}
-            >
-              {form.status === "CREATED" && <option value="CREATED">Created</option>}
-              <option value="IN_PROGRESS">Running</option>
-              <option value="CLOSED">Closed</option>
-              <option value="PAUSED">Paused</option>
-            </select>
-          </fieldset>
+
 
           {canUpdateProject && (
             <button type="submit" className="update-project-modal-submit">

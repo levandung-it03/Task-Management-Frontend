@@ -16,7 +16,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
     initialForm || {
       name: '',
       description: '',
-      startDate: '',
+      expectedStartDate: '',
       dueDate: '',
     }
   );
@@ -29,7 +29,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
         initialForm || {
           name: '',
           description: '',
-          startDate: '',
+          expectedStartDate: '',
           dueDate: '',
         }
       );
@@ -58,7 +58,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
     const validation = DateValidationHelper.validateProjectForm(
       form.name,
       form.description,
-      form.startDate,
+      form.expectedStartDate,
       null, // endDate is not used in project creation
       form.dueDate
     );
@@ -85,7 +85,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
     setForm({
       name: '',
       description: '',
-      startDate: '',
+      expectedStartDate: '',
       dueDate: '',
     });
     setValidationErrors([]);
@@ -264,14 +264,14 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                     marginLeft: 8,
                   }}
                 >
-                  Start Date
+                  Expected Start Date
                 </legend>
                 <input
                   type="date"
-                  value={form.startDate}
+                  value={form.expectedStartDate}
                   onChange={e => {
                     const newStartDate = e.target.value;
-                    handleInputChange('startDate', newStartDate);
+                    handleInputChange('expectedStartDate', newStartDate);
                     // Reset dueDate if it's now invalid
                     if (form.dueDate && new Date(form.dueDate) <= new Date(newStartDate)) {
                       handleInputChange('dueDate', '');
@@ -314,7 +314,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                   onChange={e => handleInputChange('dueDate', e.target.value)}
                   style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent' }}
                   required
-                  min={DateValidationHelper.getMinDueDate(form.startDate)}
+                  min={DateValidationHelper.getMinDueDate(form.expectedStartDate)}
                 />
               </fieldset>
             </div>

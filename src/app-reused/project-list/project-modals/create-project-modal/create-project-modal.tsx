@@ -20,7 +20,7 @@ export function CreateProjectModalComponent({ open, onClose, onCreate }: CreateP
       initialForm={{
         name: '',
         description: '',
-        startDate: '',
+        expectedStartDate: '',
         dueDate: '',
       }}
     />
