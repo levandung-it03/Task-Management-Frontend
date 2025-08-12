@@ -45,7 +45,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
           .bid(taskInfo.id)
           .bcontent(content)
         const response = await TaskDetailPageAPIs.updateTaskDescription(request) as ApiResponse<void>
-        if (String(response.status)[0] === "2") {
+        if (String(response.status).startsWith("2")) {
           toast.success(response.msg)
           setTaskInfo(prev => ({ ...prev, description: content }))
           setOpenTextDialog(false)
@@ -70,7 +70,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
           .bid(taskInfo.id)
           .bcontent(content)
         const response = await TaskDetailPageAPIs.updateTaskReportFormat(request) as ApiResponse<void>
-        if (String(response.status)[0] === "2") {
+        if (String(response.status).startsWith("2")) {
           toast.success(response.msg)
           setTaskInfo(prev => ({ ...prev, reportFormat: content }))
           setOpenTextDialog(false)

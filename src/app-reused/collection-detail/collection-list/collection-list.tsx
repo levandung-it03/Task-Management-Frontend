@@ -1,6 +1,7 @@
 import React from 'react';
 import { DTO_CollectionItem } from '../../../dtos/collection.page.dto';
 import './collection-list.scss';
+import { SquareLibrary, Trash } from 'lucide-react';
 
 interface CollectionListProps {
   collections: DTO_CollectionItem[];
@@ -25,25 +26,19 @@ export default function CollectionList({
       {validCollections.map((collection) => (
         <div 
           key={`collection-${collection.id}`} 
-          className="collection-item"
+          className="collection-item overview-list-item"
         >
-          <div className="collection-info">
-            <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="4" y="4" width="20" height="20" rx="5" fill="#e6f4ea" stroke="var(--main-green)" />
-              <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
-            </svg>
-            <span 
-              className="collection-name"
-              onClick={() => onCollectionClick(collection.id)}
-            >
+          <div className="collection-info" onClick={() => onCollectionClick(collection.id)}>
+            <SquareLibrary className="oli-icon"/>
+            <span className="collection-name oli-title">
               {collection.name}
             </span>
           </div>
-          <div className="collection-deadline">
-            Due Date: <span className="deadline-value">{collection.dueDate}</span>
+          <div className="collection-deadline oli-due-date quick-blue-tag">
+            Due Date: {collection.dueDate}
           </div>
           <button
-            className="view-details-btn"
+            className="view-details-btn oli-quick-btn"
             onClick={() => onOpenUpdate(collection)}
           >
             View Collection Details
@@ -51,12 +46,10 @@ export default function CollectionList({
           {canDeleteCollection ? (
             <button
               key={`delete-${collection.id}`}
-              className="delete-btn"
+              className="oli-delete-btn"
               onClick={() => onDeleteCollection(collection)}
             >
-              <svg width="20" height="20" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0v2m4-2v2m4-2v2"/>
-              </svg>
+              <Trash className="oli-db-icon" />
             </button>
           ) : null}
         </div>

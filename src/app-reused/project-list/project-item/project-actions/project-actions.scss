@@ -5,14 +5,19 @@
   margin-left: 18px;
 
   .project-actions-add-leader-btn {
-    background: var(--main-green);
+    background: var(--blue-in-env);
     color: #fff;
-    border: 1.5px solid var(--main-green);
+    border: 1px solid var(--blue-in-env);
     border-radius: 8px;
     padding: 8px 18px;
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
+
+    &:hover {
+      background-color: var(--blue-in-env-bg);
+      color: var(--blue-in-env);
+    }
 
     &--disabled {
       background: #ccc;
@@ -30,6 +35,11 @@
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
+
+    &:hover {
+      background-color: #ffe1be;
+      color: #d97706;
+    }
 
     &--disabled {
       background: #ccc;

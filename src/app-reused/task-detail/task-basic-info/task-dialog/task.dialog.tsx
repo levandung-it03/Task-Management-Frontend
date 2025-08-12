@@ -86,7 +86,7 @@ export default function TaskDialog({
         .bdeadline(deadline)
         .baddedUserEmail(GlobalValidators.notEmpty(addedUsers) ? Object.values(addedUsers)[0].email : "")
       const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setTaskInfo(prev => ({
           ...prev,

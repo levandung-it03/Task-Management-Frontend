@@ -2,6 +2,7 @@ import { DTO_CreateCollection, DTO_CollectionItem, DTO_DeleteCollection } from '
 import { ApiResponse, GeneralAPIs } from './general.api';
 import axiosInstance from '../util/axios.helper';
 import { AuthHelper } from '@/util/auth.helper';
+import { DTO_IdResponse } from '@/dtos/general.dto';
 
 export class CollectionAPIs {
   // API: Lấy thông tin chi tiết collection
@@ -25,7 +26,7 @@ export class CollectionAPIs {
   }
 
   // API: Tạo collection mới trong phase
-  static async createCollection(phaseId: number, collectionData: DTO_CreateCollection):  Promise<ApiResponse<{id: number}> | unknown> {
+  static async createCollection(phaseId: number, collectionData: DTO_CreateCollection):  Promise<ApiResponse<DTO_IdResponse> | unknown> {
     try {
       const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/phase/${phaseId}/create-collection`, collectionData);
       return response.data;

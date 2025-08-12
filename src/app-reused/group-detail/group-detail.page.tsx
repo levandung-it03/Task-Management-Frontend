@@ -25,7 +25,8 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
       createdByUser: {
         fullName: "",
         email: "",
-        role: ""
+        role: "",
+        department: ""
       },
       name: "",
       createdTime: "",
@@ -40,7 +41,7 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
     async function fetchGroup() {
       setIsLoading(true)
       const response = await GroupPageAPIs.getGroup(groupId) as ApiResponse<DTO_DetailGroupResponse>
-      if (String(response.status)[0] === "2")
+      if (String(response.status).startsWith("2"))
         setGroup(response.body)
       setIsLoading(false)
     }
@@ -74,7 +75,7 @@ function GroupInfoContainer({ group, setGroup, isAdmin }: {
   useEffect(() => {
     async function fetchRoles() {
       const response = await GeneralAPIs.getGroupRoleEnums() as ApiResponse<Record<string, string>>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setGroupRoles(Object.values(response.body))
         return
       }
@@ -115,7 +116,7 @@ function GroupBaseInfo({ group, setOpenDialog, setGroup, isAdmin }: {
         .bgroupId(group.baseInfo.id)
         .bstatus(status)
       const response = await GroupPageAPIs.changeGroupStatus(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setGroup(prev => ({
           ...prev,
@@ -194,7 +195,7 @@ function UserTag({ userGroup, groupRoles, isAdmin }: {
         .bgroupUserId(userGroup.id)
         .brole(newRole)
       const response = await GroupPageAPIs.changeUserGroupRole(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setRole(newRole)
         return
@@ -208,7 +209,7 @@ function UserTag({ userGroup, groupRoles, isAdmin }: {
       if (!(await confirm("This action cannot be undone. Are you sure?", "Re-add User")))
         return
       const response = await GroupPageAPIs.reAddGroupUser(userGroup.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserGroupStatus(true)
         return
@@ -222,7 +223,7 @@ function UserTag({ userGroup, groupRoles, isAdmin }: {
       if (!(await confirm("This action cannot be undone. Are you sure?", "Kick User out")))
         return
       const response = await GroupPageAPIs.kickUserOut(userGroup.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserGroupStatus(false)
         return
@@ -238,6 +239,7 @@ function UserTag({ userGroup, groupRoles, isAdmin }: {
       <span className="ju-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
       <span className="ju-full-name">{userGroup.joinedUser.fullName}</span>
       <span className="ju-email">{userGroup.joinedUser.email}</span>
+      <span className="ju-dep quick-blue-tag">{userGroup.joinedUser.department}</span>
       <span className={`ju-tags ju-${userGroup.joinedUser.role.toLowerCase().replace("_", "-")}`}>
         {userGroup.joinedUser.role}
       </span>
@@ -308,7 +310,7 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
         .baddedEmails(Object.entries(addedUsers).map(([key, user]) => user.email))
 
       const response = await GroupPageAPIs.updateGroup(request) as ApiResponse<DTO_IdResponse>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         window.location.reload()
         return

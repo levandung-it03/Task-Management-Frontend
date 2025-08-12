@@ -11,6 +11,7 @@ import { ApiResponse } from '@/apis/general.api';
 import { confirm } from '../confirm-alert/confirm-alert';
 import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import { AuthHelper } from '../../util/auth.helper';
+import { DTO_IdResponse } from '@/dtos/general.dto';
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
   const permissions = usePermission();
@@ -134,7 +135,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     try {
       const res = await PhaseAPIs.createPhase(projectId, createForm);
       if (res && typeof res === 'object' && 'body' in res && res.body) {
-        const response = res as ApiResponse<{id: number}>;
+        const response = res as ApiResponse<DTO_IdResponse>;
         // Tạo phase item mới từ response
         const newPhase: DTO_PhaseItem = {
           id: response.body.id,

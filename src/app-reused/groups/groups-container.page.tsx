@@ -72,7 +72,7 @@ function GroupsContainer() {
         .bsearchVal(reqData.searchVal)
 
       const response = await GroupPageAPIs.getGroups(request) as ApiResponse<DTO_PaginatedGroupsResponse>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setGroups(response.body.dataList)
         setTableState(prev => ({
           ...prev,

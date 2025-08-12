@@ -57,7 +57,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     async function getDetail() {
       setIsLoading(true)
       const response = await TaskDetailPageAPIs.getTaskDetail(taskId) as ApiResponse<DTO_TaskDetail>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setTaskInfo(response.body)
         setIsLoading(false)
         console.log(response.body)

@@ -1,0 +1,11 @@
+
+.statistic-review {
+  padding: 25px;
+  border-radius: 15px;
+  background-color: var(--background);
+
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}

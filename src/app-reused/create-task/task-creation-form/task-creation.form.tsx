@@ -157,7 +157,7 @@ export function TaskCreationForm({
         ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
         : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
 
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         const role = AuthHelper.getRoleFromToken()
         window.location.href = `${role}/task/${response.body.id}`

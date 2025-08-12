@@ -2,12 +2,13 @@ import { ApiResponse, GeneralAPIs } from './general.api';
 import axiosInstance from '../util/axios.helper';
 import { AuthHelper } from '@/util/auth.helper';
 import { DTO_CreatePhase, DTO_DeletePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
+import { DTO_IdResponse } from '@/dtos/general.dto';
 
 export class PhaseAPIs {
   // ===== PHASE CRUD OPERATIONS =====
   
   // Tạo phase mới
-  static async createPhase(projectId: number, phaseData: DTO_CreatePhase): Promise<ApiResponse<{id: number}> | unknown> {
+  static async createPhase(projectId: number, phaseData: DTO_CreatePhase): Promise<ApiResponse<DTO_IdResponse> | unknown> {
     try {
       const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${projectId}/phase`, phaseData);
       return response.data;

@@ -2,7 +2,6 @@ import React from 'react';
 import { DTO_ProjectItem } from '@/dtos/home.page.dto';
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
 import { ProjectAPIs } from '@/apis/project.page.api';
-import { ApiResponse } from '@/apis/general.api';
 import toast from 'react-hot-toast';
 import './project-actions.scss';
 
@@ -30,8 +29,7 @@ export function ProjectActions({
     if (!ok) return;
     
     try {
-      const currentDate = new Date().toISOString().split('T')[0]; // Lấy ngày hiện tại
-      const updatedRes = await ProjectAPIs.completeProject(project.id, currentDate);
+      const updatedRes = await ProjectAPIs.completeProject(project.id);
       if (updatedRes) {
         onCompleteProject();
         // Thông báo thành công

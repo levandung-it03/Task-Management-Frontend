@@ -158,7 +158,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
         .breportId(reportInfo.report.id)
         .breport(report)
       const response = await UserTaskPageAPIs.updateReport(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         window.location.reload()
         return
@@ -181,7 +181,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
         return
       }
       const response = await UserTaskPageAPIs.approveReport(reportInfo.report.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         window.location.reload()
         return
@@ -315,7 +315,7 @@ function CommentsGroup({ reportInfo, addNewComment }: {
         .breportId(reportInfo.report.id)
         .bcontent(comment)
       const response = await UserTaskPageAPIs.createComment(request) as ApiResponse<DTO_CommentOfReport>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         addNewComment(response.body)
         setComment("")
@@ -442,7 +442,7 @@ function ReplyCommentFrame({ replyRef, setIsReplying, reportId, rootCommentId, a
         .brepliedCommentId(rootCommentId)
         .bcontent(replying)
       const response = await UserTaskPageAPIs.createComment(request) as ApiResponse<DTO_CommentOfReport>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         addNewComment(response.body)
         setIsReplying(false)
@@ -514,7 +514,7 @@ function RejectingReportDialog({ reportId, setIsRejecting }: {
         .breportId(reportId)
         .brejectedReason(content)
       const response = await UserTaskPageAPIs.rejectReport(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         return
       }

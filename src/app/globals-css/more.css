@@ -28,7 +28,7 @@
   width: 90px;
   padding: 2px 8px;
   border-radius: 20px;
-  font-size: 12px!important;
+  font-size: 12px !important;
   text-align: center;
   margin-left: var(--component-padding);
   height: -moz-fit-content;
@@ -60,5 +60,89 @@
     color: #fff !important;
     background-color: var(--main-text-err-red);
     cursor: pointer;
+  }
+}
+
+.overview-list-item {
+  border-radius: 10px;
+  border: 2px solid var(--main-green);
+  background-color: var(--main-green);
+  padding: 15px;
+  color: #fff;
+  transition: all ease 0.3s;
+
+  &:hover {
+    background-color: var(--background);
+    cursor: pointer;
+
+    .oli-icon,
+    .oli-title,
+    .oli-menu {
+      color: var(--main-green);
+    }
+  }
+
+  .oli-title {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .oli-due-date {
+    background-color: var(--foreground);
+    color: var(--background)!important;
+  }
+
+  .oli-menu {
+    color: #fff;
+  }
+
+  .oli-delete-btn {
+    border: 1px solid var(--red-in-env);
+    background-color: var(--red-in-env);
+    color: #fff;
+    border-radius: 5px;
+    transition: all ease 0.2s;
+
+    .oli-db-icon {
+      width: 25px;
+      height: 25px;
+      padding-top: 2px;
+      padding-right: 2px;
+      padding-left: 2px;
+    }
+
+    &:hover:not(:disabled) {
+      cursor: pointer;
+      color: var(--red-in-env);
+      background-color: var(--background);
+    }
+
+    &:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+    }
+  }
+
+  .oli-quick-btn {
+    background: var(--blue-in-env);
+    color: #fff;
+    border: 1px solid var(--blue-in-env);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--blue-in-env-bg);
+      color: var(--blue-in-env);
+    }
+
+    &--disabled {
+      background: #ccc;
+      border-color: #ccc;
+      cursor: not-allowed;
+    }
   }
 }

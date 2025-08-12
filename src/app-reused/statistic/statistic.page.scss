@@ -1,0 +1,17 @@
+:root {
+  --component-padding: 15px;
+}
+
+.project-statistic {
+  padding: var(--component-padding);
+
+  .project-overview {
+    margin-bottom: 25px;
+  }
+}
+
+.tag-data {
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 13px !important;
+}

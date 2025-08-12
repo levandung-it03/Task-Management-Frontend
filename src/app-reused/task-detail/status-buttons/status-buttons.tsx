@@ -17,7 +17,7 @@ export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_Tas
       if (!await confirm("This change cannot be undone. Are you sure?", "Confirm Complete"))
         return
       const response = await TaskDetailPageAPIs.updateDoneTask(taskInfo.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         window.location.reload()
         return
@@ -32,7 +32,7 @@ export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_Tas
         return
       const request = DTO_LockTaskStatus.withBuilder().bid(taskInfo.id).blocked(!locked)
       const response = await TaskDetailPageAPIs.updateLockTaskStatus(request) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setLocked(!locked)
         return
@@ -46,7 +46,7 @@ export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_Tas
       if (!await confirm("This change cannot be undone. Are you sure?", "Change Task Status"))
         return
       const response = await TaskDetailPageAPIs.deleteTask(taskInfo.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         window.location.href = "/"
       }

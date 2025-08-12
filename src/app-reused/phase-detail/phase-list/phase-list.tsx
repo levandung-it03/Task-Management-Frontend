@@ -1,6 +1,7 @@
 import React from 'react';
 import { DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import './phase-list.scss';
+import { AlignLeft, Trash } from 'lucide-react';
 
 interface PhaseListProps {
   phases: DTO_PhaseItem[];
@@ -16,28 +17,22 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
       {phases.map((phase) => (
         <div 
           key={phase.id} 
-          className="phase-card"
+          className="phase-card overview-list-item"
         >
-          <div className="phase-card__info">
-            <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="4" y="4" width="20" height="20" rx="5" fill="#e6f4ea" stroke="var(--main-green)" />
-              <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
-            </svg>
-            <span 
-              className="phase-card__name"
-              onClick={() => onPhaseClick(phase.id)}
-            >
+          <div className="phase-card__info" onClick={() => onPhaseClick(phase.id)}>
+            <AlignLeft className="oli-icon" />
+            <span className="phase-card__name oli-title">
               {phase.name}
             </span>
           </div>
           
-          <div className="phase-card__deadline">
-            Due Date: <span className="phase-card__deadline-text">{phase.dueDate}</span>
+          <div className="phase-card__deadline quick-blue-tag oli-due-date">
+            Due Date: {phase.dueDate}
           </div>
           
           {permissions?.canViewPhaseDetails && (
             <button
-              className="phase-card__button"
+              className="oli-quick-btn"
               onClick={() => onUpdateClick(phase)}
             >
               View Phase Details
@@ -46,12 +41,10 @@ export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDelet
           
           {permissions?.canDeletePhase && (
             <button
-              className="phase-card__delete-button"
+              className="oli-delete-btn"
               onClick={() => onDeleteClick(phase)}
             >
-              <svg width="20" height="20" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0v2m4-2v2m4-2v2"/>
-              </svg>
+              <Trash className="oli-db-icon"/>
             </button>
           )}
         </div>

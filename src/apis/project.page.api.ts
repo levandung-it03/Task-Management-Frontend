@@ -71,7 +71,7 @@ export class ProjectAPIs {
   }
 
   // Đánh dấu project hoàn thành - API thực tế từ backend
-  static async completeProject(id: number,): Promise<ApiResponse<void> | unknown> {
+  static async completeProject(id: number): Promise<ApiResponse<void> | unknown> {
     try {
       const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/complete`);
       return response.data;

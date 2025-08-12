@@ -17,7 +17,7 @@ export default function SubTasks({ taskId }: { taskId: number }) {
     async function fetchSubTasks() {
       setIsLoading(true)
       const response = await TaskDetailPageAPIs.getOverviewSubTasks(taskId) as ApiResponse<DTO_OverviewSubTask[]>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setSubTasks(response.body)
       }
       setIsLoading(false)

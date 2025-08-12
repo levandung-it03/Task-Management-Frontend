@@ -12,6 +12,7 @@ const formatDateAsYYYYMMDD = (dateStr: string | undefined): string => {
 };
 import './project-item.scss';
 import { DTO_ProjectItem } from '@/dtos/home.page.dto';
+import { Container, EllipsisVertical } from 'lucide-react';
 
 interface ProjectItemProps {
   project: DTO_ProjectItem;
@@ -62,24 +63,20 @@ export function ProjectItem({
   const isDeleting = deletingProjectId === project.id;
 
   return (
-    <div className={`project-item ${isDisabled ? 'project-item--disabled' : ''}`}>
+    <div className={`project-item overview-list-item ${isDisabled ? 'project-item--disabled' : ''}`}>
       <div className="project-item-content">
-        <div className="project-item-info">
-          <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="4" y="4" width="20" height="20" rx="5" fill="#e6f4ea" stroke="var(--main-green)" />
-            <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
-          </svg>
+        <div className="project-item-info" onClick={() => !isDisabled && onProjectClick(project.id)}>
+          <Container className="oli-icon"/>
           <span 
-            className={`project-item-name ${isDisabled ? 'project-item-name--disabled' : ''}`}
-            onClick={() => !isDisabled && onProjectClick(project.id)}
+            className={`oli-title project-item-name ${isDisabled ? 'project-item-name--disabled' : ''}`}
           >
             {project.name}
             {isDisabled && <span className="project-item-disabled-text">(Disabled)</span>}
           </span>
         </div>
         
-        <div className="project-item-deadline">
-          Due Date: <span className="project-item-deadline-date">{formatDateAsYYYYMMDD(project.dueDate)}</span>
+        <div className="oli-due-date quick-blue-tag">
+          Due Date: {formatDateAsYYYYMMDD(project.dueDate)}
         </div>
 
         <ProjectActions
@@ -97,11 +94,7 @@ export function ProjectItem({
           onClick={() => !isDisabled && setOpenMenu(!openMenu)}
           disabled={isDisabled}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="5" r="2" fill="currentColor" />
-            <circle cx="12" cy="12" r="2" fill="currentColor" />
-            <circle cx="12" cy="19" r="2" fill="currentColor" />
-          </svg>
+          <EllipsisVertical className="oli-menu" />
         </button>
 
         {openMenu && (

@@ -18,6 +18,7 @@
 > npm install js-cookie
 > npm i @tiptap/react
 > npm install antd
+> npm install dayjs clsx
 
 # Build project #
 > npx next build

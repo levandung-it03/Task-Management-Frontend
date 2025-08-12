@@ -15,7 +15,7 @@ export class HomeAPIs {
 
   static async getHomeStats(): Promise<ApiResponse<DTO_DashboardStats> | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/get-statistic`)
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/short-projects`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error);

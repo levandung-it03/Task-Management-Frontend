@@ -1,6 +1,7 @@
 import React from 'react';
 import { DTO_TaskListItem } from '../../../dtos/task-list.page.dto';
 import './task-list-list.scss';
+import { AuthHelper } from '@/util/auth.helper';
 
 interface TaskListListProps {
   taskLists: DTO_TaskListItem[];
@@ -83,7 +84,7 @@ export default function TaskListList({
           key={`task-list-${taskList.id}`} 
           className="task-list-item"
         >
-          <div className="task-list-info">
+          <a className="task-list-info" href={`/${AuthHelper.getRoleFromToken()}/task-detail/${taskList.id}`}>
             <svg width="28" height="28" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="4" y="4" width="20" height="20" rx="5" fill="#e6f4ea" stroke="var(--main-green)" />
               <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
@@ -97,7 +98,7 @@ export default function TaskListList({
               </span>
               <span className="task-list-subtitle">Sub task</span>
             </div>
-          </div>
+          </a>
           
           <div className="task-list-tags">
             <span 

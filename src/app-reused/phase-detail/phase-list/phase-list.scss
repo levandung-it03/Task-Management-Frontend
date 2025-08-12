@@ -7,14 +7,9 @@
 
 .phase-card {
   position: relative !important;
-  background: linear-gradient(110deg, #e6f4ec 0%, #b2dbc7 30%, #5ac8a1 50%, #b2dbc7 70%, #e6f4ec 100%) !important;
-  border: 1px solid var(--main-green) !important;
-  border-radius: 16px !important;
-  padding: 15px 32px !important;
   display: flex !important;
   align-items: center !important;
   gap: 18px !important;
-  transition: all 0.2s ease !important;
 
   &--disabled {
     background: linear-gradient(110deg, #f5f5f5 0%, #e0e0e0 30%, #cccccc 50%, #e0e0e0 70%, #f5f5f5 100%) !important;
@@ -29,36 +24,11 @@
     gap: 16px !important;
   }
 
-  &__name {
-    font-weight: 700 !important;
-    font-size: 22px !important;
-    color: var(--main-green) !important;
-    cursor: pointer !important;
-    transition: color 0.2s !important;
-
-    &:hover {
-      color: #0f5132 !important;
-    }
-  }
-
   &__disabled-text {
     font-size: 14px !important;
     color: #888 !important;
     margin-left: 8px !important;
     font-style: italic !important;
-  }
-
-  &__deadline {
-    min-width: 180px !important;
-    font-size: 16px !important;
-    color: var(--main-green) !important;
-    font-weight: 500 !important;
-    text-align: right !important;
-  }
-
-  &__deadline-text {
-    font-weight: 700 !important;
-    color: #d32f2f !important;
   }
 
   &__button {
@@ -84,29 +54,6 @@
       cursor: not-allowed !important;
     }
   }
-
-  &__delete-button {
-    background: transparent !important;
-    color: #dc2626 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 8px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-left: 8px !important;
-    transition: all 0.2s !important;
-
-    &:hover:not(:disabled) {
-      background: rgba(220, 38, 38, 0.1) !important;
-    }
-
-    &:disabled {
-      opacity: 0.6 !important;
-      cursor: not-allowed !important;
-    }
-  }
 }
 
 // Responsive styles
@@ -120,9 +67,6 @@
     &__info {
       gap: 8px !important;
       
-      .phase-card__name {
-        font-size: 16px !important;
-      }
     }
 
     &__deadline {

@@ -17,7 +17,7 @@ export default function UndoneTasks() {
     async function fetchTasks() {
       setIsLoading(true)
       const response = await HomeAPIs.getUndoneRelatedTasks() as ApiResponse<DTO_TaskOverview[]>
-      if (String(response.status)[0] === "2")
+      if (String(response.status).startsWith("2"))
         setTasks(response.body)
       setIsLoading(false)
     }

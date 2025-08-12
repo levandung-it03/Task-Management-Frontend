@@ -27,7 +27,7 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers }: 
   useEffect(() => {
     async function fetchAssignedUsers() {
       const response = await TaskDetailPageAPIs.getUsersOfTask(taskInfo.id) as ApiResponse<DTO_TaskUser[]>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setAssignedUsers(response.body)
         setTotalUsers(response.body.length)
       }
@@ -94,7 +94,7 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
       if (!(await confirm("This action cannot be undone. Are you sure?", "Re-add User")))
         return
       const response = await TaskDetailPageAPIs.reAddUserOfTask(userTask.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserKicked(false)
         return
@@ -109,7 +109,7 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
       if (!(await confirm("This action cannot be undone. Are you sure?", "Kick User out")))
         return
       const response = await TaskDetailPageAPIs.kickUserOfTask(userTask.id) as ApiResponse<void>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserKicked(true)
         return
