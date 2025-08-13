@@ -99,9 +99,6 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
       const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
       const isAssignedUser = assignedRes.body.result
 
-      if (response.body.length === 0)
-        return
-      
       //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
       setIsReportOwner(isAssignedUser)
       setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
