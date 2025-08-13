@@ -495,7 +495,7 @@ function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: {
               <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
               <span className="usi-full-name">{user.fullName}</span>
               <span className="usi-email">{user.email}</span>
-              <spane className="usi-dep quick-blue-tag">{user.department}</spane>
+              <span className="usi-dep quick-blue-tag">{user.department}</span>
               <span className={`usi-role usi-${normalRole}`}>{user.role}</span>
             </div>
           </div>
