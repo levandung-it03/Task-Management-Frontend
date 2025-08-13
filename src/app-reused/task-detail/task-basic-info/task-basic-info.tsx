@@ -244,7 +244,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       </div>
       {totalUsers !== 0 && isOwner && taskInfo.rootTaskId === null && <a
         className="create-sub-task"
-        href={`/${AuthHelper.getRoleFromToken().toLowerCase()}/create-task/${taskInfo.id}`}
+        href={`/${AuthHelper.getRoleFromToken().toLowerCase()}/collections/${taskDelegator.collectionInfo.id}/create-task/${taskInfo.id}`}
       >
         <CirclePlus className="cst-icon" />Create Sub-Task
       </a>}

@@ -6,7 +6,6 @@ import { ProjectHeader } from './project-header/project-header';
 import { ProjectItem } from './project-item/project-item';
 import { ProjectModals } from './project-modals/project-modals';
 import { usePermission } from '../../util/usePermission.hook';
-import { AuthHelper } from '../../util/auth.helper';
 import './project-list.scss';
 import { DTO_ProjectItem, DTO_ProjectItem1 } from '@/dtos/home.page.dto';
 

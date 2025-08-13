@@ -94,7 +94,6 @@ export default function TaskListList({
               >
                 {taskList.name}
               </a>
-              <span className="task-list-subtitle">Sub task</span>
             </div>
           </a>
           

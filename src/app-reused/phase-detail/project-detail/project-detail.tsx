@@ -2,18 +2,23 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Container, ScrollText } from "lucide-react";
+import { Check, CirclePause, CirclePlay, CircleX, Container, ScrollText } from "lucide-react";
 import "./project-detail.scss";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PhaseAPIs } from "@/apis/phase.page.api";
-import { ApiResponse } from "@/apis/general.api";
+import { ApiResponse, GeneralAPIs } from "@/apis/general.api";
 import { DTO_ProjectDetail } from "@/dtos/phase.page.dto";
+import { DTO_EmailResponse } from "@/dtos/general.dto";
+import toast from "react-hot-toast";
+import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
 
 export default function ProjectDetail({ projectId }: { projectId: number }) {
+  const [isOwner, setIsOwner] = useState(false)
   const [project, setProject] = useState<DTO_ProjectDetail>({
     id: 0,
     name: "",
     description: "",
+    expectedStartDate: "",
     startDate: "",
     endDate: null,
     dueDate: "",
@@ -28,12 +33,87 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
     }
   })
 
+  const onClickComplete = useCallback(() => {
+    async function complete() {
+      if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
+        return
+      const response = await PhaseAPIs.completeProject(project.id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setProject(prev => ({
+          ...prev,
+          endDate: new Date().toDateString(),
+          status: "COMPLETED"
+        }))
+      }
+    }
+    complete()
+  }, [project.id])
+
+  const onClickStartProject = useCallback(() => {
+    async function start() {
+      if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
+        return
+      const response = await PhaseAPIs.startProject(project.id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setProject(prev => ({
+          ...prev,
+          endDate: new Date().toDateString(),
+          status: "IN_PROGRESS"
+        }))
+      }
+    }
+    start()
+  }, [project.id])
+
+  const onClickCloseProject = useCallback(() => {
+    async function close() {
+      const response = await PhaseAPIs.closeProject(project.id) as ApiResponse<void>
+      if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
+        return
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setProject(prev => ({
+          ...prev,
+          endDate: new Date().toDateString(),
+          status: "CLOSED"
+        }))
+      }
+    }
+    close()
+  }, [project.id])
+
+  const onClickSwitch = useCallback(() => {
+    async function close() {
+      const response = await PhaseAPIs.switchPauseInProgress(project.id) as ApiResponse<Record<string, string>>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setProject(prev => ({
+          ...prev,
+          endDate: new Date().toDateString(),
+          status: response.body?.newStatus
+        }))
+      }
+    }
+    close()
+  }, [project.id])
+
   useEffect(() => {
     async function fetchProject() {
       const response = await PhaseAPIs.getProjecDetail(projectId) as ApiResponse<DTO_ProjectDetail>
       if (String(response.status).startsWith("2")) {
-        setProject(response.body)
+        setProject(prev => ({
+          ...prev,
+          ...response.body
+        }))
       }
+
+      const emailRes = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
+      if (String(emailRes.status)[0] !== "2")
+        return
+
+      setIsOwner(emailRes.body.email === response.body.userInfoCreated.email)
     }
     fetchProject()
   }, [projectId])
@@ -78,13 +158,20 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
           </span>
         </div>
         <div className="project-info-item">
-          <span className="project-info-label">Start Date</span>
+          <span className="project-info-label">Expected Start Date</span>
           <span className="project-info-value">
-            <span className="project-date">{prettierDate(project.startDate)}</span>
+            <span className="project-date">{prettierDate(project.expectedStartDate)}</span>
           </span>
         </div>
       </div>
       <div className="project-info-right">
+        {project.startDate !== null &&
+          <div className="project-info-item">
+            <span className="project-info-label">Start Date</span>
+            <span className="project-info-value">
+              <span className="project-date">{prettierDate(project.startDate)}</span>
+            </span>
+          </div>}
         {project.endDate !== null
           && <div className="project-info-item">
             <span className="project-info-label">End Date</span>
@@ -122,6 +209,38 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
         </div>
       </div>
     </div>
+    {isOwner && <div className="project-buttons">
+      <div className="btn-block">
+        {project.status === "CREATED"
+          ? <button
+            className="general-btn start-btn"
+            onClick={onClickStartProject}>
+            <Check className="cb-icon" />
+            Start
+          </button>
+          : project.status !== "CLOSED" && project.status !== "COMPLETED"
+          && <>
+            {project.status === "IN_PROGRESS" && <>
+              <button className="general-btn complete-btn" onClick={onClickComplete}>
+                <Check className="cb-icon" />
+                Complete
+              </button>
+              <button className="general-btn close-btn" onClick={onClickCloseProject}>
+                <CircleX className="cb-icon" />
+                Close
+              </button>
+            </>}
+            {project.status === "PAUSED"
+              ? <button className="general-btn in-progress-btn" onClick={onClickSwitch}>
+                <CirclePlay className="cb-icon" /> Open Project Again
+              </button>
+              : <button className="general-btn pause-btn" onClick={onClickSwitch}>
+                <CirclePause className="cb-icon" />Pause
+              </button>
+            }
+          </>}
+      </div>
+    </div>}
   </div>
 
 }

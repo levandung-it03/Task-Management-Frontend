@@ -132,7 +132,7 @@ export function UpdateProjectModal({ open, project, onClose, onUpdate, canUpdate
           {validationErrors.length > 0 && (
             <div className="update-project-modal-validation-errors">
               <div className="validation-errors-title">
-                Vui lòng sửa các lỗi sau:
+                Errors occured by provided information:
               </div>
               <ul className="validation-errors-list">
                 {validationErrors.map((error, index) => (

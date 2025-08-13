@@ -5,6 +5,8 @@ import { TaskCreationForm } from "./task-creation-form/task-creation.form"
 import GroupListDialog from "./group-list-dialog/group-list.dialog"
 import "./page.scss"
 import CollectionDetail from "../task-list/collection-detail/collection-detail"
+import RootTaskDetail from "./root-task-detail/root-task-detail"
+import GlobalValidators from "@/util/global.validators"
 
 export default function CreateTask({ rootId, collectionId }: { collectionId: number, rootId?: number }) {
   const [openDialog, setOpenDialog] = useState(false)
@@ -18,7 +20,9 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
   }, [])
 
   return <div className="create-task">
-    <CollectionDetail collectionId={collectionId} />
+    {GlobalValidators.nonNull(rootId) && rootId
+      ? <RootTaskDetail taskId={rootId} />
+      : <CollectionDetail collectionId={collectionId} showCompleteBtn={false} />}
     <TaskCreationForm
       rootId={rootId}
       collectionId={1}

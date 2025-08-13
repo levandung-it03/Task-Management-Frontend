@@ -10,7 +10,7 @@ import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api";
 import toast from "react-hot-toast";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
 import { DTO_TaskDetail, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
-import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.dto";
+import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto";
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
 import { AuthHelper } from "@/util/auth.helper";
 
@@ -97,6 +97,7 @@ export default function TaskDialog({
         .blevel(level)
         .btaskType(taskType)
         .bdeadline(deadline)
+        .bstartDate(startDate)
         .baddedUserEmail(GlobalValidators.notEmpty(addedUsers) ? Object.values(addedUsers)[0].email : "")
       const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {
@@ -117,7 +118,7 @@ export default function TaskDialog({
   }, [
     taskInfo.id, taskInfo.deadline, taskInfo.level, taskInfo.taskType, taskInfo.priority,
     priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo,
-    formTouched
+    formTouched, startDate
   ])
 
   useEffect(() => {
@@ -159,7 +160,7 @@ export default function TaskDialog({
   useEffect(() => setPriority(taskInfo.priority), [taskInfo.priority])
   useEffect(() => setTaskType(taskInfo.taskType), [taskInfo.taskType])
   useEffect(() => setDeadline(taskInfo.deadline), [taskInfo.deadline])
-  useEffect(() => setDeadline(taskInfo.startDate), [taskInfo.startDate])
+  useEffect(() => setStartDate(taskInfo.startDate), [taskInfo.startDate])
 
   return openDialog
     ? <div className="task-dialog">

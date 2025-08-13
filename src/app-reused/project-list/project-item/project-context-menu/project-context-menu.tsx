@@ -13,6 +13,7 @@ interface ProjectContextMenuProps {
 
 export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuProps>(
   ({ project, onViewDetails, onViewLeaders, onDeleteProject, isDeleting, permissions }, ref) => {
+
     return (
       <div
         ref={ref}
@@ -30,7 +31,7 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
             Update
           </div>
         )}
-        
+
         {permissions?.canViewLeaders && (
           <div
             className="project-context-menu-item"
@@ -43,7 +44,7 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
             View Leader Joined
           </div>
         )}
-        
+
         {permissions?.canViewPerformance && (
           <div
             className="project-context-menu-item"
@@ -56,7 +57,7 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
             View Project Performance
           </div>
         )}
-        
+
         {permissions?.canDeleteProject && (
           <div
             className="project-context-menu-item project-context-menu-item--danger"

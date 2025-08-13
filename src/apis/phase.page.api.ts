@@ -77,4 +77,41 @@ export class PhaseAPIs {
       return GeneralAPIs.extractError(error);
     }
   }
+
+  // Đánh dấu project hoàn thành - API thực tế từ backend
+  static async completeProject(id: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/complete`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
+
+  static async startProject(id: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/start-project`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
+  
+  static async closeProject(id: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/close-project`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
+  
+  static async switchPauseInProgress(id: number): Promise<ApiResponse<Record<string, string>> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/switch-pause-in-progress`);
+      return response.data;
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error);
+    }
+  }
 } 

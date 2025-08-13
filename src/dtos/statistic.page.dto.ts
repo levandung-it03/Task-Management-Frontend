@@ -5,7 +5,8 @@ export interface DTO_ProjectOverview {
   userInfoCreated: DTO_FastUserInfo;
   name: string;
   description: string;
-  startDate: string;
+  expectedStartDate: string;
+  startDate: string | null;
   endDate: string | null;
   dueDate: string;
   active: boolean;

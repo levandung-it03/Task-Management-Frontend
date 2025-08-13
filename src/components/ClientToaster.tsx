@@ -3,5 +3,10 @@
 import { Toaster } from "react-hot-toast"
 
 export default function ClientToaster() {
-  return <Toaster position="top-right" />
+  return <Toaster
+    position="top-right"
+    toastOptions={{
+      duration: 7000
+    }}
+    />
 }

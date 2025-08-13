@@ -44,7 +44,7 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
 
   return (
     <>
-    <CollectionDetail collectionId={collectionId} />
+    <CollectionDetail collectionId={collectionId} showCompleteBtn={true} />
     <div className="task-list-detail-container">
       <div className="task-list-detail-content">
         <TaskListActions 

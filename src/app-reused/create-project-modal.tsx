@@ -107,7 +107,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
       justifyContent: 'center',
     }}>
       <div ref={modalRef} style={{
-        background: '#fff',
+        background: 'var(--background)',
         borderRadius: 18,
         boxShadow: '0 4px 32px #0002',
         padding: '32px 32px 24px 32px',
@@ -151,7 +151,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                 fontWeight: '600',
                 marginBottom: '8px',
               }}>
-                Vui lòng sửa các lỗi sau:
+                Errors occured by provided information:
               </div>
               <ul style={{
                 margin: 0,
@@ -159,7 +159,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
                 color: '#dc2626',
               }}>
                 {validationErrors.map((error, index) => (
-                  <li key={index}>{error}</li>
+                  <li style={{ color: "#000" }} key={index}>{error}</li>
                 ))}
               </ul>
             </div>
@@ -234,7 +234,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               placeholder="..."
               value={form.description}
               onChange={e => handleInputChange('description', e.target.value)}
-              style={{ border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent', minHeight: 70, resize: 'vertical' }}
+              style={{ color: 'var(--forground)', border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent', minHeight: 70, resize: 'vertical' }}
             />
           </fieldset>
           

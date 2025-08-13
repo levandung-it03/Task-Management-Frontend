@@ -206,20 +206,20 @@ export function TaskCreationForm({
 
       <div className="form-group-container half-form-left-container">
         <fieldset className="form-group">
-          <legend className="form-label">Deadline</legend>
-          <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
-            value={deadline} onChange={onChangeDeadline} />
-        </fieldset>
-        {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
-      </div>
-
-      <div className="form-group-container half-form-right-container">
-        <fieldset className="form-group">
           <legend className="form-label">Start Date</legend>
           <input type="date" id="start-date" className="form-input" placeholder="Type Start Date" required
             value={startDate} onChange={onChangeStartDate} />
         </fieldset>
         {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
+      </div>
+
+      <div className="form-group-container half-form-right-container">
+        <fieldset className="form-group">
+          <legend className="form-label">Deadline</legend>
+          <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
+            value={deadline} onChange={onChangeDeadline} />
+        </fieldset>
+        {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
       </div>
 
       <div className="form-group-container half-form-left-container">

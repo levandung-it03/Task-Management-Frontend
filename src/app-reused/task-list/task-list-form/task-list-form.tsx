@@ -67,7 +67,7 @@ export default function TaskListForm({
           {validationErrors.length > 0 && (
             <div className="task-list-form-validation-errors">
               <div className="validation-errors-title">
-                Vui lòng sửa các lỗi sau:
+                Errors occured by provided information:
               </div>
               <ul className="validation-errors-list">
                 {validationErrors.map((error, index) => (

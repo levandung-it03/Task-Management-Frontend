@@ -56,12 +56,14 @@ export class DTO_UpdateBasicTask {
   priority!: string;
   deadline!: string;
   addedUserEmail!: string
+  startDate!: string
 
   public static withBuilder() { return new DTO_UpdateBasicTask() }
   public bid(id: number): DTO_UpdateBasicTask { this.id = id; return this }
   public blevel(level: string): DTO_UpdateBasicTask { this.level = level; return this }
   public btaskType(taskType: string): DTO_UpdateBasicTask { this.taskType = taskType; return this }
   public bpriority(priority: string): DTO_UpdateBasicTask { this.priority = priority; return this }
+  public bstartDate(startDate: string): DTO_UpdateBasicTask { this.startDate = startDate; return this }
   public bdeadline(deadline: string): DTO_UpdateBasicTask { this.deadline = deadline; return this }
   public baddedUserEmail(addedUserEmail: string): DTO_UpdateBasicTask { this.addedUserEmail = addedUserEmail; return this }
 }

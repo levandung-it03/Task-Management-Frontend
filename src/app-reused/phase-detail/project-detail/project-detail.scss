@@ -1,6 +1,7 @@
 :root {
   --component-padding: 15px;
 }
+
 .project-overview {
   padding: calc(1.5*var(--component-padding));
   background-color: var(--background);
@@ -146,14 +147,18 @@
         border-radius: 5px;
         color: #fff;
       }
+
       .ps-in-progress {
         background-color: var(--blue-in-env);
       }
-      .ps-in-created {
+
+      .ps-completed,
+      .ps-created {
         background-color: var(--main-green);
       }
-      .ps-in-paused,
-      .ps-in-closed {
+
+      .ps-paused,
+      .ps-closed {
         border: 1px solid #000;
         background-color: var(--main-component-grey);
         color: #000;
@@ -168,5 +173,99 @@
 
   .project-id {
     margin-left: 10px;
+  }
+
+  .btn-block {
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+
+    .general-btn {
+      width: 32%;
+      padding: 15px;
+      border-radius: 15px;
+      transition: all ease 0.3s;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      margin-top: 15px;
+
+      .cb-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+      }
+    }
+
+    .complete-btn {
+      border: 2px solid var(--foreground);
+      background-color: var(--foreground);
+      color: var(--background);
+
+      &:hover {
+        cursor: pointer;
+        color: var(--foreground);
+        background-color: var(--background);
+      }
+    }
+
+    .start-btn {
+      border: 2px solid var(--main-green);
+      background-color: var(--main-green);
+      color: #fff;
+
+      &:hover {
+        cursor: pointer;
+        color: var(--main-green);
+        background-color: var(--background);
+      }
+    }
+
+    .in-progress-btn {
+      border: 2px solid var(--focusing-fieldset-color);
+      background-color: var(--focusing-fieldset-color);
+      color: #fff;
+
+      &:hover {
+        cursor: pointer;
+        color: var(--focusing-fieldset-color);
+        background-color: var(--background);
+      }
+    }
+
+    .pause-btn {
+      border: 2px solid orange;
+      background-color: orange;
+      color: #000;
+
+      &:hover {
+        cursor: pointer;
+        color: orange;
+        background-color: var(--background);
+      }
+    }
+    
+    .close-btn {
+      border: 2px solid var(--main-text-err-red);
+      background-color: var(--main-text-err-red);
+      color: #fff;
+
+      &:hover {
+        cursor: pointer;
+        color: var(--main-text-err-red);
+        background-color: var(--background);
+      }
+    }
+
+    .btn-disabled {
+      background-color: var(--main-component-grey) !important;
+      color: #000 !important;
+      cursor: not-allowed !important;
+    }
   }
 }
