@@ -164,7 +164,7 @@ export function TaskCreationForm({
       }
     }
     createTask();
-  }, [rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation, formTouched])
+  }, [collectionId, rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation, formTouched])
 
   useEffect(() => {
     async function initValues() {

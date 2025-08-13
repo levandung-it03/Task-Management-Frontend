@@ -163,9 +163,9 @@ export class GeneralAPIs {
     }
   }
 
-  static async viewUserById(userId: number): Promise<ApiResponse<DTO_ViewUserResponse> | unknown> {
+  static async viewUserByEmail(email: string): Promise<ApiResponse<DTO_ViewUserResponse> | unknown> {
     try {
-      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/user-info/${userId}`)
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/user-info/${email}`)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)

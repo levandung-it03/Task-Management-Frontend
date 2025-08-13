@@ -235,7 +235,7 @@ function UserTag({ userGroup, groupRoles, isAdmin }: {
   useEffect(() => setUserGroupStatus(userGroup.active), [userGroup.active])
 
   return <li ref={tagRef} className="joined-user">
-    <a className="ju-wrapper" href={``}>
+    <a className="ju-wrapper" href={`/${AuthHelper.getRoleFromToken()}/view-user/${userGroup.joinedUser.email}`}>
       <span className="ju-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
       <span className="ju-full-name">{userGroup.joinedUser.fullName}</span>
       <span className="ju-email">{userGroup.joinedUser.email}</span>

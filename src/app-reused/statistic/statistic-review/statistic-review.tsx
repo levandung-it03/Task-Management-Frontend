@@ -7,6 +7,9 @@ import { ApiResponse } from "@/apis/general.api";
 import { DTO_UserStatistic } from "@/dtos/statistic.page.dto";
 import { getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
 import { ChartArea } from "lucide-react";
+import { AuthHelper } from "@/util/auth.helper";
+import { GeneralTools } from "@/util/general.helper";
+import HelpContainer from "@/app-reused/help-container/page";
 
 export default function StatisticReview({ projectId }: { projectId: number }) {
   const [isLoadingUsers, setIsLoadingUsers] = useState(true)
@@ -18,7 +21,7 @@ export default function StatisticReview({ projectId }: { projectId: number }) {
     async function fetchCollections() {
       const phaseId = Number(e.target.value)
       const response = await StatisticPageAPIs.fetchSimpleCollections(phaseId) as ApiResponse<Record<number, string>>
-      if (!String(response).startsWith("2"))
+      if (!String(response.status).startsWith("2"))
         return
       setCollections(response.body)
 
@@ -74,6 +77,7 @@ export default function StatisticReview({ projectId }: { projectId: number }) {
         <span className="caption-content">
           Statistic
         </span>
+        <HelpContainer title="" key="" description="Score = DefaultScore(1) + (Free-Hours of Submitted-Tasks × 0.1) + Task-Level-Ratio." />
         <i className="desc-content">All assigned Users (to Tasks of Project) statistic shown here!</i>
       </div>
 
@@ -105,12 +109,18 @@ export default function StatisticReview({ projectId }: { projectId: number }) {
       : <div className="users-statistic">
         {statisticUsers.map((user, ind) => {
           const firstNameChar = user.fullName[0].toUpperCase()
-          return <a key={"us-" + ind} className="user-short-info" href={`${window.location.pathname}/user-task/${user.id}`}>
+          return <a key={"us-" + ind}
+            className={`user-short-info ${ind <= 2 ? "top-user" : ""}`}
+            href={`/${AuthHelper.getRoleFromToken()}/view-user/${user.email}`}>
             <span className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</span>
             <span className="usi-full-name">{user.fullName}</span>
             <span className="usi-email">{user.email}</span>
             <span className="usi-dep quick-blue-tag">{user.department}</span>
             <span className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</span>
+            <span className="quick-green-tag">Approved {GeneralTools.floatNumberFormat(user.approvedRatio)}%</span>
+            <span className="quick-green-tag">Score {GeneralTools.floatNumberFormat(user.totalPoint)}</span>
+            <span className="quick-blue-tag">On-time tasks: {user.totalDoneTaskOnTime}</span>
+            <span className="quick-blue-tag">Late tasks: {user.totalDoneTaskLate}</span>
           </a>
         })}
       </div>}

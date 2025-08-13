@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { DTO_ProjectItem } from '@/dtos/home.page.dto';
 import './project-context-menu.scss';
+import { AuthHelper } from '@/util/auth.helper';
 
 interface ProjectContextMenuProps {
   project: DTO_ProjectItem;
@@ -46,8 +47,9 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
         )}
 
         {permissions?.canViewPerformance && (
-          <div
+          <a
             className="project-context-menu-item"
+            href={`/${AuthHelper.getRoleFromToken()}/projects/${project.id}/statistic`}
           >
             <svg width="20" height="20" fill="none" stroke="#166534" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="10" width="3" height="7" rx="1" />
@@ -55,7 +57,7 @@ export const ProjectContextMenu = forwardRef<HTMLDivElement, ProjectContextMenuP
               <rect x="14" y="3" width="3" height="14" rx="1" />
             </svg>
             View Project Performance
-          </div>
+          </a>
         )}
 
         {permissions?.canDeleteProject && (

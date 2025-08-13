@@ -25,7 +25,7 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
       : <CollectionDetail collectionId={collectionId} showCompleteBtn={false} />}
     <TaskCreationForm
       rootId={rootId}
-      collectionId={1}
+      collectionId={collectionId}
       assignedUsers={assignedUsers}
       setAssignedUsers={setAssignedUsers}
       setOpenDialog={setOpenDialog}

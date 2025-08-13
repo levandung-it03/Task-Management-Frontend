@@ -54,4 +54,8 @@ export class GeneralTools {
       window.location.reload();
     }, 1000);
   }
+
+  static floatNumberFormat(num: number) {
+    return Number(num).toFixed(1);
+  }
 }
