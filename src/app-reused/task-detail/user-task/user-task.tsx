@@ -96,11 +96,12 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
         return
 
       setIsLoading(false)
-      if (response.body.length === 0)
-        return
       const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
       const isAssignedUser = assignedRes.body.result
 
+      if (response.body.length === 0)
+        return
+      
       //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
       setIsReportOwner(isAssignedUser)
       setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
@@ -118,7 +119,7 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
         : <div className="form-caption">
           <FileIcon className="caption-icon" />
           <span className="caption-content">Reports</span>
-          <i className="desc-content">All report of Assigned User <b>{taskInfo.userInfo.fullName}</b> shown here.</i>
+          <i className="desc-content">All report of Assigned User shown here.</i>
         </div>}
     </div>
     {isLoading
