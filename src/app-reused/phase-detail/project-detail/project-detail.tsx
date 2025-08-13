@@ -52,8 +52,8 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
 
   const onClickStartProject = useCallback(() => {
     async function start() {
-      if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
-        return
+      // if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
+      //   return
       const response = await PhaseAPIs.startProject(project.id) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
@@ -70,8 +70,8 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
   const onClickCloseProject = useCallback(() => {
     async function close() {
       const response = await PhaseAPIs.closeProject(project.id) as ApiResponse<void>
-      if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
-        return
+      // if (!(await confirm("This action cannot be undone, are you sure?", "Confirm")))
+      //   return
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setProject(prev => ({
@@ -124,7 +124,7 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
       <span className="caption-content">
         Project Information<span className="project-id tag-data quick-green-tag">{project.id}</span>
       </span>
-      <i className="desc-content">Shorten Project information, and statistic!</i>
+      <i className="desc-content">Shorten Project information,\!</i>
     </div>
     <div className="project-info">
       <div className="project-info-item project-header">

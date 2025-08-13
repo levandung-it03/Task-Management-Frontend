@@ -2,7 +2,7 @@ import { ApiResponse } from '@/apis/general.api'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import HelpContainer from '@/app-reused/help-container/page'
 import { CirclePlus, ClipboardList, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { checkOverDue, prettierDate, prettierTime } from '../task-detail.service'
 import TextDialog from './text-dialog/text.dialog'
@@ -44,6 +44,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
   >(() => {
     return () => Promise.resolve();
   });
+  const isUpdatable = useMemo(() => isOwner && !taskInfo.hasAtLeastOneReport, [isOwner, taskInfo.hasAtLeastOneReport])
 
   const onClickOpenDescription = useCallback(() => {
     setOpenTextDialog(true)
@@ -255,7 +256,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       inpContent={dialogContent}
       openDialog={openTextDialog}
       setOpenDialog={setOpenTextDialog}
-      isUpdatabale={isOwner}
+      isUpdatabale={isUpdatable}
     />
     <TaskDialog
       taskInfo={taskInfo}

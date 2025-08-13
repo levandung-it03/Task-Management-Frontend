@@ -119,17 +119,10 @@ export class TaskDetailPageAPIs {
 
   static async updateLockTaskStatus(request: DTO_LockTaskStatus): Promise<ApiResponse<void> | unknown> {
     try {
-      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${request.id}`, {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${request.id}/update-locked-status`, {
         status: request.locked
       })
       return response.data
-      // return {
-      //   code: 11001,
-      //   msg: "Thành công",
-      //   status: 200,
-      //   body: null,
-      //   time: "12:00:20 30/06/2025"
-      // }
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }
