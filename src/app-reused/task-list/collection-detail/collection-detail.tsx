@@ -93,7 +93,7 @@ export default function CollectionDetail({ collectionId, showCompleteBtn=true }:
       <span className="caption-content">
         Collection Information<span className="collection-id tag-data quick-green-tag">{collection.id}</span>
       </span>
-      <i className="desc-content">Shorten Collection information, and statistic!</i>
+      <i className="desc-content">{collection.description}</i>
     </div>
     <div className="collection-info">
       <div className="collection-info-item collection-header">

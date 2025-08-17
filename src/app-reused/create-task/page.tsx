@@ -8,11 +8,20 @@ import CollectionDetail from "../task-list/collection-detail/collection-detail"
 import RootTaskDetail from "./root-task-detail/root-task-detail"
 import GlobalValidators from "@/util/global.validators"
 
+export interface ReusableRootTaskData {
+  description: string
+  reportFormat: string
+}
+
 export default function CreateTask({ rootId, collectionId }: { collectionId: number, rootId?: number }) {
   const [openDialog, setOpenDialog] = useState(false)
   const [assignedUsers, setAssignedUsers] = useState<Record<string, Record<string, string>>>({})
   const [assignedUsersHist, setAssignedUsersHist] = useState<Record<string, Record<string, string>>>({})
   const [canUndo, setCanUndo] = useState(true)
+  const [rootData, setRootData] = useState<ReusableRootTaskData>({
+    description: "",
+    reportFormat: ""
+  })
 
   const setHistories = useCallback((prev: Record<string, Record<string, string>>) => {
     setAssignedUsersHist(prev)
@@ -21,10 +30,11 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
 
   return <div className="create-task">
     {GlobalValidators.nonNull(rootId) && rootId
-      ? <RootTaskDetail taskId={rootId} />
+      ? <RootTaskDetail taskId={rootId} setRootData={setRootData} />
       : <CollectionDetail collectionId={collectionId} showCompleteBtn={false} />}
     <TaskCreationForm
       rootId={rootId}
+      rootData={rootData}
       collectionId={collectionId}
       assignedUsers={assignedUsers}
       setAssignedUsers={setAssignedUsers}

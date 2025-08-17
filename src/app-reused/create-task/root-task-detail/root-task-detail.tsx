@@ -10,8 +10,12 @@ import { GeneralTools } from "@/util/general.helper"
 import { ClipboardList } from "lucide-react"
 import { useEffect, useState } from "react"
 import "./root-task-detail.scss"
+import { ReusableRootTaskData } from "../page"
 
-export default function RootTaskDetail({ taskId }: { taskId: number }) {
+export default function RootTaskDetail({ taskId, setRootData }: {
+  taskId: number,
+  setRootData: React.Dispatch<React.SetStateAction<ReusableRootTaskData>>
+}) {
   const [isLoading, setIsLoading] = useState(true)
   const [taskDelegator, setTaskDelegator] = useState<DTO_TaskDelegator>({
     taskInfo: null,
@@ -29,7 +33,7 @@ export default function RootTaskDetail({ taskId }: { taskId: number }) {
     }
   })
   const [taskInfo, setTaskInfo] = useState<DTO_TaskDetail>({
-    id: 1,
+    id: 0,
     userInfo: {
       fullName: "",
       email: "",
@@ -70,21 +74,24 @@ export default function RootTaskDetail({ taskId }: { taskId: number }) {
       if (String(response.status).startsWith("2")) {
         setTaskInfo(response.body)
         setIsLoading(false)
-        console.log(response.body)
+        setRootData({
+          description: response.body.description,
+          reportFormat: response.body.reportFormat
+        })
       }
     }
     getDetail()
-  }, [taskId])
+  }, [taskId, setRootData])
 
   useEffect(() => {
     async function fetchTaskDelegator() {
-      const response = await TaskDetailPageAPIs.getTaskDelegator(taskInfo.id) as ApiResponse<DTO_TaskDelegator>
+      const response = await TaskDetailPageAPIs.getTaskDelegator(taskId) as ApiResponse<DTO_TaskDelegator>
       if (String(response.status).startsWith("2")) {
         setTaskDelegator(response.body)
       }
     }
     fetchTaskDelegator()
-  }, [taskInfo.id])
+  }, [taskId])
 
   return (
     isLoading

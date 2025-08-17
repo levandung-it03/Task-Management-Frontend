@@ -20,7 +20,6 @@ export interface RequestDataWrapper {
   sortedField: string,
   sortedMode: number,
   page: number,
-  data: Record<string, string>
 }
 
 export type MenuCallback = (data: Record<string, unknown>) => void
@@ -93,16 +92,29 @@ export function TableSearch({ tableId, tableState, setTableState, setReqData, ta
       const searchVal: string | undefined = searchBoxRef?.current?.value.trim()
       if (searchVal && searchVal.trim().length !== 0) {
         GeneralTools.addHistIntoCookies(tableId, searchVal.trim())
-        setTableState(prev => ({ ...prev, searchVal: searchVal }))
         setReqData(prev => ({
           ...prev,
           page: 1,
-          searchVal: searchVal
+          searchVal: searchVal,
+          filterField: tableState.filterField,
+          sortedField: tableState.sortedField,
+          sortedMode: tableState.sortedMode
         }))
+        setTableState(prev => ({ ...prev, searchVal: searchVal }))
+      } else {
+        setReqData(prev => ({
+          ...prev,
+          page: 1,
+          searchVal: "",
+          filterField: "",
+          sortedField: tableState.sortedField,
+          sortedMode: tableState.sortedMode
+        }))
+        setTableState(prev => ({ ...prev, searchVal: "", filterField: "" }))
       }
     }
     submit()
-  }, [tableId, setTableState, setReqData])
+  }, [tableId, setTableState, setReqData, tableState])
 
   useEffect(() => {
     const instructBox = instructBoxRef.current;
@@ -214,15 +226,15 @@ export function TableTDMenuBtn({ menuId, openingMenu, setOpeningMenu, menuAndFun
   menuAndFuncs: MenuElementWrapper[],
   data: Record<string, unknown>
 }): JSX.Element {
-  const menuRef = useRef<HTMLUListElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node))
         setOpeningMenu("");
     }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setOpeningMenu])
 
   return (
@@ -234,15 +246,20 @@ export function TableTDMenuBtn({ menuId, openingMenu, setOpeningMenu, menuAndFun
           <EllipsisVertical className="tbr-menu-icon" />
         </button>
       </div>
-      <ul ref={menuRef} className={`tbr-main-menu-wrapper${openingMenu === menuId ? "" : " hidden"}`}>
-        {menuAndFuncs.map((menuAndFunc, ind) => (
-          <li key={menuId + ind} className="tbd-menu-index">
-            <button className="tbd-menu-btn" type="button" onClick={() => menuAndFunc.func(data)}>
-              {menuAndFunc.name}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="empty-wrapper" ref={menuRef}>
+        <ul className={`tbr-main-menu-wrapper${openingMenu === menuId ? "" : " hidden"}`}>
+          {menuAndFuncs.map((menuAndFunc, ind) => (
+            <li key={menuId + ind} className="tbd-menu-index">
+              <button
+                className="tbd-menu-btn"
+                type="button"
+                onMouseDown={(e) => menuAndFunc.func(data)}>
+                {menuAndFunc.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </td>
   )
 }

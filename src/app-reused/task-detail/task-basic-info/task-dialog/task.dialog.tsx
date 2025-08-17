@@ -48,7 +48,7 @@ export default function TaskDialog({
   const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value)
     setFormTouched(true)
-    setFormValidation(prev => ({ ...prev, deadline: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
+    setFormValidation(prev => ({ ...prev, startDate: CreateTaskPageValidators.isValidDeadline(e.target.value) }))
   }, [])
 
   const onChangeDeadline = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

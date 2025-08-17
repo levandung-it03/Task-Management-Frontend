@@ -88,12 +88,9 @@ export default function TaskListList({
               <path d="M10 12h8M10 16h8" stroke="var(--main-green)" />
             </svg>
             <div className="task-list-content">
-              <a
-                className="task-list-name"
-                href={`${window.location.origin}/${AuthHelper.getRoleFromToken()}/task-detail/${taskList.id}`}
-              >
+              <span className="task-list-name">
                 {taskList.name}
-              </a>
+              </span>
             </div>
           </a>
           

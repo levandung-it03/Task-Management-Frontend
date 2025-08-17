@@ -1,10 +1,11 @@
-"use client";
+'use client'
 
-import React, { useEffect, useMemo, useState } from "react";
-import "./users.table.scss";
-import GlobalValidators from "@/util/global.validators";
-import { ManageUsersAPIs } from "@/apis/manage-users.page.api";
-import { ApiResponse } from "@/apis/general.api";
+import React, { JSX, useCallback, useEffect, useMemo, useState } from "react"
+import "./users.table.scss"
+import GlobalValidators from "@/util/global.validators"
+import { DTO_PaginatedDataResponse } from "@/dtos/manage-users.page.dto"
+import { ManageUsersAPIs } from "@/apis/manage-users.page.api"
+import { ApiResponse } from "@/apis/general.api"
 import {
   MenuElementWrapper,
   TablePagination,
@@ -20,230 +21,85 @@ import {
   MainTable,
   TableDataLoading,
   TableRowWrapper,
-} from "@/components/table.component";
-import { DTO_PaginationRequest } from "@/dtos/general.dto";
-import {
-  DTO_PaginatedDataResponse,
-  DTO_ManagedUserInfoResponse,
-  DTO_UpdateAccountStatusRequest,
-  DTO_UpdateAccountRoleRequest,
-} from "@/dtos/manage-users.page.dto";
-
-const USERS_PER_PAGE = 10;
+  RequestDataWrapper
+} from "@/components/table.component"
+import { DTO_PaginationRequest } from "@/dtos/general.dto"
+import { getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
+import { AuthHelper } from "@/util/auth.helper"
+import toast from "react-hot-toast"
 
 export default function UsersTable() {
-  const tableId = useMemo(() => "usif_hist", []);
-  const [openingMenu, setOpeningMenu] = useState("");
-  const [rawUserList, setRawUserList] = useState<DTO_ManagedUserInfoResponse[]>(
-    []
-  );
-  const [displayedList, setDisplayedList] = useState<
-    DTO_ManagedUserInfoResponse[]
-  >([]);
-  const [tableFields, setTableFields] = useState<string[]>([]);
-  const [noResultsFound, setNoResultsFound] = useState(false);
-
+  const tableId = useMemo(() => "usif_hist", [])
+  const [openingMenu, setOpeningMenu] = useState("")
+  const [data, setData] = useState<DTO_PaginatedDataResponse>({
+    totalPages: 1,
+    dataList: []
+  })
+  const [tableFields, setTableFields] = useState<string[]>([])
   const [tableState, setTableState] = useState<TableStateWrapper>({
     searchVal: "",
     filterField: "",
     sortedField: "",
     sortedMode: 0,
     page: 1,
-    totalPages: 1,
-  });
+    totalPages: 1
+  })
+  const [reqData, setReqData] = useState<RequestDataWrapper>({
+    searchVal: "",
+    filterField: "",
+    sortedField: "",
+    sortedMode: 0,
+    page: 1
+  })
 
-  const ROLE_LABELS: Record<string, string> = {
-    ROLE_EMP: "Employee",
-    ROLE_LD: "Leader",
-    ROLE_PM: "Project Manager",
-  };
+  const menuAndFuncs = useMemo(() => [
+    MenuElementWrapper.withBuilder()
+      .bname("View detail")
+      .bfunc((data: Record<string, unknown>) => {
+        window.location.href = `/${AuthHelper.getRoleFromToken()}/view-user/${data.email}`
+      }),
+  ], [])
 
-  const ROLE_OPTIONS = Object.entries(ROLE_LABELS).map(([value, label]) => ({
-    value,
-    label,
-  }));
-
-  const menuAndFuncs = useMemo(
-    () => [
-      MenuElementWrapper.withBuilder()
-        .bname("Go to User Info Page")
-        .bfunc((data) => {
-          const accountId = data.accountId as number;
-          if (accountId) {
-            window.location.href = `/emp/user-info/${accountId}`;
+  const onClickSwitchUserStatus = useCallback((id: number, index: number) => {
+    async function switchUserStatus() {
+      const response = await ManageUsersAPIs.switchAccountStatus(id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setData(prev => {
+          const tempDataList = [...prev.dataList]
+          tempDataList[index].status = !tempDataList[index].status
+          return {
+            ...prev,
+            dataList: tempDataList
           }
-        }),
-    ],
-    []
-  );
-
-  async function fetchUsers() {
-    const request = DTO_PaginationRequest.fromInterface({
-      searchVal: "",
-      filterField: "",
-      sortedField: "",
-      sortedMode: 0,
-      page: 1,
-      data: {},
-    });
-
-    const response = (await ManageUsersAPIs.getPaginatedUsers(
-      request
-    )) as ApiResponse<DTO_PaginatedDataResponse>;
-    const allUsers = response.body.dataList;
-    setRawUserList(allUsers);
-    setTableFields(Object.keys(allUsers[0] || {}));
-  }
+        })
+      }
+    }
+    switchUserStatus()
+  }, [])
 
   useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  useEffect(() => {
-    let result = [...rawUserList];
-
-    // 1. Search
-    if (tableState.searchVal) {
-      const keyword = tableState.searchVal.toLowerCase();
-      result = result.filter(
-        (user) =>
-          user.fullname.toLowerCase().includes(keyword) ||
-          user.email.toLowerCase().includes(keyword) ||
-          user.phone.toLowerCase().includes(keyword)
-      );
-    }
-
-    // 2. Filter
-    if (tableState.filterField) {
-      result = result.filter((user) => {
-        const fieldValue = (user as any)[tableState.filterField];
-        return (
-          fieldValue !== undefined && fieldValue !== null && fieldValue !== ""
-        );
-      });
-    }
-
-    // 3. Sort
-    if (tableState.sortedField && tableState.sortedMode !== 0) {
-      result.sort((a, b) => {
-        const aVal = (a as any)[tableState.sortedField];
-        const bVal = (b as any)[tableState.sortedField];
-        if (typeof aVal === "string" && typeof bVal === "string") {
-          return tableState.sortedMode === 1
-            ? aVal.localeCompare(bVal)
-            : bVal.localeCompare(aVal);
-        }
-        return 0;
-      });
-    }
-
-    const totalPages = Math.ceil(result.length / USERS_PER_PAGE);
-    const currentPage = tableState.page;
-
-    // Nếu trang hiện tại vượt quá số trang mới sau khi lọc, reset về trang 1
-    if (currentPage > totalPages && totalPages > 0) {
-      setTableState((prev) => ({
+    async function init() {
+      const request = DTO_PaginationRequest.fromInterface(reqData)
+      const response = await ManageUsersAPIs.getPaginatedUsers(request) as ApiResponse<DTO_PaginatedDataResponse>
+      setData(response.body)
+      setTableState(prev => ({
         ...prev,
-        page: 1,
-        totalPages,
-      }));
-      return; // tránh render 2 lần
+        page: reqData.page,
+        totalPages: response.body.totalPages
+      }))
+      setTableFields([...Object.keys(response.body.dataList[0])])
     }
-
-    const paginatedUsers = result.slice(
-      (currentPage - 1) * USERS_PER_PAGE,
-      currentPage * USERS_PER_PAGE
-    );
-
-    setDisplayedList(paginatedUsers);
-    setTableState((prev) => ({
-      ...prev,
-      totalPages,
-    }));
-  }, [
-    rawUserList,
-    tableState.searchVal,
-    tableState.filterField,
-    tableState.sortedField,
-    tableState.sortedMode,
-    tableState.page,
-  ]);
-
-  const handleToggleStatus = (userInfo: DTO_ManagedUserInfoResponse) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to ${
-        userInfo.status ? "deactivate" : "activate"
-      } this user?`
-    );
-    if (!confirmed) return;
-
-    // Update FE
-    // const updated = rawUserList.map((user) =>
-    //   user.accountId === userInfo.accountId
-    //     ? { ...user, status: !user.status }
-    //     : user
-    // );
-    // setRawUserList(updated);
-
-    // Update BE
-    try {
-      const request = DTO_UpdateAccountStatusRequest.withBuilder()
-        .setId(userInfo.accountId)
-        .setStatus(!userInfo.status);
-
-      // const response = await ManageUsersAPIs.updateAccountStatus(request);
-      // if (response.success) {
-      //   alert("Status updated successfully.");
-      //   // fetchUsers();
-      // } else {
-      //   alert("Failed to update status.");
-      // }
-    } catch (err) {
-      console.error(err);
-      alert("Error occurred while updating status.");
-    }
-  };
-
-  const handleRoleChange = (
-    user: DTO_ManagedUserInfoResponse,
-    newRole: string
-  ) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to change the role of ${user.email} to ${newRole}?`
-    );
-    if (!confirmed) return;
-
-    // Update FE
-    // const updated = rawUserList.map((u) =>
-    //   u.accountId === user.accountId ? { ...u, authorities: newRole } : u
-    // );
-    // setRawUserList(updated);
-
-    // Update BE
-    try {
-      const request = DTO_UpdateAccountRoleRequest.withBuilder()
-        .setId(user.accountId)
-        .setRole(newRole);
-
-      // const response = await ManageUsersAPIs.updateAccountRole(request);
-      // if (response.success) {
-      //   alert("Role updated successfully.");
-      //   fetchUsers();
-      // } else {
-      //   alert("Failed to update role.");
-      // }
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    init()
+  }, [reqData])
 
   return (
     <div className="customize-table">
-      <TableCaption caption="Manage Users" />
-      <TableDescription desc="Provide table and tools to manage users information using our system services" />
+      <TableCaption caption={"Manage Users"} />
+      <TableDescription desc={"Provide table and tools to manage users information using our system services"} />
       <TableSearch
         tableId={tableId}
-        setReqData={() => {}}
+        setReqData={setReqData}
         tableState={tableState}
         setTableState={setTableState}
         tableFields={tableFields}
@@ -251,65 +107,93 @@ export default function UsersTable() {
       <MainTable>
         <TableHeadWrapper>
           <TableHeadCell name="Avatar" />
-          <TableHeadCell name="Email" />
           <TableHeadCell name="Full Name" />
-          <TableHeadCell name="Phone" />
+          <TableHeadCell name="Email" />
           <TableHeadCell name="Department" />
+          <TableHeadCell name="Phone" />
+          <TableHeadCell name="Identity" />
           <TableHeadCell name="Authorities" />
+          <TableHeadCell name="Created Time" />
           <TableHeadCell name="Status" />
           <TableTDMenuHead />
         </TableHeadWrapper>
         <TableBodyWrapper>
-          {GlobalValidators.isEmpty(displayedList) ? (
-            <TableDataLoading />
-          ) : (
-            displayedList.map((userInfo, index) => (
-              <TableRowWrapper key={`tbrw-${index}`}  >
-                <td className="table-cell tb-cell-ava">
-                  <span className="virtual-ava">
-                    {userInfo.fullname[0].toUpperCase()}
+          {GlobalValidators.isEmpty(data.dataList)
+            ? <TableDataLoading />
+            : data.dataList.map((userInfo, ind) => {
+              const firstNameChar = userInfo.fullName[0].toUpperCase()
+              return <TableRowWrapper key={"tbrw" + ind}>
+                <td className="table-cell usi-ava">
+                  <span className="virtual-ava" style={getColorByCharacter(firstNameChar)}>
+                    {firstNameChar}
                   </span>
                 </td>
-                <td className="table-cell tb-cell-mullines">
-                  {userInfo.email}
-                </td>
-                <td className="table-cell tb-cell-mullines">
-                  {userInfo.fullname}
-                </td>
-                <td className="table-cell">{userInfo.phone}</td>
-                <td className="table-cell">{userInfo.department}</td>
-                <td className={`usi-role usi-${userInfo.authorities.toLowerCase().replace("_", "-")}`}>{userInfo.authorities}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.fullName}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.email}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.department}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.phone}</td>
+                <td className="table-cell tb-cell-mullines">{userInfo.identity}</td>
                 <td className="table-cell">
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={userInfo.status}
-                      onChange={() => handleToggleStatus(userInfo)}
-                    />
-                    <span className="slider round"></span>
-                  </label>
+                  {ExtractedRoles(userInfo.authorities)}
+                </td>
+                <td className="table-cell tb-cell-mullines">{ExtractedTime(userInfo.createdTime)}</td>
+                <td className="table-cell">
+                  <button className={`user-status status-${userInfo.status + ""}`}
+                  onClick={() => onClickSwitchUserStatus(userInfo.id, ind)}
+                    onMouseLeave={e => {
+                      const btn = e.target as HTMLElement
+                      btn.classList.remove(`status-${!userInfo.status + ""}`)
+                      btn.classList.add(`status-${userInfo.status + ""}`)
+                      btn.textContent = userInfo.status ? "Activated" : "In-activated"
+                    }}
+                    onMouseEnter={e => {
+                      const btn = e.target as HTMLElement
+                      btn.classList.remove(`status-${userInfo.status + ""}`)
+                      btn.classList.add(`status-${!userInfo.status + ""}`)
+                      btn.textContent = !userInfo.status ? "Activate" : "In-activate"
+                    }}>
+                    {userInfo.status ? "Activated" : "In-activated"}
+                  </button>
                 </td>
                 <TableTDMenuBtn
-                  menuId={`${tableId}-menu-${index}`}
+                  menuId={tableId + "-menu-" + ind}
                   openingMenu={openingMenu}
                   setOpeningMenu={setOpeningMenu}
                   menuAndFuncs={menuAndFuncs}
                   data={{
-                    email: userInfo.email,
-                    accountId: userInfo.accountId,
+                    email: userInfo.email
                   }}
                 />
               </TableRowWrapper>
-            ))
-          )}
+            })
+          }
         </TableBodyWrapper>
       </MainTable>
       <TablePagination
-        totalPages={tableState.totalPages}
+        totalPages={data.totalPages}
         tableState={tableState}
         setTableState={setTableState}
-        setReqData={() => {}}
+        setReqData={setReqData}
       />
     </div>
-  );
+  )
+}
+
+function ExtractedRoles(scopes: string): JSX.Element[] {
+  return scopes.split(",").map((scope, ind) =>
+    <span
+      key={scope + ind}
+      className={`user-role usi-role usi-role-${scope.replace("ROLE_", "").toLowerCase()}`}
+    >
+      {scope}
+    </span>
+  )
+}
+
+function ExtractedTime(time: string): JSX.Element {
+  const extractedTime = time.split(" ");
+  return <>
+    <span className="quick-green-tag">{extractedTime[0]}</span>
+    <span className="quick-green-tag">{extractedTime[1]}</span>
+  </>
 }

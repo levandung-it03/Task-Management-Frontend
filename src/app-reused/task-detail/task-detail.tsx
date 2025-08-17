@@ -72,7 +72,6 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
       if (String(response.status).startsWith("2")) {
         setTaskInfo(response.body)
         setIsLoading(false)
-        console.log(response.body)
       }
     }
     getDetail()

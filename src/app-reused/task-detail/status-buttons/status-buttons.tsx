@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import toast from "react-hot-toast"
 import "./status-buttons.scss"
 import { DTO_LockTaskStatus, DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
+import { AuthHelper } from "@/util/auth.helper"
 
 export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_TaskDetail }) {
   const [locked, setLocked] = useState(false)
@@ -48,7 +49,10 @@ export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_Tas
       const response = await TaskDetailPageAPIs.deleteTask(taskInfo.id) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
-        window.location.href = "/"
+        if (taskInfo.rootTaskId !== null)
+          window.location.href = `/${AuthHelper.getRoleFromToken()}/task-detail/${taskInfo.rootTaskId}`
+        else
+          window.location.href = `/${AuthHelper.getRoleFromToken()}/collections/${taskInfo.collectionInfo.id}/tasks`
       }
     }
     deleteTask()

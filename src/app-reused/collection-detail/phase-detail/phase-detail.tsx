@@ -80,7 +80,7 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
       <span className="caption-content">
         Phase Information<span className="phase-id tag-data quick-green-tag">{phase.id}</span>
       </span>
-      <i className="desc-content">Shorten Phase information, and statistic!</i>
+      <i className="desc-content">{phase.description}</i>
     </div>
     <div className="phase-info">
       <div className="phase-info-item phase-header">

@@ -14,6 +14,7 @@ import { TextEditor } from "@/app-reused/text-editor/text-editor"
 import { GeneralTools } from "@/util/general.helper"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.dto"
 import { AuthHelper } from "@/util/auth.helper"
+import { ReusableRootTaskData } from "../page"
 
 export interface TaskInfo {
   deadline: string,
@@ -41,6 +42,7 @@ interface SearchUserToAssignProps {
 
 interface TaskCreationFormProps {
   rootId: number | undefined;
+  rootData: ReusableRootTaskData;
   collectionId: number;
   assignedUsersHist: Record<string, Record<string, string>>;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
@@ -53,6 +55,7 @@ interface TaskCreationFormProps {
 
 export function TaskCreationForm({
   rootId,
+  rootData,
   collectionId,
   assignedUsers,
   setAssignedUsers,
@@ -67,7 +70,7 @@ export function TaskCreationForm({
   const [startDate, setStartDate] = useState("")
   const [description, setDescription] = useState("")
   const [reportFormat, setReportFormat] = useState("")
-  const [levelList, setLevelList] = useState<string[]>([])
+  const [levels, setLevels] = useState<Record<string, string>[]>([])
   const [level, setLevel] = useState("")
   const [priorityList, setPriorityList] = useState<string[]>([])
   const [priority, setPriority] = useState("")
@@ -168,24 +171,31 @@ export function TaskCreationForm({
 
   useEffect(() => {
     async function initValues() {
-      const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<string[]>
-      if (String(levelsResponse.status)[0] === "2"){
-        setLevel(levelsResponse.body[0])
-        setLevelList(levelsResponse.body)
+      const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<Record<string, number>[]>
+      if (String(levelsResponse.status)[0] === "2") {
+        setLevel(Object.entries(levelsResponse.body[0])[0][0])
+        setLevels(levelsResponse.body.map((levelEntry: Record<string, number>) => {
+          const levelEntries = Object.entries(levelEntry)[0]
+          return {
+            [levelEntries[0]]: GeneralTools.floatNumberFormat(levelEntries[1])
+          }
+        }))
       }
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
-      if (String(prioritiesResponse.status)[0] === "2"){
+      if (String(prioritiesResponse.status)[0] === "2") {
         setPriority(prioritiesResponse.body[0])
         setPriorityList(prioritiesResponse.body)
       }
       const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
-      if (String(taskTypesResponse.status)[0] === "2"){
+      if (String(taskTypesResponse.status)[0] === "2") {
         setTaskType(taskTypesResponse.body[0])
         setTaskTypeList(taskTypesResponse.body)
       }
+      setDescription(rootData.description)
+      setReportFormat(rootData.reportFormat)
     }
     initValues()
-  }, [])
+  }, [rootData])
 
   return <form className="task-info-form">
     <div className="task-info-form-container">
@@ -224,11 +234,17 @@ export function TaskCreationForm({
 
       <div className="form-group-container half-form-left-container">
         <fieldset className="form-group">
-          <legend className="form-label">Level</legend>
+          <legend className="form-label task-level-label">
+            Level
+            <HelpContainer title="" key="" description="Task-Level-Ratio will be used to calculate statistic project information" />
+          </legend>
           <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
-            {levelList.map((level, ind) =>
-              <option key={"tcl-" + ind} value={level}>{GeneralTools.convertEnum(level)}</option>
-            )}
+            {levels.map((levelEntry, ind) => {
+              const levelEntries = Object.entries(levelEntry)[0]
+              return <option key={"tcl-" + ind} value={levelEntries[0]}>
+                {GeneralTools.convertEnum(levelEntries[0])} (x{levelEntries[1]} Score)
+              </option>
+            })}
           </select>
         </fieldset>
       </div>

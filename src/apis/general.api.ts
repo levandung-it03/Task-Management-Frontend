@@ -117,10 +117,9 @@ export class GeneralAPIs {
     }
   }
 
-  static async getTaskLevelEnums(): Promise<ApiResponse<string[]> | unknown> {
+  static async getTaskLevelEnums(): Promise<ApiResponse<Record<string, number>> | unknown> {
     try {
       const response = await axiosInstance.get(`/api/public/v1/enum/task-level`)
-      console.log(response.data)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)

@@ -109,10 +109,16 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       const response = await TaskDetailPageAPIs.getTaskDelegator(taskInfo.id) as ApiResponse<DTO_TaskDelegator>
       if (String(response.status).startsWith("2")) {
         setTaskDelegator(response.body)
+        setTaskInfo(prev => ({
+          ...prev,
+          projectInfo: response.body.projectInfo,
+          phaseInfo: response.body.phaseInfo,
+          collectionInfo: response.body.collectionInfo,
+        }))
       }
     }
     fetchTaskDelegator()
-  }, [taskInfo.id])
+  }, [taskInfo.id, setTaskInfo])
 
   return <>
     <div className="task-basic-info">
