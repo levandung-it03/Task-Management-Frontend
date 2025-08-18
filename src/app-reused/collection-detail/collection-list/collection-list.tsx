@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DTO_CollectionItem } from '../../../dtos/collection.page.dto';
 import './collection-list.scss';
 import { SquareLibrary, Trash } from 'lucide-react';
@@ -19,7 +19,7 @@ export default function CollectionList({
   canDeleteCollection
 }: CollectionListProps) {
   // Filter out any null or undefined collections to prevent errors
-  const validCollections = collections.filter(collection => collection != null);
+  const validCollections = useMemo(() => collections.filter(collection => collection != null), [collections]);
 
   return (
     <div className="collection-list">

@@ -192,7 +192,7 @@ export class GroupPageAPIs {
 
   static async updateGroup(request: DTO_UpdateGroup): Promise<ApiResponse<DTO_IdResponse> | unknown> {
     try {
-      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/group/update/${request.groupId}`, {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/group/${request.groupId}`, {
         name: request.name,
         addedEmails: request.addedEmails,
       })

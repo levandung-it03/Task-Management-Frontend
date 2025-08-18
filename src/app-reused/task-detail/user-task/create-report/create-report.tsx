@@ -14,6 +14,7 @@ import { ApiResponse } from "@/apis/general.api";
 import { DTO_IdResponse } from "@/dtos/general.dto";
 import toast from "react-hot-toast";
 import { GeneralTools } from "@/util/general.helper";
+import { IndexDBHelper } from "@/util/indexdb.helper";
 
 export interface CreateReportFormProps {
   userTaskId: number;
@@ -57,6 +58,25 @@ export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportF
   }, [title, report, userTaskId])
 
   useEffect(() => setFormat(taskInfo.reportFormat), [taskInfo.reportFormat])
+
+  useEffect(() => {
+    async function fetchDraft() {
+      const draft = await IndexDBHelper.loadDraft(`report-${userTaskId}`);
+      if (draft && typeof draft.content === "string") setReport(draft.content);
+    }
+    fetchDraft();
+  }, [userTaskId]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      async function save() {
+        await IndexDBHelper.saveDraft(`report-${userTaskId}`, report);
+      }
+      save()
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [report, userTaskId]);
 
   return <div className="report-creation">
     <div className="form-caption">

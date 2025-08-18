@@ -304,6 +304,12 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
       if (GlobalValidators.isInvalidValidation(formTouched, formValidation))
         return
 
+      if (trimmedName === group.baseInfo.name
+        && Object.entries(addedUsers).length === group.groupHasUsers.length) {
+        toast.error("Fill all the fields before submitting!")
+        return
+      }
+
       const request = DTO_UpdateGroup.withBuilder()
         .bgroupId(group.baseInfo.id)
         .bname(trimmedName)
@@ -317,7 +323,7 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
       }
     }
     createGroup();
-  }, [formValidation, name, formTouched])
+  }, [formValidation, name, formTouched, addedUsers, group.baseInfo.name])
 
   useEffect(() => setAddedUsers(existingUsers), [existingUsers])
   useEffect(() => setName(group.baseInfo.name), [group.baseInfo.name])
@@ -352,7 +358,7 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
         <div className="form-group-container search-user-container">
           <fieldset className="form-group">
             <legend className="form-label">Search User</legend>
-            <SearchUserToAdd addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
+            <SearchUserToAdd addedUsers={addedUsers} setAddedUsers={setAddedUsers} setFormTouched={setFormTouched} />
           </fieldset>
         </div>
 
@@ -363,15 +369,16 @@ function UpdateGroupBaseInfoDialog({ setOpenDialog, group }: {
           </fieldset>
         </div>
 
-        <button type="button" className="submit-btn" onClick={onClickSubmitBtn}>Create</button>
+        <button type="button" className="submit-btn" onClick={onClickSubmitBtn}>Submit</button>
       </div>
     </div>
   </div>
 }
 
-function SearchUserToAdd({ addedUsers, setAddedUsers }: {
+function SearchUserToAdd({ addedUsers, setAddedUsers, setFormTouched }: {
   addedUsers: Record<string, Record<string, string>>,
-  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>
+  setAddedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>,
+  setFormTouched: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const searchUserRef = useRef<HTMLInputElement>(null)
   const searchedUsersRef = useRef<HTMLTableElement>(null)
@@ -407,6 +414,7 @@ function SearchUserToAdd({ addedUsers, setAddedUsers }: {
 
   const toggleAddRemoveAddedUser = useCallback((user: DTO_FastUserInfo) => {
     setAddedUsers(prev => {
+      setFormTouched(true)
       const key = extractEmailToGetId(user.email)
       if (key in prev)
         return prev //--Do not remove it in search user (cannot remove existing-users on this UI)
