@@ -70,16 +70,6 @@ export class ProjectAPIs {
     }
   }
 
-  // Đánh dấu project hoàn thành - API thực tế từ backend
-  static async completeProject(id: number): Promise<ApiResponse<void> | unknown> {
-    try {
-      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/project/${id}/complete`);
-      return response.data;
-    } catch (error: unknown) {
-      return GeneralAPIs.extractError(error);
-    }
-  }
-
   // Tìm kiếm users để thêm làm leader - CHƯA CÓ API TRONG BACKEND
   static async searchLeadersForProject(projectId: number, query: string): Promise<ApiResponse<DTO_FastUserInfo[]> | unknown> {
     try {

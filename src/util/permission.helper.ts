@@ -43,7 +43,7 @@ export class PermissionHelper {
   private static readonly PERMISSIONS: PermissionConfig = {
     // PROJECT
     createProject: { PM: true, LD: false, EMP: false },
-    viewProjectDetails: { PM: true, LD: true, EMP: true },
+    viewProjectDetails: { PM: true, LD: false, EMP: false },
     updateProject: { PM: true, LD: false, EMP: false },
     viewLeaders: { PM: true, LD: false, EMP: false },
     addLeader: { PM: true, LD: false, EMP: false },
@@ -54,13 +54,13 @@ export class PermissionHelper {
 
     // PHASE
     createPhase: { PM: true, LD: false, EMP: false },
-    viewPhaseDetails: { PM: true, LD: true, EMP: true },
+    viewPhaseDetails: { PM: true, LD: false, EMP: false },
     updatePhase: { PM: true, LD: false, EMP: false },
     deletePhase: { PM: true, LD: false, EMP: false },
 
     // COLLECTION
     createCollection: { PM: true, LD: false, EMP: false },
-    viewCollection: { PM: true, LD: true, EMP: true },
+    viewCollection: { PM: true, LD: false, EMP: false },
     updateCollection: { PM: true, LD: false, EMP: false },
     deleteCollection: { PM: true, LD: false, EMP: false },
 

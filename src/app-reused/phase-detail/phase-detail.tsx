@@ -13,10 +13,13 @@ import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import { AuthHelper } from '../../util/auth.helper';
 import { DTO_IdResponse } from '@/dtos/general.dto';
 import ProjectDetail from './project-detail/project-detail';
+
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
   const permissions = usePermission();
 
+  const [cachedPhases, setCachedPhases] = useState<DTO_PhaseItem[]>([]);
+  const [name, setName] = useState("")
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [form, setForm] = useState<DTO_PhaseItem | null>(null);
@@ -58,6 +61,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
         if (response && typeof response === 'object' && 'body' in response && response.body) {
           const data = (response as ApiResponse<DTO_PhaseItem[]>).body;
           setPhases(data);
+          setCachedPhases(data)
         } else {
           console.error('Invalid response format:', response);
         }
@@ -169,6 +173,20 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     setCreateForm(newForm as DTO_CreatePhase);
   };
 
+  const onChangeName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }, []);
+
+  useEffect(() => {
+    if (name.length === 0) {
+      setPhases(cachedPhases)
+    } else {
+      setPhases(prev => {
+        return [...prev.filter(phase => phase.name.toUpperCase().includes(name.toUpperCase()))]
+      })
+    }
+  }, [name, cachedPhases])
+
   return (
     <>
       <ProjectDetail projectId={projectId} />
@@ -191,6 +209,13 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
               onCreateClick={() => setShowCreateModal(true)}
               canCreatePhase={permissions.canCreatePhase}
             />
+          </div>
+          
+          <div className="form-group-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Search</legend>
+              <input type="name" id="name" className="form-input" placeholder="Type Name" required value={name} onChange={onChangeName} />
+            </fieldset>
           </div>
 
           <PhaseList

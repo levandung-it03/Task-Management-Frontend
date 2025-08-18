@@ -48,11 +48,19 @@ export default function ProjectInfo({ project }: { project: DTO_ProjectOverview 
           </span>
         </div>
         <div className="project-info-item">
-          <span className="project-info-label">Start Date</span>
-          <span className="project-info-value">
-            <span className="project-date">{prettierDate(project.startDate)}</span>
-          </span>
-        </div>
+            <span className="project-info-label">Expected Start Date</span>
+            <span className="project-info-value">
+              <span className="project-date">{prettierDate(project.expectedStartDate)}</span>
+            </span>
+          </div>
+        {project.startDate !== null
+          && <div className="project-info-item">
+            <span className="project-info-label">Start Date</span>
+            <span className="project-info-value">
+              <span className="project-date">{prettierDate(project.startDate)}</span>
+            </span>
+          </div>
+        }
         {project.endDate !== null
           && <div className="project-info-item">
             <span className="project-info-label">End Date</span>

@@ -19,7 +19,9 @@ interface CollectionDetailProps {
 export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
   const router = useRouter();
   const permissions = usePermission();
-  
+
+  const [cachedCollections, setCachedCollections] = useState<DTO_CollectionItem[]>([]);
+  const [name, setName] = useState("")
   const [collections, setCollections] = useState<DTO_CollectionItem[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -35,29 +37,29 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
   // Hàm xử lý click vào collection để chuyển đến trang task
   const handleCollectionClick = (collectionId: number) => {
     const role = AuthHelper.getRoleFromToken();
-  
+
     const rolePaths: Record<string, string> = {
       pm: '/pm',
       lead: '/lead',
       emp: '/emp'
     };
-  
+
     const basePath = rolePaths[role];
     if (!basePath) {
       console.error('Role không hợp lệ:', role);
       return;
     }
-  
+
     router.push(`${basePath}/collections/${collectionId}/tasks`);
   };
-  
+
 
   // Load collections
   useEffect(() => {
     console.log('PhaseId:', phaseId); // Debug phaseId
     if (phaseId) {
       console.log('Calling API with phaseId:', phaseId); // Debug API call
-      
+
       // Try to get collections directly
       CollectionAPIs.getCollectionsByPhase(phaseId).then((response) => {
         console.log('Collection response:', response); // Debug log
@@ -66,6 +68,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
           if (apiResponse.body && Array.isArray(apiResponse.body)) {
             console.log('Setting collections:', apiResponse.body); // Debug set collections
             setCollections(apiResponse.body);
+            setCachedCollections(apiResponse.body)
           } else {
             console.error('Invalid body format:', apiResponse.body);
             setCollections([]);
@@ -129,7 +132,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
       CollectionAPIs.createCollection(phaseId, { name, description, startDate, dueDate }).then((response) => {
         if (response && typeof response === 'object' && 'body' in response && response.body) {
           const idResponse = response.body as { id: number };
-          
+
           if (idResponse && typeof idResponse.id === 'number') {
             // Instead of fetching individual collection details (which causes 403), 
             // just refresh the collections list to show the new collection
@@ -147,7 +150,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
         } else {
           console.error('Invalid response structure:', response);
         }
-        
+
         setShowCreateModal(false);
         setCreateForm({
           name: '',
@@ -185,12 +188,12 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
     try {
       const message = 'Are you sure you want to delete this collection?';
       const title = 'Delete Collection';
-      
+
       const ok = await confirm(message, title);
       if (!ok) return;
-      
+
       const response = await CollectionAPIs.deleteCollection(collection.id);
-      
+
       if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
         setCollections(prev => prev.filter(c => c.id !== collection.id));
       } else {
@@ -201,49 +204,69 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
     }
   };
 
+  const onChangeName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }, []);
 
+  useEffect(() => {
+    if (name.length === 0) {
+      setCollections(cachedCollections)
+    } else {
+      setCollections(prev => {
+        return [...prev.filter(collection => collection.name.toUpperCase().includes(name.toUpperCase()))]
+      })
+    }
+  }, [name, cachedCollections])
 
   return (
-      <>
+    <>
       <PhaseDetail phaseId={phaseId} />
-    <div className="collection-detail-container">
-      <div className="collection-detail-content">
-        <CollectionActions 
-          onShowCreateModal={() => setShowCreateModal(true)} 
-          canCreateCollection={permissions.canCreateCollection}
+      <div className="collection-detail-container">
+        <div className="collection-detail-content">
+          <CollectionActions
+            onShowCreateModal={() => setShowCreateModal(true)}
+            canCreateCollection={permissions.canCreateCollection}
+          />
+
+          <div className="form-group-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Search</legend>
+              <input type="name" id="name" className="form-input" placeholder="Type Name" required value={name} onChange={onChangeName} />
+            </fieldset>
+          </div>
+
+          <CollectionList
+            collections={collections}
+            onCollectionClick={handleCollectionClick}
+            onOpenUpdate={handleOpenUpdate}
+            onDeleteCollection={handleDeleteCollection}
+            canDeleteCollection={permissions.canDeleteCollection}
+            canUpdateCollection={permissions.canUpdateCollection}
+          />
+        </div>
+
+        {/* Create Modal */}
+        <CollectionForm
+          isOpen={showCreateModal}
+          isCreate={true}
+          form={createForm}
+          onClose={() => setShowCreateModal(false)}
+          onSubmit={handleCreate}
+          onFormChange={handleCreateFormChange}
+          canUpdateCollection={permissions.canUpdateCollection}
         />
-        
-        <CollectionList
-          collections={collections}
-          onCollectionClick={handleCollectionClick}
-          onOpenUpdate={handleOpenUpdate}
-          onDeleteCollection={handleDeleteCollection}
-          canDeleteCollection={permissions.canDeleteCollection}
+
+        {/* Update Modal */}
+        <CollectionForm
+          isOpen={showUpdateModal}
+          isCreate={false}
+          form={form}
+          onClose={() => setShowUpdateModal(false)}
+          onSubmit={handleUpdate}
+          onFormChange={handleUpdateFormChange}
+          canUpdateCollection={permissions.canUpdateCollection}
         />
       </div>
-
-      {/* Create Modal */}
-      <CollectionForm
-        isOpen={showCreateModal}
-        isCreate={true}
-        form={createForm}
-        onClose={() => setShowCreateModal(false)}
-        onSubmit={handleCreate}
-        onFormChange={handleCreateFormChange}
-        canUpdateCollection={permissions.canUpdateCollection}
-      />
-
-      {/* Update Modal */}
-      <CollectionForm
-        isOpen={showUpdateModal}
-        isCreate={false}
-        form={form}
-        onClose={() => setShowUpdateModal(false)}
-        onSubmit={handleUpdate}
-        onFormChange={handleUpdateFormChange}
-        canUpdateCollection={permissions.canUpdateCollection}
-      />
-    </div>
     </>
   );
 } 

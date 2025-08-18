@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DTO_CollectionItem } from '../../../dtos/collection.page.dto';
 import './collection-list.scss';
 import { SquareLibrary, Trash } from 'lucide-react';
@@ -9,6 +9,7 @@ interface CollectionListProps {
   onOpenUpdate: (collection: DTO_CollectionItem) => void;
   onDeleteCollection: (collection: DTO_CollectionItem) => void;
   canDeleteCollection?: boolean;
+  canUpdateCollection?: boolean;
 }
 
 export default function CollectionList({ 
@@ -16,10 +17,11 @@ export default function CollectionList({
   onCollectionClick, 
   onOpenUpdate, 
   onDeleteCollection,
-  canDeleteCollection
+  canDeleteCollection,
+  canUpdateCollection
 }: CollectionListProps) {
   // Filter out any null or undefined collections to prevent errors
-  const validCollections = collections.filter(collection => collection != null);
+  const validCollections = useMemo(() => collections.filter(collection => collection != null), [collections]);
 
   return (
     <div className="collection-list">
@@ -37,12 +39,14 @@ export default function CollectionList({
           <div className="collection-deadline oli-due-date quick-blue-tag">
             Due Date: {collection.dueDate}
           </div>
-          <button
-            className="view-details-btn oli-quick-btn"
-            onClick={() => onOpenUpdate(collection)}
-          >
-            Update
-          </button>
+          {canUpdateCollection ? (
+            <button
+              className="view-details-btn oli-quick-btn"
+              onClick={() => onOpenUpdate(collection)}
+            >
+              Update
+            </button>
+          ) : null}
           {canDeleteCollection ? (
             <button
               key={`delete-${collection.id}`}

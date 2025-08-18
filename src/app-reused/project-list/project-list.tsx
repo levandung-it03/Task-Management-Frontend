@@ -6,13 +6,14 @@ import { ProjectHeader } from './project-header/project-header';
 import { ProjectItem } from './project-item/project-item';
 import { ProjectModals } from './project-modals/project-modals';
 import { usePermission } from '../../util/usePermission.hook';
-import { AuthHelper } from '../../util/auth.helper';
 import './project-list.scss';
 import { DTO_ProjectItem, DTO_ProjectItem1 } from '@/dtos/home.page.dto';
 
 export default function ProjectListPage() {
   const router = useRouter();
   const permissions = usePermission();
+  const [cachedProjects, setCachedProjects] = useState<DTO_ProjectItem1[]>([]);
+  const [name, setName] = useState("")
   const [projects, setProjects] = useState<DTO_ProjectItem1[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -23,19 +24,44 @@ export default function ProjectListPage() {
   const [completingProjectId, setCompletingProjectId] = useState<number | null>(null);
   const [completedProjects, setCompletedProjects] = useState<Record<string, boolean>>({});
   const [deletingProjectId, setDeletingProjectId] = useState<number | null>(null);
+  
+  const onChangeName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }, []);
 
   useEffect(() => {
-    ProjectListService.fetchProjects().then(setProjects).catch(console.error);
+    ProjectListService.fetchProjects().then(setCachedProjects).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    setProjects(cachedProjects)
+  }, [cachedProjects])
+
+  useEffect(() => {
+    if (name.length === 0) {
+      setProjects(cachedProjects)
+    } else {
+      setProjects(prev => {
+        return [...prev.filter(project => project.name.toUpperCase().includes(name.toUpperCase()))]
+      })
+    }
+  }, [name, cachedProjects])
 
   return (
     <div className="project-list-container">
       <div className="project-list-content">
-        <ProjectHeader 
+        <ProjectHeader
           onCreateProject={() => setShowCreateModal(true)}
           canCreateProject={permissions.canCreateProject}
         />
-        
+
+        <div className="form-group-container">
+          <fieldset className="form-group">
+            <legend className="form-label">Search</legend>
+            <input type="name" id="name" className="form-input" placeholder="Type Name" required value={name} onChange={onChangeName} />
+          </fieldset>
+        </div>
+
         <div className="project-list-items">
           {projects.map((project) => (
             <ProjectItem
@@ -116,16 +142,16 @@ export default function ProjectListPage() {
           setShowUpdateModal(false);
         }}
         onAddLeader={(projectId, leaders) => {
-          setProjects(prev => prev.map(p => p.id === projectId ? { 
-            ...p, 
+          setProjects(prev => prev.map(p => p.id === projectId ? {
+            ...p,
             leaders: { ...(p.leaders || {}), ...leaders }
           } : p));
           setShowAddLeaderModal(null);
         }}
         onUpdateLeader={(projectId, leaders) => {
-          setProjects(prev => prev.map(p => p.id === projectId ? { 
-            ...p, 
-            leaders 
+          setProjects(prev => prev.map(p => p.id === projectId ? {
+            ...p,
+            leaders
           } : p));
           setShowUpdateLeaderModal(null);
         }}

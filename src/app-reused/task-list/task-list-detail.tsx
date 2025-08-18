@@ -19,7 +19,9 @@ interface TaskListDetailProps {
 export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
   const router = useRouter();
   const permissions = usePermission();
-  
+
+  const [cachedTasks, setCachedTasks] = useState<DTO_TaskListItem[]>([]);
+  const [name, setName] = useState("")
   const [tasks, setTasks] = useState<DTO_TaskListItem[]>([]);
 
   // Load tasks theo collectionId
@@ -30,6 +32,7 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
           const apiResponse = response as ApiResponse<DTO_TaskListItem[]>;
           if (apiResponse.body && Array.isArray(apiResponse.body)) {
             setTasks(apiResponse.body);
+            setCachedTasks(apiResponse.body)
           } else {
             setTasks([]);
           }
@@ -42,18 +45,39 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
     }
   }, [collectionId]);
 
+  const onChangeName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  }, []);
+
+  useEffect(() => {
+    if (name.length === 0) {
+      setTasks(cachedTasks)
+    } else {
+      setTasks(prev => {
+        return [...prev.filter(collection => collection.name.toUpperCase().includes(name.toUpperCase()))]
+      })
+    }
+  }, [name, cachedTasks])
+
   return (
     <>
-    <CollectionDetail collectionId={collectionId} />
-    <div className="task-list-detail-container">
-      <div className="task-list-detail-content">
-        <TaskListActions 
-          canCreateTask={permissions.canCreateTask} collectionId={collectionId}
-        />
-        
-        <TaskListList taskLists={tasks} />
+      <CollectionDetail collectionId={collectionId} showCompleteBtn={true} />
+      <div className="task-list-detail-container">
+        <div className="task-list-detail-content">
+          <TaskListActions
+            canCreateTask={permissions.canCreateTask} collectionId={collectionId}
+          />
+
+          <div className="form-group-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Search</legend>
+              <input type="name" id="name" className="form-input" placeholder="Type Name" required value={name} onChange={onChangeName} />
+            </fieldset>
+          </div>
+
+          <TaskListList taskLists={tasks} />
+        </div>
       </div>
-    </div>
     </>
   );
 } 

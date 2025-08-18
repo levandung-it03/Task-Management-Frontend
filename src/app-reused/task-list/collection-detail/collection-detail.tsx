@@ -13,7 +13,10 @@ import GlobalValidators from "@/util/global.validators";
 import toast from "react-hot-toast";
 import { DTO_EmailResponse } from "@/dtos/general.dto";
 
-export default function CollectionDetail({ collectionId }: { collectionId: number }) {
+export default function CollectionDetail({ collectionId, showCompleteBtn=true }: {
+  collectionId: number,
+  showCompleteBtn: boolean
+}) {
   const [isOwner, setIsOwner] = useState(false)
   const [collection, setCollection] = useState<DTO_CollectionDetail>({
     id: 0,
@@ -61,7 +64,7 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
       if (String(response.status).startsWith("2")) {
         setCollection(response.body)
       }
-      
+
       const emailRes = await GeneralAPIs.getEmail() as ApiResponse<DTO_EmailResponse>
       if (String(emailRes.status)[0] !== "2")
         return
@@ -90,7 +93,7 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
       <span className="caption-content">
         Collection Information<span className="collection-id tag-data quick-green-tag">{collection.id}</span>
       </span>
-      <i className="desc-content">Shorten Collection information, and statistic!</i>
+      <i className="desc-content">{collection.description}</i>
     </div>
     <div className="collection-info">
       <div className="collection-info-item collection-header">
@@ -158,7 +161,7 @@ export default function CollectionDetail({ collectionId }: { collectionId: numbe
         </div>
       </div>
     </div>
-    {isOwner && <div className="complete-btn-block">
+    {isOwner && showCompleteBtn && <div className="complete-btn-block">
       <button
         className={`complete-btn ${GlobalValidators.nonNull(collection.endDate) ? "btn-disabled" : ""}`}
         disabled={GlobalValidators.nonNull(collection.endDate)}

@@ -174,10 +174,10 @@ export function AddLeaderModal({ open, projectId, onClose, onAddLeader }: AddLea
         </div>
 
         <div className="add-leader-modal-assigned">
-          <label className="add-leader-modal-label">Assigned Users</label>
+          <label className="add-leader-modal-label">New Added Leader</label>
           <div className="add-leader-modal-assigned-container">
             {Object.values(selectedLeaders).length === 0 && (
-              <span className="add-leader-modal-placeholder">Assigned Users (blank for Root Task)</span>
+              <span className="add-leader-modal-placeholder">New Leaders</span>
             )}
             {Object.values(selectedLeaders).map(user => {
               const roleColor = getRoleColor(user.role);
