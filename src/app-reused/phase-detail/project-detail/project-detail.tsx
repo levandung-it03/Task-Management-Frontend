@@ -19,7 +19,7 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
     name: "",
     description: "",
     expectedStartDate: "",
-    startDate: "",
+    startDate: null,
     endDate: null,
     dueDate: "",
     status: "",
@@ -62,6 +62,7 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
           endDate: new Date().toDateString(),
           status: "IN_PROGRESS"
         }))
+        window.location.reload()
       }
     }
     start()
@@ -163,6 +164,14 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
             <span className="project-date">{prettierDate(project.expectedStartDate)}</span>
           </span>
         </div>
+        {project.startDate !== null &&
+          <div className="project-info-item">
+            <span className="project-info-label">Start Date</span>
+            <span className="project-info-value">
+              <span className="project-date">{prettierDate(project.startDate)}</span>
+            </span>
+          </div>
+        }
       </div>
       <div className="project-info-right">
         {project.startDate !== null &&

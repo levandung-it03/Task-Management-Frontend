@@ -67,7 +67,7 @@ export interface DTO_ProjectDetail {
   name: string;
   description: string;
   expectedStartDate: string;
-  startDate: string; 
+  startDate: string | null; 
   endDate?: string | null; 
   dueDate: string; 
   createdTime: string; 
