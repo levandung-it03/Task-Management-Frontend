@@ -1,10 +1,16 @@
 import { DTO_FastUserInfo } from "./create-task.page.dto";
 
-export interface DTO_CreatePhase {
-  name: string;
-  description: string;
-  startDate: string;
-  dueDate: string;
+export class DTO_CreatePhase {
+  name!: string;
+  description!: string;
+  startDate!: string;
+  dueDate!: string;
+
+  public static withBuilder() { return new DTO_CreatePhase(); }
+  public bname(name: string) { this.name = name; return this; }
+  public bdescription(description: string) { this.description = description; return this; }
+  public bstartDate(startDate: string) { this.startDate = startDate; return this; }
+  public bdueDate(dueDate: string) { this.dueDate = dueDate; return this; }
 }
 
 export interface DTO_PhaseItem {

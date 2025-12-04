@@ -23,7 +23,9 @@ export default function CollectionList({
 
   return (
     <div className="collection-list">
-      {validCollections.map((collection) => (
+      {validCollections.length === 0
+        ? <span className="loading-row">No Tasks Collections related to this Phase!</span>
+        : validCollections.map((collection) => (
         <div 
           key={`collection-${collection.id}`} 
           className="collection-item overview-list-item"

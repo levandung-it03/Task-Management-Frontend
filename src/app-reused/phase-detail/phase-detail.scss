@@ -1,18 +1,19 @@
-// Phase Detail Container Styles - Isolated from layout.css
+.form-caption {
+  margin-bottom: 10px;
+}
+
 .phase-detail-container {
   min-height: 100vh !important;
   background: var(--under-background) !important;
-  padding: 32px !important;
   font-family: 'Inter', sans-serif !important;
 }
 
 .phase-detail-content {
-  max-width: 1700px !important;
-  margin: 0 auto !important;
   background: var(--background) !important;
   border-radius: 18px !important;
   box-shadow: 0 2px 16px #0001 !important;
-  padding: 48px !important;
+  padding: 15px;
+  margin: 15px;
 }
 
 .phase-detail-header {
@@ -21,50 +22,3 @@
   align-items: center !important;
   margin-bottom: 24px !important;
 }
-
-.phase-detail-title {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-}
-
-.phase-detail-title-main {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-}
-
-.phase-detail-title-text {
-  font-weight: 700 !important;
-  font-size: 32px !important;
-  color: var(--main-green) !important;
-}
-
-.phase-detail-subtitle {
-  color: #64748b !important;
-  font-size: 16px !important;
-  margin-bottom: 24px !important;
-  margin-top: 2px !important;
-  font-style: italic !important;
-  margin-left: 40px !important;
-}
-
-// Responsive styles
-@media (max-width: 768px) {
-  .phase-detail-container {
-    padding: 16px !important;
-  }
-  
-  .phase-detail-content {
-    padding: 24px !important;
-  }
-  
-  .phase-detail-title-text {
-    font-size: 24px !important;
-  }
-  
-  .phase-detail-subtitle {
-    font-size: 14px !important;
-    margin-left: 20px !important;
-  }
-} 

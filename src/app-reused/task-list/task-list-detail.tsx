@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { TaskListAPIs } from '../../apis/task-list.page.api';
 import { DTO_TaskListItem } from '../../dtos/task-list.page.dto';
 import { ApiResponse } from '../../apis/general.api';
@@ -10,14 +9,12 @@ import TaskListActions from './task-list-actions/task-list-actions';
 import TaskListList from './task-list-list/task-list-list';
 import './task-list-detail.scss';
 import CollectionDetail from './collection-detail/collection-detail';
-import { AuthHelper } from '@/util/auth.helper';
 
 interface TaskListDetailProps {
   collectionId: number;
 }
 
 export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
-  const router = useRouter();
   const permissions = usePermission();
 
   const [cachedTasks, setCachedTasks] = useState<DTO_TaskListItem[]>([]);

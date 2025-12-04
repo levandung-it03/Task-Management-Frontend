@@ -84,7 +84,7 @@ export default function StatisticReview({ projectId }: { projectId: number }) {
       <div className="form-group-container half-form-left-container">
         <fieldset className="form-group">
           <legend className="form-label">Phase Filtering</legend>
-          <select className="phase form-input" onChange={onClickChoosePhase} defaultValue="">
+          <select className="phase form-select" onChange={onClickChoosePhase} defaultValue="">
             <option value="" disabled>-- Choose a Phase --</option>
             {Object.entries(phases).map(([id, name], ind) =>
               <option key={`phase-` + ind} value={id}>{name}</option>
@@ -95,7 +95,7 @@ export default function StatisticReview({ projectId }: { projectId: number }) {
       <div className="form-group-container half-form-right-container">
         <fieldset className="form-group">
           <legend className="form-label">Collection Filtering</legend>
-          <select className="phase form-input" onChange={onClickChooseCollection} defaultValue="">
+          <select className="phase form-select" onChange={onClickChooseCollection} defaultValue="">
             <option value="" disabled>-- Choose a Collection --</option>
             {Object.entries(collections).map(([id, name], ind) =>
               <option key={`col-` + ind} value={id}>{name}</option>

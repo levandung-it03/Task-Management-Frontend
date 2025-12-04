@@ -77,7 +77,9 @@ export default function TaskListList({
 
   return (
     <div className="task-list-list">
-      {validTaskLists.map((taskList) => (
+      {validTaskLists.length === 0
+        ? <span className="loading-row">No Tasks in this Collection here!</span>
+        : validTaskLists.map((taskList) => (
         <div 
           key={`task-list-${taskList.id}`} 
           className="task-list-item"

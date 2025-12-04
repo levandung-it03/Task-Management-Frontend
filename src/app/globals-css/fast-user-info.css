@@ -6,7 +6,7 @@
   align-items: center;
   justify-self: flex-start;
   width: 100%;
-  transition: all ease 0.3s;
+  transition: all ease 0.2s;
   border-radius: 10px;
 
   &:hover {

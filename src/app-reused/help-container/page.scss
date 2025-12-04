@@ -6,24 +6,18 @@
   justify-content: flex-start;
   margin-bottom: 5px;
   position: relative;
-
-  .dc-desc-text {
-    color: var(--main-text-grey);
-    font-weight: 500;
-    font-size: 16px;
-    margin-right: 2px;
-  }
+  z-index: 2;
 
   .dc-help-icon {
     width: 16px;
     height: 16px;
+    margin-left: 2px;
   }
 
   .dc-help-container {
     position: absolute;
     display: none;
     top: 100%;
-    left: 100%;
     width: auto;
     white-space: nowrap;
     padding: 5px 10px;
@@ -34,5 +28,6 @@
 
   .dc-help-icon:hover+.dc-help-container {
     display: block;
+    z-index: 100;
   }
 }

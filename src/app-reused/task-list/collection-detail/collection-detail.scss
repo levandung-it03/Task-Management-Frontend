@@ -6,8 +6,8 @@
   padding: calc(1.5*var(--component-padding));
   background-color: var(--background);
   border-radius: var(--component-padding);
-  padding: 25px;
-  margin: 30px;
+  padding: 15px;
+  margin: 15px;
   margin-bottom: 0;
   border-radius: 15px;
 
@@ -161,7 +161,7 @@
       background-color: var(--foreground);
       color: var(--background);
       border-radius: 15px;
-      transition: all ease 0.3s;
+      transition: all ease 0.2s;
       display: flex;
       flex-wrap: wrap;
       align-items: center;

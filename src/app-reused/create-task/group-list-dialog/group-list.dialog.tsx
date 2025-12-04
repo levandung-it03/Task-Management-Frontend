@@ -9,15 +9,15 @@ import { extractEmailToGetId, getColorByCharacter } from '../task-creation-form/
 import { DTO_FastUserInfo, DTO_GroupOverview } from '@/dtos/create-task.page.dto';
 
 export interface GroupListDialogProps {
-  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
-  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
-  openDialog: boolean;
-  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
+  setOpenGrDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  openGrDialog: boolean;
+  setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
 }
 
 export default function GroupListDialog({
-  openDialog,
-  setOpenDialog,
+  openGrDialog,
+  setOpenGrDialog,
   setAssignedUsers,
   setHistories
 }: GroupListDialogProps) {
@@ -28,7 +28,7 @@ export default function GroupListDialog({
   const onClickGroup = useCallback((id: number) => {
     async function findRelatedUsersAndAssign() {
       const response = await CreateTaskPageAPIs.getUsersGroupToAssign(id) as ApiResponse<DTO_FastUserInfo[]>
-      setOpenDialog(false)
+      setOpenGrDialog(false)
 
       if (response.status !== 200)
         return
@@ -37,21 +37,17 @@ export default function GroupListDialog({
         setHistories(prev)
         return {
           ...prev,
-          ...response.body.reduce((acc, user) => {
-            acc[extractEmailToGetId(user.email)] = {
-              email: user.email,
-              fullName: user.fullName,
-              role: user.role
-            }
-            return acc;
-          }, {} as Record<string, Record<string, string>>)
+          ...response.body.reduce((acc, user) => ({
+            ...acc,
+            [extractEmailToGetId(user.email)]: user
+          }), {})
         }
       })
     }
     findRelatedUsersAndAssign()
-  }, [setOpenDialog, setAssignedUsers, setHistories])
+  }, [setOpenGrDialog, setAssignedUsers, setHistories])
 
-  const onClickCloseDialog = useCallback(() => setOpenDialog(false), [setOpenDialog])
+  const onClickCloseDialog = useCallback(() => setOpenGrDialog(false), [setOpenGrDialog])
 
   useEffect(() => {
     async function getGroups() {
@@ -64,20 +60,20 @@ export default function GroupListDialog({
       setIsLoading(false)
       setGroups(response.body)
     }
-    if (openDialog) getGroups()
-  }, [openDialog])
+    if (openGrDialog) getGroups()
+  }, [openGrDialog])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (overlayRef.current && overlayRef.current.contains(event.target as Node)) {
-        setOpenDialog(false);
+        setOpenGrDialog(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [setOpenDialog])
+  }, [setOpenGrDialog])
 
-  return <div className={`main-groups-dialog ${openDialog ? "" : "hidden"}`}>
+  return <div className={`main-groups-dialog ${openGrDialog ? "" : "hidden"}`}>
     <div ref={overlayRef} className="dialog-overlay"></div>
     <div className="groups-container">
       <div className="groups-container-header">

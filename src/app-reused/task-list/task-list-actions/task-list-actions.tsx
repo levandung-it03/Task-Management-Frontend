@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import './task-list-actions.scss';
 import { AuthHelper } from '@/util/auth.helper';
+import { ClipboardList, Plus } from 'lucide-react';
 
 interface TaskListActionsProps {
   canCreateTask?: boolean;
@@ -10,31 +11,23 @@ interface TaskListActionsProps {
 export default function TaskListActions({ canCreateTask, collectionId }: TaskListActionsProps) {
   const url = useMemo(() =>
     `${window.location.origin}/${AuthHelper.getRoleFromToken()}/collections/${collectionId}/create-task`
-  ,[ collectionId, canCreateTask ])
-  return (
-    <div className="task-list-actions">
-      <div className="task-list-header">
-        <div className="task-list-header-content">
-          <div className="header-icon">
-            <svg width="32" height="32" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="4" y="4" width="24" height="24" rx="6" fill="#e6f4ea" stroke="var(--main-green)" />
-              <path d="M10 12h12M10 18h12" stroke="var(--main-green)" />
-            </svg>
-          </div>
-          <div className="header-text">
-            <span className="title">Task List</span>
-            <div className="subtitle">See full Task List information</div>
-          </div>
-        </div>
-        {canCreateTask && (
-          <a
-            href={url}
-            className="new-collection-btn"
-          >
-            <span className="plus-icon">+</span> New
-          </a>
-        )}
-      </div>
+    , [collectionId, canCreateTask])
+  return <div className="task-header form-caption-wrap">
+    <div className="form-caption">
+      <ClipboardList className="caption-icon" />
+      <span className="caption-content">Tasks Collection</span>
+      <i className="desc-content">All Collections are shown here!</i>
     </div>
-  );
+
+    {canCreateTask && <div className="general-crt-btn">
+      <a
+        href={url}
+        className="gcb-main"
+      >
+        <Plus className="gcb-icon" />
+        <span className="gcb-text">New</span>
+      </a>
+    </div>
+    }
+  </div>;
 } 

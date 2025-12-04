@@ -63,45 +63,47 @@ export default function ProjectListPage() {
         </div>
 
         <div className="project-list-items">
-          {projects.map((project) => (
-            <ProjectItem
-              key={project.id}
-              project={project}
-              onUpdateProject={(project) => {
-                console.log('Opening update modal with project:', project);
-                setSelectedProject(project);
-                setShowUpdateModal(true);
-              }}
-              onAddLeader={(projectId) => setShowAddLeaderModal(projectId)}
-              onUpdateLeader={(project) => {
-                setSelectedProject(project);
-                setShowUpdateLeaderModal(project.id);
-              }}
-              onDeleteProject={(project) => {
-                setSelectedProject(project);
-                setDeletingProjectId(project.id);
-                setShowDeleteModal(true);
-              }}
-              onCompleteProject={async (project) => {
-                setCompletingProjectId(project.id);
-                try {
-                  // Reload toàn bộ danh sách projects để đảm bảo dữ liệu mới nhất
-                  const updatedProjects = await ProjectListService.fetchProjects();
-                  setProjects(updatedProjects);
-                  setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
-                } catch (error) {
-                  console.error('Error reloading projects after completion:', error);
-                  // Fallback: cập nhật state local nếu reload thất bại
-                  setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
-                } finally {
-                  setCompletingProjectId(null);
-                }
-              }}
-              completingProjectId={completingProjectId}
-              completedProjects={completedProjects}
-              deletingProjectId={deletingProjectId}
-              permissions={permissions}
-            />
+          {projects.length === 0
+            ? <span className="loading-row">No Projects are shown here!</span>
+            : projects.map((project) => (
+              <ProjectItem
+                key={project.id}
+                project={project}
+                onUpdateProject={(project) => {
+                  console.log('Opening update modal with project:', project);
+                  setSelectedProject(project);
+                  setShowUpdateModal(true);
+                }}
+                onAddLeader={(projectId) => setShowAddLeaderModal(projectId)}
+                onUpdateLeader={(project) => {
+                  setSelectedProject(project);
+                  setShowUpdateLeaderModal(project.id);
+                }}
+                onDeleteProject={(project) => {
+                  setSelectedProject(project);
+                  setDeletingProjectId(project.id);
+                  setShowDeleteModal(true);
+                }}
+                onCompleteProject={async (project) => {
+                  setCompletingProjectId(project.id);
+                  try {
+                    // Reload toàn bộ danh sách projects để đảm bảo dữ liệu mới nhất
+                    const updatedProjects = await ProjectListService.fetchProjects();
+                    setProjects(updatedProjects);
+                    setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
+                  } catch (error) {
+                    console.error('Error reloading projects after completion:', error);
+                    // Fallback: cập nhật state local nếu reload thất bại
+                    setCompletedProjects(prev => ({ ...prev, [project.id]: true }));
+                  } finally {
+                    setCompletingProjectId(null);
+                  }
+                }}
+                completingProjectId={completingProjectId}
+                completedProjects={completedProjects}
+                deletingProjectId={deletingProjectId}
+                permissions={permissions}
+              />
           ))}
         </div>
       </div>

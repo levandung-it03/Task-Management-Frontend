@@ -14,7 +14,9 @@ interface PhaseListProps {
 export default function PhaseList({ phases, onPhaseClick, onUpdateClick, onDeleteClick, permissions }: PhaseListProps) {
   return (
     <div className="phase-list">
-      {phases.map((phase) => (
+      {phases.length === 0
+        ? <span className="loading-row">No Phases related to this Project!</span>
+        : phases.map((phase) => (
         <div 
           key={phase.id} 
           className="phase-card overview-list-item"

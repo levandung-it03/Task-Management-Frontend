@@ -1,70 +1,12 @@
-.task-list-actions {
-  .task-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 48px;
+.task-header {
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 
-    .task-list-header-content {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 12px;
-
-      .header-icon {
-        display: flex;
-        align-items: flex-start;
-        margin-top: 4px;
-      }
-
-      .header-text {
-        display: flex;
-        flex-direction: column;
-        
-        .title {
-          font-weight: 700;
-          font-size: 32px;
-          color: var(--main-green);
-          line-height: 1;
-        }
-
-        .subtitle {
-          color: #64748b;
-          font-size: 16px;
-          margin-top: 4px;
-          font-style: italic;
-        }
-      }
-    }
-
-    .new-collection-btn {
-      background: #166534;
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 32px;
-      font-weight: 700;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 2px 8px #0001;
-      cursor: pointer;
-      margin-right: 90px;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #0f5132;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px #0002;
-      }
-
-      .plus-icon {
-        color: #fff;
-        font-size: 22px;
-        font-weight: 700;
-        margin-right: 4px;
-      }
-    }
+  .form-caption {
+    flex: 1;
+    margin-bottom: 10px;
   }
-} 
+}

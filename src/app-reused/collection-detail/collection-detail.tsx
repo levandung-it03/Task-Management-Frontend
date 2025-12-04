@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { CollectionAPIs } from '../../apis/collection.page.api';
 import { DTO_CreateCollection, DTO_CollectionItem } from '@/dtos/collection.page.dto';
@@ -11,6 +11,7 @@ import CollectionForm from './collection-form/collection-form';
 import './collection-detail.scss';
 import PhaseDetail from './phase-detail/phase-detail';
 import { confirm } from '../confirm-alert/confirm-alert';
+import toast from 'react-hot-toast';
 
 interface CollectionDetailProps {
   phaseId: number;
@@ -114,6 +115,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
       CollectionAPIs.updateCollection(id, { name, description, startDate, dueDate }).then((response) => {
         if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
           // Update the collection in the local state with the form data
+          toast.success("Update successfully!");
           setCollections((prev) => prev.map((c) => (c.id === id ? { ...c, name, description, startDate, dueDate, updatedTime: new Date().toISOString().slice(0, 19).replace('T', ' ') } : c)));
           setShowUpdateModal(false);
         } else {
@@ -139,6 +141,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
             console.log('Collection created successfully, refreshing list...');
             CollectionAPIs.getCollectionsByPhase(phaseId).then((collectionsResponse) => {
               if (collectionsResponse && typeof collectionsResponse === 'object' && 'body' in collectionsResponse) {
+                toast.success("Create sucessfully!");
                 setCollections(collectionsResponse.body as DTO_CollectionItem[]);
               }
             }).catch((refreshError) => {
@@ -183,26 +186,19 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
     }
   };
 
-  // Handle delete collection
-  const handleDeleteCollection = async (collection: DTO_CollectionItem) => {
-    try {
-      const message = 'Are you sure you want to delete this collection?';
-      const title = 'Delete Collection';
+  const handleDeleteCollection = useCallback((collection: DTO_CollectionItem) => {
+    async function remove() {
+      if (!await confirm('Are you sure you want to delete this collection?', 'Delete Collection'))
+        return;
 
-      const ok = await confirm(message, title);
-      if (!ok) return;
-
-      const response = await CollectionAPIs.deleteCollection(collection.id);
-
-      if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
+      const response = await CollectionAPIs.deleteCollection(collection.id) as ApiResponse<void>;
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
         setCollections(prev => prev.filter(c => c.id !== collection.id));
-      } else {
-        console.error('Invalid response format:', response);
       }
-    } catch (error: any) {
-      console.error('Error deleting collection:', error);
     }
-  };
+    remove();
+  }, []);
 
   const onChangeName = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);

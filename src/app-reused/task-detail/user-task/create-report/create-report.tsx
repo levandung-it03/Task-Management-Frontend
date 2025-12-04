@@ -9,7 +9,7 @@ import GlobalValidators from "@/util/global.validators";
 import CreateReportService from "./create-report.service";
 import { FileIcon } from "@/assets/file.icon";
 import { UserTaskPageAPIs } from "@/apis/user-task.page.api";
-import { DTO_ReportRequest } from "@/dtos/user-task.page.dto";
+import { DTO_ReportRequest, DTO_ReportsComments } from "@/dtos/user-task.page.dto";
 import { ApiResponse } from "@/apis/general.api";
 import { DTO_IdResponse } from "@/dtos/general.dto";
 import toast from "react-hot-toast";
@@ -19,10 +19,11 @@ import { IndexDBHelper } from "@/util/indexdb.helper";
 export interface CreateReportFormProps {
   userTaskId: number;
   taskInfo: DTO_TaskDetail;
+  reportComments: DTO_ReportsComments[];
 }
 
-export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportFormProps) {
-  const [format, setFormat] = useState("")
+export default function CreateReportForm({ userTaskId, taskInfo, reportComments }: CreateReportFormProps) {
+  // const [format, setFormat] = useState("")
   const [report, setReport] = useState("")
   const [title, setTitle] = useState("")
   const [formTouched, setFormTouched] = useState(false)
@@ -57,7 +58,15 @@ export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportF
     submitReport()
   }, [title, report, userTaskId])
 
-  useEffect(() => setFormat(taskInfo.reportFormat), [taskInfo.reportFormat])
+  useEffect(() => {
+    // setFormat(taskInfo.reportFormat)
+
+    const lastReportIdx = reportComments.length - 1;
+    if (lastReportIdx !== -1)
+      setReport(reportComments[lastReportIdx].report.content)
+
+    setTitle(`Report for ${taskInfo.name} by ${taskInfo.userInfo.fullName}`)
+  }, [reportComments])
 
   useEffect(() => {
     async function fetchDraft() {
@@ -92,7 +101,8 @@ export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportF
       </fieldset>
       {GlobalValidators.notEmpty(formValidation.title) && <span className="input-err-msg">{formValidation.title}</span>}
     </div>
-    <div className="form-group-container desc-container half-form-left-container">
+    {/* <div className="form-group-container desc-container half-form-left-container"> */}
+    <div className="form-group-container desc-container">
       <fieldset className="form-group">
         <legend className="form-label">
           <HelpContainer title="Your Report" description="Prepare your Report that related to your Task and submit" />
@@ -100,14 +110,14 @@ export default function CreateReportForm({ userTaskId, taskInfo }: CreateReportF
         <TextEditor state={report} setState={setReport} />
       </fieldset>
     </div>
-    <div className="form-group-container desc-container half-form-right-container">
+    {/* <div className="form-group-container desc-container half-form-right-container">
       <fieldset className="form-group">
         <legend className="form-label">
           <HelpContainer title="Format Example" description="From Task Owner, to support your Report writing" />
         </legend>
         <TextEditor state={format} setState={setFormat} />
       </fieldset>
-    </div>
+    </div> */}
     <button className="submit-btn" onClick={onClickSubmitReport}>Submit</button>
   </div>
 }

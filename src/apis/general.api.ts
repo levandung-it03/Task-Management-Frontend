@@ -144,6 +144,15 @@ export class GeneralAPIs {
     }
   }
 
+  static async getAuthorityEnums(): Promise<ApiResponse<string[]> | unknown> {
+    try {
+      const response = await axiosInstance.get(`/api/private/${AuthHelper.getRoleFromToken()}/v1/account/authorities`)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
   static async getGroupRoleEnums(): Promise<ApiResponse<string[]> | unknown> {
     try {
       const response = await axiosInstance.get(`/api/public/v1/enum/group-role`)

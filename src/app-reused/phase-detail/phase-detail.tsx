@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import PhaseList from './phase-list/phase-list';
 import PhaseForm from './phase-form/phase-form';
@@ -13,6 +13,8 @@ import { DTO_CreatePhase, DTO_PhaseItem } from '@/dtos/phase.page.dto';
 import { AuthHelper } from '../../util/auth.helper';
 import { DTO_IdResponse } from '@/dtos/general.dto';
 import ProjectDetail from './project-detail/project-detail';
+import { AudioWaveform } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function PhaseDetail({ projectId }: { projectId: number }) {
   const router = useRouter();
@@ -27,7 +29,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
   const menuRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const modalRef = useRef<HTMLDivElement>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [createForm, setCreateForm] = useState<DTO_CreatePhase>({
+  const [createForm, setCreateForm] = useState<Record<string, string>>({
     name: '',
     description: '',
     startDate: '',
@@ -95,49 +97,59 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
     setShowUpdateModal(true);
   }
 
-  function handleUpdate(e: React.FormEvent) {
+  const handleUpdate = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    if (form) {
-      const { id, name, description, startDate, dueDate } = form;
-      PhaseAPIs.updatePhase(id, { name, description, startDate, dueDate }).then((res) => {
-        if (res && typeof res === 'object' && 'status' in res && res.status === 200) {
-          // Update the phase in the local state with the form data
-          setPhases((prev) => prev.map((p) => (p.id === id ? { ...p, name, description, startDate, dueDate, updatedTime: new Date().toISOString().slice(0, 19).replace('T', ' ') } : p)));
+    async function update() {
+      if (form) {
+        const { id, name, description, startDate, dueDate } = form;
+        const request = DTO_CreatePhase.withBuilder()
+          .bname(name)
+          .bdescription(description)
+          .bstartDate(startDate)
+          .bdueDate(dueDate);
+        const response = await PhaseAPIs.updatePhase(form.id, request) as ApiResponse<void>;
+        if (String(response.status)[0] === "2") {
+          toast.success(response.msg);
+          setPhases((prev) => prev.map((p) => (p.id === id
+            ? {
+              ...p,
+              name,
+              description,
+              startDate,
+              dueDate,
+              updatedTime: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            } : p)));
           setShowUpdateModal(false);
-        } else {
-          console.error('Invalid response format:', res);
         }
-      }).catch((error: unknown) => {
-        console.error('Error updating phase:', error);
-      });
-    }
-  }
-
-  // Hàm xóa phase
-  const handleDeletePhase = async (phase: DTO_PhaseItem) => {
-    try {
-      const ok = await confirm('Are you sure you want to delete this phase?', 'Delete Phase');
-      if (!ok) return;
-
-      const response = await PhaseAPIs.deletePhase(phase.id);
-
-      if (response && typeof response === 'object' && 'status' in response && response.status === 200) {
-        // Remove the phase from the local state
-        setPhases(prev => prev.filter(p => p.id !== phase.id));
-      } else {
-        console.error('Invalid response format:', response);
       }
-    } catch (error) {
-      console.error('Error deleting phase:', error);
     }
-  };
+    update();
+  }, [form]);
 
-  const handleCreatePhase = async () => {
-    try {
-      const res = await PhaseAPIs.createPhase(projectId, createForm);
-      if (res && typeof res === 'object' && 'body' in res && res.body) {
-        const response = res as ApiResponse<DTO_IdResponse>;
-        // Tạo phase item mới từ response
+  const handleDeletePhase = useCallback((phase: DTO_PhaseItem) => {
+    async function remove() {
+      if (!await confirm('Are you sure you want to delete this phase?', 'Delete Phase'))
+        return;
+
+      const response = await PhaseAPIs.deletePhase(phase.id) as ApiResponse<void>;
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg)
+        setPhases(prev => prev.filter(p => p.id !== phase.id));
+      }
+    }
+    remove();
+  }, []);
+
+  const handleCreatePhase = useCallback(() => {
+    async function create() {
+        const request = DTO_CreatePhase.withBuilder()
+          .bname(createForm.name)
+          .bdescription(createForm.description)
+          .bstartDate(createForm.startDate)
+          .bdueDate(createForm.dueDate);
+      const response = await PhaseAPIs.createPhase(projectId, request) as ApiResponse<DTO_IdResponse>;
+      if (String(response.status)[0] === "2") {
+        toast.success(response.msg);
         const newPhase: DTO_PhaseItem = {
           id: response.body.id,
           name: createForm.name,
@@ -156,13 +168,10 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
           startDate: '',
           dueDate: '',
         });
-      } else {
-        console.error('Invalid response format:', res);
       }
-    } catch (error) {
-      console.error('Error creating phase:', error);
     }
-  };
+    create();
+  }, [createForm]);
 
   // Wrapper functions for form setters
   const handleSetForm = (newForm: DTO_PhaseItem | DTO_CreatePhase) => {
@@ -192,25 +201,18 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
       <ProjectDetail projectId={projectId} />
       <div className="phase-detail-container">
         <div className="phase-detail-content">
-          <div className="phase-detail-header">
-            <div className="phase-detail-title">
-              <div className="phase-detail-title-main">
-                <svg width="32" height="32" fill="none" stroke="var(--main-green)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="4" y="4" width="24" height="24" rx="6" fill="#e6f4ea" stroke="var(--main-green)" />
-                  <path d="M10 12h12M10 18h12" stroke="var(--main-green)" />
-                </svg>
-                <span className="phase-detail-title-text">Phase List</span>
-              </div>
-              <div className="phase-detail-subtitle">
-                See full Phase information
-              </div>
+          <div className="phase-detail-header form-caption-wrap">
+            <div className="form-caption">
+              <AudioWaveform className="caption-icon" />
+              <span className="caption-content">Phases List</span>
+              <i className="desc-content">All Phases that relates to this Project.</i>
             </div>
             <PhaseActions
               onCreateClick={() => setShowCreateModal(true)}
               canCreatePhase={permissions.canCreatePhase}
             />
           </div>
-          
+
           <div className="form-group-container">
             <fieldset className="form-group">
               <legend className="form-label">Search</legend>

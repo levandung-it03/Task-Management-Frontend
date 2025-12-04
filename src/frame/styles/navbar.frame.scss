@@ -28,7 +28,9 @@
       color: var(--logo-color);
       width: 45px;
       height: 45px;
-      padding: 4px;
+      padding: 8px;
+      background: white;
+      border-radius: 18px;
     }
 
     .app-name {
@@ -51,7 +53,7 @@
       padding: 10px;
       border-radius: 8px;
       background-color: transparent;
-      transition: all ease 0.3s;
+      transition: all ease 0.2s;
       margin-bottom: 5px;
 
       .nav-item-icon {
@@ -131,7 +133,7 @@
       border: none;
       border-radius: 12px;
       box-shadow: 0 0 4px 2px var(--shadow-color);
-      z-index: 1;
+      z-index: 3;
 
       .user-profile {
         display: flex;

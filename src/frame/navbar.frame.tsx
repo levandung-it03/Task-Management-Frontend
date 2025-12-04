@@ -10,6 +10,7 @@ import { DTO_Token } from '@/dtos/general.dto';
 import { GeneralAPIs, RecordResponse } from '@/apis/general.api';
 import toast from 'react-hot-toast';
 import PackageCheck from '@/assets/package-check.icon';
+import Image from 'next/image';
 
 interface NavbarComponentProps {
   lightMode: string;
@@ -126,7 +127,8 @@ export default function Navbar({ lightMode, setLightMode }: NavbarComponentProps
   return (
     <nav className={"main-nav-bar" + (collapse ? " nav-collapse" : "")}>
       <div className="app-logo">
-        <PackageCheck className="app-logo-icon" />
+        {/* <PackageCheck className="app-logo-icon" /> */}
+        <Image src="/images/app.logo.png" width={10} height={10} alt="Login illustration" className="app-logo-icon" />
         <span className="app-name">Tmakes</span>
       </div>
       <ul className="item-container">

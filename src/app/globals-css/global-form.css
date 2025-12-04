@@ -13,6 +13,13 @@
   }
 }
 
+.form-caption-wrap {
+  border-bottom: 3px solid var(--main-green);
+  border-right: 3px solid var(--main-green);
+  padding: 10px;
+  border-radius: 15px;
+}
+
 .form-caption {
   width: 100%;
   display: flex;
@@ -66,9 +73,17 @@
       margin-left: 15px;
     }
 
+
+    .form-input {
+      width: calc(100% - 2px*2);
+    }
+
+    .form-select {
+      width: calc(100% - 2px*2 - 10px);
+    }
+
     .form-input,
     .form-select {
-      width: calc(100% - 2px*2);
       border: none;
       outline: none;
       font-size: 16px;
@@ -120,7 +135,7 @@
       width: 20%;
       border-radius: 0 calc(var(--reactangle-radius) - 2px) calc(var(--reactangle-radius) - 2px) 0;
       border: none;
-      transition: all ease 0.3s;
+      transition: all ease 0.2s;
     }
 
     .not-showing-otp-age {
@@ -168,6 +183,14 @@
 .half-form-left-container {
   width: 47%;
   margin-right: 3%;
+}
+.fit-form-container {
+  flex: 1;
+  margin-right: 15px;
+
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
 .half-form-right-container {

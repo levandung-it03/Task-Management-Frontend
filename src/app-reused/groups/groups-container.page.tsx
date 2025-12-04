@@ -17,7 +17,7 @@ export default function GroupsPage() {
   const [openDialog, setOpenDialog] = useState(false)
 
   return <div className="groups-page">
-    <div className="groups-page-header">
+    <div className="groups-page-header form-caption-wrap">
       <div className="form-caption">
         <BookUser className="caption-icon" />
         <span className="caption-content">Groups</span>
@@ -94,7 +94,6 @@ function GroupsContainer() {
         placeholder="Type Group name..." />
       <button className="gs-submit-btn" onClick={onClickSearchGroups}>
         <Search className="gs-btn-icon" />
-        Search
       </button>
     </div>
     <div className="group-blocks-wrapper">

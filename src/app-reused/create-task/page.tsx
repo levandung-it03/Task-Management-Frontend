@@ -7,6 +7,9 @@ import "./page.scss"
 import CollectionDetail from "../task-list/collection-detail/collection-detail"
 import RootTaskDetail from "./root-task-detail/root-task-detail"
 import GlobalValidators from "@/util/global.validators"
+import UsersRecDialog from "./users-rec-dialog/users-rec.dialog"
+import { DTO_RecUsersRequest } from "@/dtos/users-rec.page.dto"
+import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto"
 
 export interface ReusableRootTaskData {
   description: string
@@ -14,16 +17,23 @@ export interface ReusableRootTaskData {
 }
 
 export default function CreateTask({ rootId, collectionId }: { collectionId: number, rootId?: number }) {
-  const [openDialog, setOpenDialog] = useState(false)
-  const [assignedUsers, setAssignedUsers] = useState<Record<string, Record<string, string>>>({})
-  const [assignedUsersHist, setAssignedUsersHist] = useState<Record<string, Record<string, string>>>({})
+  const [recRequest, setRecRequest] = useState<DTO_RecUsersRequest>({
+    domain: "",
+    level: "",
+    priority: "",
+    numOfEmp: 0
+  })
+  const [openGrDialog, setOpenGrDialog] = useState(false)
+  const [openUsersRecDialog, setOpenUsersRecDialog] = useState(false)
+  const [assignedUsers, setAssignedUsers] = useState<Record<string, DTO_FastUserInfo>>({})
+  const [assignedUsersHist, setAssignedUsersHist] = useState<Record<string, DTO_FastUserInfo>>({})
   const [canUndo, setCanUndo] = useState(true)
   const [rootData, setRootData] = useState<ReusableRootTaskData>({
     description: "",
     reportFormat: ""
   })
 
-  const setHistories = useCallback((prev: Record<string, Record<string, string>>) => {
+  const setHistories = useCallback((prev: Record<string, DTO_FastUserInfo>) => {
     setAssignedUsersHist(prev)
     setCanUndo(true)
   }, [])
@@ -38,15 +48,24 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
       collectionId={collectionId}
       assignedUsers={assignedUsers}
       setAssignedUsers={setAssignedUsers}
-      setOpenDialog={setOpenDialog}
+      setOpenGrDialog={setOpenGrDialog}
+      setOpenUsersRecDialog={setOpenUsersRecDialog}
       canUndo={canUndo}
       setCanUndo={setCanUndo}
       assignedUsersHist={assignedUsersHist}
-      setHistories={setHistories} />
+      setHistories={setHistories}
+      setRecRequest={setRecRequest} />
     <GroupListDialog
-      openDialog={openDialog}
+      openGrDialog={openGrDialog}
       setAssignedUsers={setAssignedUsers}
-      setOpenDialog={setOpenDialog}
+      setOpenGrDialog={setOpenGrDialog}
+      setHistories={setHistories} />
+    <UsersRecDialog
+      recRequest={recRequest}
+      openUsersRecDialog={openUsersRecDialog}
+      setOpenUsersRecDialog={setOpenUsersRecDialog}
+      assignedUsers={assignedUsers}
+      setAssignedUsers={setAssignedUsers}
       setHistories={setHistories} />
   </div>
 }

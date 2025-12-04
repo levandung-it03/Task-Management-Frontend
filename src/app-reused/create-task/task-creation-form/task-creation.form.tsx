@@ -15,6 +15,7 @@ import { GeneralTools } from "@/util/general.helper"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dtos/create-task.page.dto"
 import { AuthHelper } from "@/util/auth.helper"
 import { ReusableRootTaskData } from "../page"
+import { DTO_RecUsersRequest } from "@/dtos/users-rec.page.dto"
 
 export interface TaskInfo {
   deadline: string,
@@ -35,22 +36,24 @@ export interface UserSelectedTag {
 
 interface SearchUserToAssignProps {
   rootId: number | undefined
-  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
-  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
-  assignedUsers: Record<string, Record<string, string>>;
+  setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
+  assignedUsers: Record<string, DTO_FastUserInfo>;
 }
 
 interface TaskCreationFormProps {
   rootId: number | undefined;
   rootData: ReusableRootTaskData;
   collectionId: number;
-  assignedUsersHist: Record<string, Record<string, string>>;
-  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
-  assignedUsers: Record<string, Record<string, string>>;
-  setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  assignedUsersHist: Record<string, DTO_FastUserInfo>;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
+  assignedUsers: Record<string, DTO_FastUserInfo>;
+  setOpenGrDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenUsersRecDialog: React.Dispatch<React.SetStateAction<boolean>>;
   canUndo: boolean;
   setCanUndo: React.Dispatch<React.SetStateAction<boolean>>;
-  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
+  setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
+  setRecRequest: React.Dispatch<React.SetStateAction<DTO_RecUsersRequest>>;
 }
 
 export function TaskCreationForm({
@@ -59,11 +62,13 @@ export function TaskCreationForm({
   collectionId,
   assignedUsers,
   setAssignedUsers,
-  setOpenDialog,
+  setOpenGrDialog,
+  setOpenUsersRecDialog,
   canUndo,
   setCanUndo,
   assignedUsersHist,
-  setHistories
+  setHistories,
+  setRecRequest
 }: TaskCreationFormProps) {
   const [name, setName] = useState("")
   const [deadline, setDeadline] = useState("")
@@ -107,15 +112,21 @@ export function TaskCreationForm({
   }, [assignedUsersHist, setAssignedUsers, setCanUndo])
 
   const onChangeLevel = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setLevel(e.target.value)
+    const val = e.target.value;
+    setLevel(val)
+    setRecRequest((prev: DTO_RecUsersRequest) => ({ ...prev, level: val}))
   }, [])
 
   const onChangePriority = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPriority(e.target.value)
+    const val = e.target.value;
+    setPriority(val)  
+    setRecRequest((prev: DTO_RecUsersRequest) => ({ ...prev, priority: val}))
   }, [])
 
   const onChangeTaskType = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTaskType(e.target.value)
+    const val = e.target.value;
+    setTaskType(val)
+    setRecRequest((prev: DTO_RecUsersRequest) => ({ ...prev, domain: val}))
   }, [])
 
   const onClickSubmitBtn = useCallback(() => {
@@ -173,23 +184,27 @@ export function TaskCreationForm({
     async function initValues() {
       const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<Record<string, number>[]>
       if (String(levelsResponse.status)[0] === "2") {
-        setLevel(Object.entries(levelsResponse.body[0])[0][0])
+        const levelDefVal = Object.entries(levelsResponse.body[0])[0][0];
+        setLevel(levelDefVal)
         setLevels(levelsResponse.body.map((levelEntry: Record<string, number>) => {
           const levelEntries = Object.entries(levelEntry)[0]
           return {
             [levelEntries[0]]: GeneralTools.floatNumberFormat(levelEntries[1])
           }
         }))
+        setRecRequest(prev => ({ ...prev, level: levelDefVal }))
       }
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
       if (String(prioritiesResponse.status)[0] === "2") {
         setPriority(prioritiesResponse.body[0])
         setPriorityList(prioritiesResponse.body)
+        setRecRequest(prev => ({ ...prev, priority: prioritiesResponse.body[0] }))
       }
       const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
       if (String(taskTypesResponse.status)[0] === "2") {
         setTaskType(taskTypesResponse.body[0])
         setTaskTypeList(taskTypesResponse.body)
+        setRecRequest(prev => ({ ...prev, domain: taskTypesResponse.body[0] }))
       }
       setDescription(rootData.description)
       setReportFormat(rootData.reportFormat)
@@ -238,7 +253,7 @@ export function TaskCreationForm({
             Level
             <HelpContainer title="" key="" description="Task-Level-Ratio will be used to calculate statistic project information" />
           </legend>
-          <select id="level" className="form-input" value={level} onChange={onChangeLevel}>
+          <select id="level" className="form-select" value={level} onChange={onChangeLevel}>
             {levels.map((levelEntry, ind) => {
               const levelEntries = Object.entries(levelEntry)[0]
               return <option key={"tcl-" + ind} value={levelEntries[0]}>
@@ -252,7 +267,7 @@ export function TaskCreationForm({
       <div className="form-group-container half-form-right-container">
         <fieldset className="form-group">
           <legend className="form-label">Priority</legend>
-          <select id="priority" className="form-input" value={priority} onChange={onChangePriority}>
+          <select id="priority" className="form-select" value={priority} onChange={onChangePriority}>
             {priorityList.map((priority, ind) =>
               <option key={"tcp-" + ind} value={priority}>{GeneralTools.convertEnum(priority)}</option>
             )}
@@ -263,7 +278,7 @@ export function TaskCreationForm({
       <div className="form-group-container">
         <fieldset className="form-group">
           <legend className="form-label">Task Type</legend>
-          <select id="task-type" className="form-input" value={taskType} onChange={onChangeTaskType}>
+          <select id="task-type" className="form-select" value={taskType} onChange={onChangeTaskType}>
             {taskTypeList.map((taskType, ind) =>
               <option key={"tctt-" + ind} value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
             )}
@@ -272,9 +287,12 @@ export function TaskCreationForm({
       </div>
 
       {!rootId && <div className="form-group-container">
-        <div className="open-groups-dialog-container">
-          <button type="button" className="ogd-btn" onClick={() => setOpenDialog(true)}>
-            Groups?
+        <div className="open-dialog-container">
+          <button type="button" className="odc-users-rec-btn" onClick={() => setOpenUsersRecDialog(true)}>
+            Recommend?
+          </button>
+          <button type="button" className="odc-groups-btn" onClick={() => setOpenGrDialog(true)}>
+            Groups
           </button>
         </div>
       </div>}
@@ -314,14 +332,14 @@ export function TaskCreationForm({
         </fieldset>
       </div>
 
-      <div className="form-group-container desc-container">
+      {/* <div className="form-group-container desc-container">
         <fieldset className="form-group">
           <legend className="form-label">
             <HelpContainer title="Report Format" description="This Format supports Users prepare the Report better" />
           </legend>
           <TextEditor state={reportFormat} setState={setReportFormat} />
         </fieldset>
-      </div>
+      </div> */}
 
       <button type="button" className="submit-btn" onClick={onClickSubmitBtn}>Assign</button>
     </div>
@@ -367,7 +385,7 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
   const onFocusSearchUser = useCallback(() => setIsOpenSearchUser(true), [])
 
   const toggleAddRemoveAssignedUser = useCallback((user: DTO_FastUserInfo) => {
-    setAssignedUsers(prev => {
+    setAssignedUsers((prev) => {
       setHistories(prev)
       const key = extractEmailToGetId(user.email)
       if (key in prev) {
@@ -376,14 +394,7 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
         return newData
       }
       else
-        return {
-          ...prev, [key]: {
-            email: user.email,
-            fullName: user.fullName,
-            role: user.role,
-            department: user.department
-          }
-        }
+        return { ...prev, [key]: user }
     })
   }, [setAssignedUsers, setHistories])
 
@@ -468,9 +479,9 @@ export function extractEmailToGetId(email: string): string {
 }
 
 function AssignedUsers({ assignedUsers, setAssignedUsers, setHistories }: {
-  setHistories: (snapshot: Record<string, Record<string, string>>) => void;
-  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, Record<string, string>>>>;
-  assignedUsers: Record<string, Record<string, string>>;
+  setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
+  assignedUsers: Record<string, DTO_FastUserInfo>;
 }) {
   const [shownInfoMap, setShownInfoMap] = useState<Record<string, boolean>>({})
 

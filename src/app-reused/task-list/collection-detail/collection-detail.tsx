@@ -2,7 +2,7 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Check, Container, ScrollText } from "lucide-react";
+import { Check, LayoutList } from "lucide-react";
 import "./collection-detail.scss";
 import { useCallback, useEffect, useState } from "react";
 import { TaskListAPIs } from "@/apis/task-list.page.api";
@@ -88,20 +88,14 @@ export default function CollectionDetail({ collectionId, showCompleteBtn=true }:
         {collection.name}
       </a>
     </div>
-    <div className="form-caption">
-      <Container className="caption-icon" />
+    <div className="form-caption form-caption-wrap">
+      <LayoutList className="caption-icon" />
       <span className="caption-content">
-        Collection Information<span className="collection-id tag-data quick-green-tag">{collection.id}</span>
+        {collection.name}<span className="collection-id tag-data quick-green-tag">{collection.id}</span>
       </span>
       <i className="desc-content">{collection.description}</i>
     </div>
     <div className="collection-info">
-      <div className="collection-info-item collection-header">
-        <div className="collection-name">
-          <ScrollText className="collection-name-icon" />
-          <span className="collection-info-value">{collection.name}</span>
-        </div>
-      </div>
       <div className="collection-info-left">
         <div className="collection-info-item">
           <span className="collection-info-label">Created by</span>

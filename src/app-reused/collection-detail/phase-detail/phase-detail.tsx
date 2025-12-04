@@ -2,7 +2,7 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Check, Container, ScrollText } from "lucide-react";
+import { AudioWaveform, Check, Container, ScrollText } from "lucide-react";
 import "./phase-detail.scss";
 import { useCallback, useEffect, useState } from "react";
 import { CollectionAPIs } from "@/apis/collection.page.api";
@@ -75,20 +75,14 @@ export default function PhaseDetail({ phaseId }: { phaseId: number }) {
       <span>&gt;</span>
       <a>{phase.name}</a>
     </div>
-    <div className="form-caption">
-      <Container className="caption-icon" />
+    <div className="form-caption form-caption-wrap">
+      <AudioWaveform className="caption-icon" />
       <span className="caption-content">
-        Phase Information<span className="phase-id tag-data quick-green-tag">{phase.id}</span>
+        {phase.name}<span className="project-id tag-data quick-green-tag">{phase.id}</span>
       </span>
       <i className="desc-content">{phase.description}</i>
     </div>
     <div className="phase-info">
-      <div className="phase-info-item phase-header">
-        <div className="phase-name">
-          <ScrollText className="phase-name-icon" />
-          <span className="phase-info-value">{phase.name}</span>
-        </div>
-      </div>
       <div className="phase-info-left">
         <div className="phase-info-item">
           <span className="phase-info-label">Created by</span>

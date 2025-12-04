@@ -2,7 +2,7 @@
 
 import HelpContainer from "@/app-reused/help-container/page";
 import { checkOverDue, prettierDate, prettierTime } from "@/app-reused/task-detail/task-detail.service";
-import { Check, CirclePause, CirclePlay, CircleX, Container, ScrollText } from "lucide-react";
+import { Check, CirclePause, CirclePlay, CircleX, Container, FolderKanban, ScrollText } from "lucide-react";
 import "./project-detail.scss";
 import { useCallback, useEffect, useState } from "react";
 import { PhaseAPIs } from "@/apis/phase.page.api";
@@ -120,20 +120,14 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
   }, [projectId])
 
   return <div className="project-overview general-detail">
-    <div className="form-caption">
-      <Container className="caption-icon" />
+    <div className="form-caption form-caption-wrap">
+      <FolderKanban className="caption-icon" />
       <span className="caption-content">
-        Project Information<span className="project-id tag-data quick-green-tag">{project.id}</span>
+        {project.name}<span className="project-id tag-data quick-green-tag">{project.id}</span>
       </span>
       <i className="desc-content">{project.description}</i>
     </div>
     <div className="project-info">
-      <div className="project-info-item project-header">
-        <div className="project-name">
-          <ScrollText className="project-name-icon" />
-          <span className="project-info-value">{project.name}</span>
-        </div>
-      </div>
       <div className="project-info-left">
         <div className="project-info-item">
           <span className="project-info-label">Created by</span>

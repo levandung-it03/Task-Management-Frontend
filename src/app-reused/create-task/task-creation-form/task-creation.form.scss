@@ -11,17 +11,25 @@
     justify-content: flex-start;
   }
 
-  .undo-btn-container,
-  .open-groups-dialog-container {
+  .form-group-container {
     position: relative;
+  }
+
+  .undo-btn-container,
+  .open-dialog-container {
+    position: absolute;
     width: 100%;
+    top: 10px;
+    right: var(--component-padding);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
   }
 
   .undo-btn,
-  .ogd-btn {
-    position: absolute;
-    top: 10px;
-    right: var(--component-padding);
+  .odc-groups-btn,
+  .odc-users-rec-btn {
     display: block;
     width: auto;
     background-color: var(--background);
@@ -29,19 +37,24 @@
     z-index: 3;
   }
 
-  .undo-btn {
+  .undo-btn,
+  .odc-groups-btn {
     background-color: var(--focusing-fieldset-color);
     color: #fff;
     padding: 1px 5px;
     border-radius: 5px;
-    transition: all ease 0.3s;
-    z-index: 1;
+    transition: all ease 0.2s;
   }
 
-  .ogd-btn:hover {
+  .odc-users-rec-btn {
+    margin-right: var(--component-padding);
+  }
+
+  .odc-users-rec-btn:hover{
     cursor: pointer;
   }
 
+  .odc-groups-btn:hover,
   .undo-btn:hover {
     cursor: pointer;
     color: #000;
@@ -179,7 +192,7 @@
             align-items: center;
             justify-self: flex-start;
             width: 100%;
-            transition: all ease 0.3s;
+            transition: all ease 0.2s;
             border-radius: 10px;
             position: absolute;
             top: 100%;

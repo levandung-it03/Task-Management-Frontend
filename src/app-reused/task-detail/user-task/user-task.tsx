@@ -111,12 +111,13 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
   return <div className="main-user-task">
     <div className="introduction">
       <Delegator taskInfo={taskInfo} />
+      <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} reportComments={reportComments}/>
       {isReportOwner
-        ? <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} />
+        ? <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} reportComments={reportComments}/>
         : <div className="form-caption">
           <FileIcon className="caption-icon" />
           <span className="caption-content">Reports</span>
-          <i className="desc-content">All report of Assigned User shown here.</i>
+          <i className="desc-content">All reports of Assigned User are shown here.</i>
         </div>}
     </div>
     {isLoading
@@ -186,6 +187,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
   const [isUpdating, setIsUpdating] = useState(false)
   const canUpdated = useMemo(() =>
     reportInfo.report.createdTime === reportInfo.report.updatedTime
+      && reportInfo.report.reportStatus === "WAITING"
     , [reportInfo.report.createdTime, reportInfo.report.updatedTime])
 
   const addNewComment = useCallback((response: DTO_CommentOfReport) => {

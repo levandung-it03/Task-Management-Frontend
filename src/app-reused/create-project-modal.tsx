@@ -3,6 +3,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import { DTO_CreateProject, PROJECT_STATUS, ProjectStatus } from '@/dtos/project.page.dto';
 import { ProjectAPIs } from '@/apis/project.page.api';
 import { DateValidationHelper } from '@/util/date-validation.helper';
+import { ApiResponse } from '@/apis/general.api';
+import { DTO_IdResponse } from '@/dtos/general.dto';
+import toast from 'react-hot-toast';
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -53,7 +56,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form data before submission
     const validation = DateValidationHelper.validateProjectForm(
       form.name,
@@ -62,26 +65,24 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
       null, // endDate is not used in project creation
       form.dueDate
     );
-    
+
     if (!validation.isValid) {
       setValidationErrors(validation.errors);
       return;
     }
-    
+
     setValidationErrors([]);
-    
+
     // Log the data being sent
     console.log('Sending project data:', form);
-    
-    try {
-      onClose();
-      const newProject = await ProjectAPIs.createProject(form as DTO_CreateProject);
-      console.log('Project creation result:', newProject);
-      onCreate(newProject);
-    } catch (error) {
-      console.error('Failed to create project:', error);
-      return;
+
+    onClose();
+    const response = await ProjectAPIs.createProject(form as DTO_CreateProject) as ApiResponse<DTO_IdResponse>;
+    if (String(response.status)[0] === "2") {
+      toast.success(response.msg);
+      onCreate(response.body)
     }
+    
     setForm({
       name: '',
       description: '',
@@ -131,7 +132,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
           <span style={{ fontWeight: 700, fontSize: 20, color: '#166534' }}>Create Project</span>
           <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', fontSize: 30, color: '#222', cursor: 'pointer', lineHeight: 1 }}>&times;</button>
         </div>
-        
+
         {/* Form */}
         <form
           onSubmit={handleSubmit}
@@ -164,7 +165,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               </ul>
             </div>
           )}
-          
+
           {/* Project Name full row */}
           <fieldset
             style={{
@@ -202,7 +203,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               minLength={1}
             />
           </fieldset>
-          
+
           {/* Description full row */}
           <fieldset
             style={{
@@ -237,7 +238,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
               style={{ color: 'var(--forground)', border: 'none', outline: 'none', fontSize: 15, padding: '12px 12px', width: '100%', background: 'transparent', minHeight: 70, resize: 'vertical' }}
             />
           </fieldset>
-          
+
           {/* 2 fields in 2 columns */}
           <div style={{ display: 'flex', gap: 16 }}>
             <div style={{ flex: 1 }}>
@@ -320,7 +321,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
             </div>
           </div>
         </form>
-        
+
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 18 }}>
           <button
             type="submit"

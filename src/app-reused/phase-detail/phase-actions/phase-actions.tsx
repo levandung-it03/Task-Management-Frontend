@@ -1,5 +1,5 @@
 import React from 'react';
-import './phase-actions.scss';
+import { Plus } from 'lucide-react';
 
 interface PhaseActionsProps {
   onCreateClick: () => void;
@@ -10,13 +10,15 @@ export default function PhaseActions({ onCreateClick, canCreatePhase = true }: P
   return (
     <>
       {canCreatePhase && (
-        <button
-          className="phase-actions__create-button"
-          onClick={onCreateClick}
-        >
-          <span className="phase-actions__create-icon">+</span>
-          New
-        </button>
+        <div className="general-crt-btn">
+          <button
+            className="gcb-main"
+            onClick={onCreateClick}
+          >
+            <Plus className="gcb-icon" />
+            <span className="gcb-text">New</span>
+          </button>
+        </div>
       )}
     </>
   );

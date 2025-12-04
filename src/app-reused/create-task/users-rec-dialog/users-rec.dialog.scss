@@ -1,0 +1,305 @@
+.main-users-rec-dialog {
+  .dialog-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--overlay-color);
+    z-index: 3;
+  }
+
+  .users-rec-scroll-wrapper {
+    width: 60%;
+    min-height: 300px;
+    max-height: 600px;
+    position: absolute;
+    top: 10%;
+    z-index: 4;
+    border-radius: var(--component-padding);
+    margin: auto;
+    background-color: var(--background);
+    padding: calc(1.5*var(--component-padding));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .users-rec-container {
+      width: 100%;
+
+      .users-rec-container-header {
+        width: 100%;
+        background-color: var(--background);
+
+        .urch-title {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: flex-start;
+
+          .urch-title-wrapper {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-start;
+
+
+            .urch-title-icon {
+              width: 40px;
+              height: 40px;
+              padding: 5px;
+              background-color: var(--main-green);
+              color: #fff;
+              border-radius: 10px;
+              margin-right: var(--component-padding);
+            }
+
+            .urch-title-text {
+              flex: 1;
+              display: block;
+              color: var(--main-green);
+              font-size: var(--page-name-size);
+              font-weight: 600;
+            }
+          }
+
+          .close-btn-wrapper {
+            .close-btn-icon {
+              width: 40px;
+              height: 40px;
+              padding: 5px;
+              border-radius: 25px;
+              background-color: transparent;
+              transition: all ease 0.2s;
+
+              &:hover {
+                background-color: var(--btn-hovered-background);
+                cursor: pointer;
+              }
+            }
+          }
+        }
+      }
+
+      .users-rec-container-desc {
+        display: block;
+        width: 100%;
+        margin-bottom: calc(1.5*var(--component-padding));
+
+        .urch-desc-text {
+          display: block;
+          width: 100%;
+          font-size: 16px;
+          margin-left: 55px;
+          color: var(--main-text-grey);
+        }
+      }
+
+      .users-rec-container-overview {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        width: 100%;
+        border: 2px solid var(--main-component-grey);
+        border-radius: 10px;
+        padding: 0 10px;
+        margin: 10px 0;
+
+        .urco-title {
+          width: 100%;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--main-component-grey);
+          margin-bottom: 10px;
+
+          .urco-title-text {
+            color: var(--main-text-grey);
+          }
+        }
+
+        .urco-block {
+          width: 100%;
+          display: flex;
+          margin-bottom: 10px;
+
+          .urco-label {
+            display: block;
+            width: fit-content;
+          }
+
+          .urco-value {
+            display: blok;
+            padding: 2px 4px;
+            font-size: 13px;
+            border-radius: 4px;
+            margin-left: 6px;
+          }
+
+        }
+
+        .urco-domain {
+          .urco-value {
+            background-color: var(--focusing-fieldset-color);
+            color: #fff;
+          }
+        }
+      }
+
+      .users-rec-container-more-inp {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        border-top: 1px solid var(--main-component-grey);
+        margin-top: 10px;
+        padding-top: 10px;
+
+        .rec-btn-container {
+          flex: 1;
+        }
+
+        .rec-btn {
+          width: 100%;
+          padding: var(--component-padding) 0;
+          color: #fff;
+          background-color: var(--focusing-fieldset-color);
+          border: 1px solid var(--focusing-fieldset-color);
+          border-radius: 8px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transition: all ease 0.2s;
+
+          &:hover {
+            background-color: var(--background);
+            color: var(--focusing-fieldset-color);
+            border-color: var(--focusing-fieldset-color);
+            cursor: pointer;
+
+            .rec-icon {
+              color: var(--focusing-fieldset-color);
+            }
+          }
+
+          .rec-icon {
+            width: 16px;
+            height: 16px;
+            margin-left: 4px;
+          }
+        }
+      }
+
+      .users-rec-container-body {
+        width: 100%;
+        border: 2px solid var(--main-component-grey);
+        border-radius: 10px;
+        padding: 10px;
+
+        .urcb-header {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          border-bottom: 1px solid var(--main-component-grey);
+          margin-bottom: 10px;
+          background-color: var(--under-background);
+          padding: 10px 10px 0 10px;
+          border-radius: 10px 10px 0 0;
+
+          .urdb-title {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+
+            .urcb-title-icon {
+              width: 35px;
+              height: 35px;
+              padding: 5px;
+              background-color: var(--main-green);
+              color: #fff;
+              border-radius: 10px;
+              margin-right: 10px;
+            }
+
+            .urcb-title-text {
+              flex: 1;
+              display: block;
+              color: var(--main-green);
+              font-size: 20px;
+              font-weight: 600;
+            }
+          }
+        }
+
+        .rec-users-result {
+          width: 100%;
+
+          .rus-body {
+            width: 100%;
+
+            .rus-eb-text {
+              display: block;
+              color: var(--main-text-grey);
+              padding: var(--component-padding) 0;
+            }
+
+          }
+        }
+
+        .user-short-info {
+          width: 100%;
+          border: 1px solid var(--main-component-grey);
+        }
+      }
+
+      .assign-btn {
+        margin-top: var(--component-padding);
+        width: 100%;
+        padding: var(--component-padding) 0;
+        color: #fff;
+        background-color: var(--focusing-fieldset-color);
+        border: 1px solid var(--focusing-fieldset-color);
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: all ease 0.2s;
+
+        &:hover {
+          background-color: var(--background);
+          color: var(--focusing-fieldset-color);
+          border-color: var(--focusing-fieldset-color);
+          cursor: pointer;
+
+          .assign-icon {
+            color: var(--focusing-fieldset-color);
+          }
+        }
+
+        .assign-icon {
+          width: 16px;
+          height: 16px;
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+}
+
+
+
+.urcb-admin {
+  color: var(--role-lead-border) !important;
+  background-color: var(--role-lead-bg);
+}
+
+.urcb-member {
+  color: var(--role-emp-border) !important;
+  background-color: var(--role-emp-bg);
+}
