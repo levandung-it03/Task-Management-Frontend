@@ -237,6 +237,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
             onOpenUpdate={handleOpenUpdate}
             onDeleteCollection={handleDeleteCollection}
             canDeleteCollection={permissions.canDeleteCollection}
+            canUpdateCollection={permissions.canUpdateCollection}
           />
         </div>
 

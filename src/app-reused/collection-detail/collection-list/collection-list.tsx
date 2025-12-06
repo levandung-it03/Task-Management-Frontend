@@ -9,6 +9,7 @@ interface CollectionListProps {
   onOpenUpdate: (collection: DTO_CollectionItem) => void;
   onDeleteCollection: (collection: DTO_CollectionItem) => void;
   canDeleteCollection?: boolean;
+  canUpdateCollection?: boolean;
 }
 
 export default function CollectionList({ 
@@ -16,7 +17,8 @@ export default function CollectionList({
   onCollectionClick, 
   onOpenUpdate, 
   onDeleteCollection,
-  canDeleteCollection
+  canDeleteCollection,
+  canUpdateCollection
 }: CollectionListProps) {
   // Filter out any null or undefined collections to prevent errors
   const validCollections = useMemo(() => collections.filter(collection => collection != null), [collections]);
@@ -39,12 +41,14 @@ export default function CollectionList({
           <div className="collection-deadline oli-due-date quick-blue-tag">
             Due Date: {collection.dueDate}
           </div>
-          <button
-            className="view-details-btn oli-quick-btn"
-            onClick={() => onOpenUpdate(collection)}
-          >
-            Update
-          </button>
+          {canUpdateCollection ? (
+            <button
+              className="view-details-btn oli-quick-btn"
+              onClick={() => onOpenUpdate(collection)}
+            >
+              Update
+            </button>
+          ) : null}
           {canDeleteCollection ? (
             <button
               key={`delete-${collection.id}`}

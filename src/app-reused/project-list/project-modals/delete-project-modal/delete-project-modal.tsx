@@ -22,17 +22,14 @@ export function DeleteProjectModal({ open, project, onClose, onDelete }: DeleteP
     try {
       // Call delete API with project ID
       const response = await ProjectAPIs.deleteProject(project.id);
-      
-      // The delete API returns ApiResponse<void>, so body is null/void
-      // We consider the deletion successful if we get a response without error
-      if (response && typeof response === 'object' && 'code' in response) {
+       // Treat as success when HTTP-like status is 2xx, align with other modals
+       if (response && typeof response === 'object') {
         const apiResponse = response as any;
-        // Check if the response indicates success (typically code 200 or similar)
-        const isSuccess = apiResponse.code >= 200 && apiResponse.code < 300;
-        onDelete(project.id, isSuccess);
-      } else {
-        // Fallback if API response is unexpected
-        onDelete(project.id, true);
+        const hasStatus = 'status' in apiResponse;
+        const hasCode = 'code' in apiResponse;
+        const isSuccess = (hasStatus && apiResponse.status >= 200 && apiResponse.status < 300)
+          || (hasCode && apiResponse.code >= 200 && apiResponse.code < 300);
+        onDelete(project.id, !!isSuccess);
       }
     } catch (error) {
       console.error('Error deleting project:', error);
