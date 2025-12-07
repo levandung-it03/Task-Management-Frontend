@@ -9,7 +9,7 @@ import GlobalValidators from "@/util/global.validators";
 import CreateReportService from "./create-report.service";
 import { FileIcon } from "@/assets/file.icon";
 import { UserTaskPageAPIs } from "@/apis/user-task.page.api";
-import { DTO_ReportRequest, DTO_ReportsComments } from "@/dtos/user-task.page.dto";
+import { DTO_ReportGenRequest, DTO_ReportGenResponse, DTO_ReportRequest, DTO_ReportsComments } from "@/dtos/user-task.page.dto";
 import { ApiResponse } from "@/apis/general.api";
 import { DTO_IdResponse } from "@/dtos/general.dto";
 import toast from "react-hot-toast";
@@ -58,6 +58,27 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
     submitReport()
   }, [title, report, userTaskId])
 
+  const onClickGenerateReport = useCallback(() => {
+    async function generateReport() {
+      const request = DTO_ReportGenRequest.withBuilder().btaskUserId(userTaskId)
+      const promise = UserTaskPageAPIs.generateReport(request) as Promise<ApiResponse<DTO_ReportGenResponse>>
+      toast.promise(
+        promise,
+        {
+          loading: 'Wait for Model generating Report!',
+          success: (response) => {
+            if (String(response.status)[0] === "2") {
+              setReport(response.body.report)
+              toast.success(response.msg)
+            }
+            throw new Error();
+          },
+        }
+      );
+    }
+    generateReport()
+  }, [])
+
   useEffect(() => {
     // setFormat(taskInfo.reportFormat)
 
@@ -87,6 +108,10 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [report, userTaskId]);
 
+  useEffect(() => {
+    onClickGenerateReport();  //--Default generating an example.
+  }, []);
+
   return <div className="report-creation">
     <div className="form-caption">
       <FileIcon className="caption-icon" />
@@ -102,6 +127,13 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
       {GlobalValidators.notEmpty(formValidation.title) && <span className="input-err-msg">{formValidation.title}</span>}
     </div>
     {/* <div className="form-group-container desc-container half-form-left-container"> */}
+    <div className="form-group-container">
+      <div className="report-gen-container">
+        <button type="button" className="report-gen-btn" onClick={() => onClickGenerateReport()}>
+          Generate Example
+        </button>
+      </div>
+    </div>
     <div className="form-group-container desc-container">
       <fieldset className="form-group">
         <legend className="form-label">

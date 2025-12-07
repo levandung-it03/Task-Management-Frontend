@@ -12,3 +12,30 @@
     }
   }
 }
+
+.form-group-container {
+  position: relative;
+
+  .report-gen-container {
+    position: absolute;
+    width: 100%;
+    top: 25px;
+    right: var(--component-padding);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+
+    .report-gen-btn {
+      display: block;
+      width: auto;
+      background-color: var(--background);
+      color: var(--blue-in-env);
+      z-index: 3;
+
+      &:hover{
+        cursor: pointer;
+      }
+    }
+  }
+}

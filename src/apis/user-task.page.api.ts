@@ -1,40 +1,18 @@
 import axiosInstance from "@/util/axios.helper"
 import { ApiResponse, GeneralAPIs } from "./general.api"
-import { DTO_CommentOfReport, DTO_CreateComment, DTO_RejectReport, DTO_ReportRequest, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
+import { DTO_CommentOfReport, DTO_CreateComment, DTO_RejectReport, DTO_ReportGenRequest, DTO_ReportRequest, DTO_ReportsComments, DTO_UpdateReport } from "@/dtos/user-task.page.dto"
 import { DTO_IdResponse } from "@/dtos/general.dto"
 import { AuthHelper } from "@/util/auth.helper"
 
-const LLM_HOST = "http://localhost:1234"
-
-export class LLMSentMsgAndRole {
-  role!: string
-  content!: string
-
-  public static withBuilder(): LLMSentMsgAndRole { return new LLMSentMsgAndRole() }
-  public brole(role: string): LLMSentMsgAndRole { this.role = role; return this }
-  public bcontent(content: string): LLMSentMsgAndRole { this.content = content; return this }
-}
-
-export class DTO_LLMCompleteion {
-  model!: string
-  messages!: LLMSentMsgAndRole[]
-  max_tokens!: number
-
-  public static withBuilder(): DTO_LLMCompleteion { return new DTO_LLMCompleteion() }
-  public bmodel(model: string): DTO_LLMCompleteion { this.model = model; return this }
-  public bmessages(messages: LLMSentMsgAndRole[]): DTO_LLMCompleteion { this.messages = messages; return this }
-  public bmaxTokens(maxTokens: number): DTO_LLMCompleteion { this.max_tokens = maxTokens; return this }
-}
-
 export class UserTaskPageAPIs {
 
-  static async getCompletion(request: DTO_LLMCompleteion): Promise<Record<string, string> | unknown> {
+  static async generateReport(request: DTO_ReportGenRequest): Promise<Record<string, string> | unknown> {
     try {
-      const response = await axiosInstance.post(`${LLM_HOST}/chat/completions`, request)
+      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/generate`;
+      const response = await axiosInstance.post(url, request)
       return response.data
     } catch (error: unknown) {
-      console.error("Error From LLM:", error)
-      // return GeneralAPIs.extractError(error)
+      return GeneralAPIs.extractError(error)
     }
   }
 
