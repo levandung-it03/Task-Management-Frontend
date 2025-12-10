@@ -76,6 +76,7 @@ export interface DTO_TaskUser {
   role: string
   userTaskStatus: string
   wasDone: boolean
+  totalReports: number
 }
 
 export class DTO_LockTaskStatus {
@@ -92,4 +93,8 @@ export interface DTO_TaskDelegator {
   projectInfo: DTO_EntityDelegator;
   phaseInfo: DTO_EntityDelegator;
   collectionInfo: DTO_EntityDelegator;
+}
+
+export interface DTO_UpdateTaskResponse {
+  newUsers: DTO_TaskUser[]
 }

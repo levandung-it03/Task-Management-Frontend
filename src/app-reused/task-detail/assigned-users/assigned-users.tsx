@@ -3,19 +3,21 @@
 import { ApiResponse } from "@/apis/general.api"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
-import { ClipboardList, LogIn, LogOut } from "lucide-react"
+import { ClipboardList, LogIn, LogOut, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import "./assigned-users.scss"
 import { DTO_TaskDetail, DTO_TaskUser } from "@/dtos/task-detail.page.dto"
 import toast from "react-hot-toast"
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
 
-export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers }: {
+export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, isRootTask, assignedUsers, setAssignedUsers }: {
   taskInfo: DTO_TaskDetail,
   isTaskOwner: boolean,
-  setTotalUsers: React.Dispatch<React.SetStateAction<number>>
+  setTotalUsers: React.Dispatch<React.SetStateAction<number>>,
+  isRootTask: boolean,
+  assignedUsers: DTO_TaskUser[],
+  setAssignedUsers: React.Dispatch<React.SetStateAction<DTO_TaskUser[]>>
 }) {
-  const [assignedUsers, setAssignedUsers] = useState<DTO_TaskUser[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const totalUsersDone = useMemo(() =>
     assignedUsers.reduce((acc, user) => user.wasDone ? acc + 1 : acc, 0)
@@ -73,17 +75,25 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers }: 
         {isLoading
           ? <li className="loading-row">Loading...</li>
           : assignedUsers.map((user, ind) => 
-            <UserTag key={"usi-" + ind} isTaskOwner={isTaskOwner} userTask={user} assignedUsers={assignedUsers} />
-          )
+            <UserTag
+              key={"usi-" + ind}
+              isTaskOwner={isTaskOwner}
+              userTask={user}
+              assignedUsers={assignedUsers}
+              setAssignedUsers={setAssignedUsers}
+              isRootTask={isRootTask} />
+            )
         }
       </ul>
     </>)
 }
 
-function UserTag({ isTaskOwner, userTask, assignedUsers }: { 
+function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRootTask }: { 
   isTaskOwner: boolean,
   userTask: DTO_TaskUser,
-  assignedUsers: DTO_TaskUser[]
+  assignedUsers: DTO_TaskUser[],
+  setAssignedUsers: React.Dispatch<React.SetStateAction<DTO_TaskUser[]>>,
+  isRootTask: boolean,
  }) {
   const [userKicked, setUserKicked] = useState(false)
   const firstNameChar = useMemo(() => userTask.fullName ? userTask.fullName[0].toUpperCase() : "", [userTask.fullName])
@@ -103,6 +113,21 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
     kickUser()
   }, [])
 
+  const onClickRemoveUser = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    async function kickUser() {
+      e.preventDefault()
+      if (!(await confirm("This action cannot be undone. Are you sure?", "Remove User")))
+        return
+      const response = await TaskDetailPageAPIs.deleteUserTask(userTask.id) as ApiResponse<void>
+      if (String(response.status).startsWith("2")) {
+        toast.success(response.msg)
+        setAssignedUsers(prev => [...prev.filter(u => u.id !== userTask.id)])
+        return
+      }
+    }
+    kickUser()
+  }, [])
+
   const onClickKickUser = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     async function kickUser() {
       e.preventDefault()
@@ -112,7 +137,6 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserKicked(true)
-        window.location.reload()
         return
       }
     }
@@ -133,12 +157,18 @@ function UserTag({ isTaskOwner, userTask, assignedUsers }: {
     {userTask.wasDone
       ? <span className="usi-status quick-green-tag">Done</span>
       : <span className="usi-status quick-blue-tag">In-progress</span>}
-    {isTaskOwner && (userKicked
+    {isRootTask && isTaskOwner && (userKicked
       ? <button className="usi-tag re-add-user-btn" onClick={onClickReaddUser}>
         <LogIn className="usgb-icon" />Re-add
       </button>
       : <button className="usi-tag kick-user-btn" onClick={onClickKickUser}>
         <LogOut className="usgb-icon" />Kick
       </button>)}
+    {isRootTask
+      && isTaskOwner
+      && userTask.totalReports === 0
+      && <button className="usi-tag kick-user-btn" onClick={onClickRemoveUser}>
+      <Trash2 className="usgb-icon" />Remove
+    </button>}
   </a>
 }

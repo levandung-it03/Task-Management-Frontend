@@ -9,23 +9,27 @@ import { GeneralTools } from "@/util/general.helper";
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api";
 import toast from "react-hot-toast";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
-import { DTO_TaskDetail, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
+import { DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
 import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto";
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
 import { AuthHelper } from "@/util/auth.helper";
 
 interface TaskDialogProps {
+  isRootTask: boolean;
   openDialog: boolean;
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
   taskInfo: DTO_TaskDetail;
   setTaskInfo: React.Dispatch<React.SetStateAction<DTO_TaskDetail>>;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<DTO_TaskUser[]>>;
 }
 
 export default function TaskDialog({
+  isRootTask,
   taskInfo,
   setTaskInfo,
   openDialog,
   setOpenDialog,
+  setAssignedUsers
 }: TaskDialogProps) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [isOwner, setIsOwner] = useState(false)
@@ -99,7 +103,7 @@ export default function TaskDialog({
         .bdeadline(deadline)
         .bstartDate(startDate)
         .baddedUserEmail(GlobalValidators.notEmpty(addedUsers) ? Object.values(addedUsers)[0].email : "")
-      const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<void>
+      const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<DTO_UpdateTaskResponse>
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setTaskInfo(prev => ({
@@ -110,14 +114,17 @@ export default function TaskDialog({
           deadline: deadline,
           startDate: startDate
         }))
-        window.location.reload()
+        setAssignedUsers(prev => [
+          ...prev,
+          ...response.body.newUsers
+        ])
       }
       setOpenDialog(false)
     }
     submitUpdating()
   }, [
     taskInfo.id, taskInfo.deadline, taskInfo.level, taskInfo.taskType, taskInfo.priority,
-    priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo,
+    priority, level, taskType, deadline, formValidation, setOpenDialog, setTaskInfo, setAssignedUsers,
     formTouched, startDate
   ])
 
@@ -125,7 +132,7 @@ export default function TaskDialog({
     async function initValues() {
       const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<string[]>
       if (String(levelsResponse.status)[0] === "2")
-        setLevelList(levelsResponse.body)
+        setLevelList(levelsResponse.body.map(levelObj => Object.keys(levelObj)[0]));
 
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
       if (String(prioritiesResponse.status)[0] === "2")
@@ -226,24 +233,26 @@ export default function TaskDialog({
           </div>
 
           {isUpdatable && <>
-            <div className="form-group-container search-user-container">
-              <fieldset className="form-group">
-                <legend className="form-label">Search User</legend>
-                <SearchUserToAdd
-                  rootId={taskInfo.rootTaskId}
-                  mainId={taskInfo.id}
-                  addedUsers={addedUsers}
-                  setAddedUsers={setAddedUsers}
-                  setFormTouched={setFormTouched} />
-              </fieldset>
-            </div>
+            {isRootTask && <>
+              <div className="form-group-container search-user-container">
+                <fieldset className="form-group">
+                  <legend className="form-label">Search User</legend>
+                  <SearchUserToAdd
+                    rootId={taskInfo.rootTaskId}
+                    mainId={taskInfo.id}
+                    addedUsers={addedUsers}
+                    setAddedUsers={setAddedUsers}
+                    setFormTouched={setFormTouched} />
+                </fieldset>
+              </div>
 
-            <div className="form-group-container added-for-container">
-              <fieldset className="form-group">
-                <legend className="form-label">Added Users</legend>
-                <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
-              </fieldset>
-            </div>
+              <div className="form-group-container added-for-container">
+                <fieldset className="form-group">
+                  <legend className="form-label">Added Users</legend>
+                  <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
+                </fieldset>
+              </div>
+            </>}
 
             <div className="update-btn-container">
               <button className="update-content-btn" onClick={onSubmitUpdateContent} type="button">

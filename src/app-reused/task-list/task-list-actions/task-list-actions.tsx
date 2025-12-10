@@ -15,8 +15,8 @@ export default function TaskListActions({ canCreateTask, collectionId }: TaskLis
   return <div className="task-header form-caption-wrap">
     <div className="form-caption">
       <ClipboardList className="caption-icon" />
-      <span className="caption-content">Tasks Collection</span>
-      <i className="desc-content">All Collections are shown here!</i>
+      <span className="caption-content">Tasks List</span>
+      <i className="desc-content">All Tasks are shown here!</i>
     </div>
 
     {canCreateTask && <div className="general-crt-btn">

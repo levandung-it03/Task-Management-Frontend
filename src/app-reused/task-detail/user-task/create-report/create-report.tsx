@@ -84,9 +84,10 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
 
     const lastReportIdx = reportComments.length - 1;
     if (lastReportIdx !== -1)
-      setReport(reportComments[lastReportIdx].report.content)
+      setReport(reportComments[lastReportIdx].report.content);
 
-    setTitle(`Report for ${taskInfo.name} by ${taskInfo.userInfo.fullName}`)
+    setTitle(`Report for ${taskInfo.name} by ${taskInfo.userInfo.fullName}`);
+    setFormTouched(true);
   }, [reportComments])
 
   useEffect(() => {

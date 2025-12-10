@@ -54,7 +54,7 @@
     }
 
     .st-info {
-      width: 30%;
+      width: 280px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -64,14 +64,11 @@
       .st-type,
       .st-priority {
         height: fit-content;
-        margin-right: 25px;
+        margin-right: 10px;
       }
     }
 
     .st-dates {
-
-      .st-deadling {}
-
       .late-date {
         background-color: var(--role-admin-bg) !important;
         color: #fff !important;
@@ -79,7 +76,7 @@
         font-size: 14px;
         padding: 1px 4px;
         border-radius: 4px;
-        margin: 2px;
+        margin: 4px;
       }
     }
   }

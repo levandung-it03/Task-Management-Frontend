@@ -1,4 +1,4 @@
-import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest } from "@/dtos/task-detail.page.dto"
+import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest, DTO_UpdateTaskResponse } from "@/dtos/task-detail.page.dto"
 import { ApiResponse, GeneralAPIs } from "./general.api"
 import { AuthHelper } from "@/util/auth.helper"
 import axiosInstance from "@/util/axios.helper"
@@ -51,7 +51,7 @@ export class TaskDetailPageAPIs {
     }
   }
 
-  static async updateBasicTaskInfo(request: DTO_UpdateBasicTask): Promise<ApiResponse<void> | unknown> {
+  static async updateBasicTaskInfo(request: DTO_UpdateBasicTask): Promise<ApiResponse<DTO_UpdateTaskResponse> | unknown> {
     try {
       const { id, ...restParams } = request
       console.log(restParams)
@@ -241,6 +241,28 @@ export class TaskDetailPageAPIs {
   static async kickUserOfTask(taskUserId: number): Promise<ApiResponse<void> | unknown> {
     try {
       const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${taskUserId}/kick-user`)
+      return response.data
+      // return {
+      //   code: 11001,
+      //   msg: "Thành công",
+      //   status: 200,
+      //   body: [
+      //     { email: "trangthu.15092002.27062025@tmakes.company.vn", fullName: "Trang Thư", role: "ROLE_EMP" },
+      //     { email: "nguyentan.01111997.30062025@tmakes.company.vn", fullName: "Nguyễn Tân", role: "ROLE_LEAD" },
+      //     { email: "lethu.26062000.01072025@tmakes.company.vn", fullName: "Lê Thư", role: "ROLE_EMP" },
+      //     { email: "khanhhoa.08032001.29062025@tmakes.company.vn", fullName: "Khánh Hòa", role: "ROLE_EMP" },
+      //     { email: "vumanh.17102003.28062025@tmakes.company.vn", fullName: "Vũ Mạnh", role: "ROLE_EMP" }
+      //   ],
+      //   time: "12:00:20 30/06/2025"
+      // }
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+  
+  static async deleteUserTask(taskUserId: number): Promise<ApiResponse<void> | unknown> {
+    try {
+      const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task-user/${taskUserId}/delete-user`)
       return response.data
       // return {
       //   code: 11001,

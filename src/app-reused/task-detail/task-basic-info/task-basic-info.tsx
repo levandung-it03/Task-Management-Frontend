@@ -9,16 +9,18 @@ import TextDialog from './text-dialog/text.dialog'
 import TaskDialog from './task-dialog/task.dialog'
 import "./task-basic-info.scss"
 import { AuthHelper } from '@/util/auth.helper'
-import { DTO_TaskDelegator, DTO_TaskDetail, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
+import { DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
 import { GeneralTools } from '@/util/general.helper'
 
 interface TaskBasicInfoProps {
   taskInfo: DTO_TaskDetail,
   setTaskInfo: React.Dispatch<React.SetStateAction<DTO_TaskDetail>>,
-  totalUsers: number
+  totalUsers: number,
+  isRootTask: boolean,
+  setAssignedUsers: React.Dispatch<React.SetStateAction<DTO_TaskUser[]>>
 }
 
-export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicInfoProps) {
+export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, setAssignedUsers }: TaskBasicInfoProps) {
   const [taskDelegator, setTaskDelegator] = useState<DTO_TaskDelegator>({
     taskInfo: null,
     projectInfo: {
@@ -159,10 +161,12 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
               <ScrollText className="task-header-icon" />
               Description
             </button>
-            <button className="report-format-btn" onClick={onClickOpenReportFormat}>
-              <LetterText className="task-header-icon" />
-              Report
-            </button>
+            {/*
+              <button className="report-format-btn" onClick={onClickOpenReportFormat}>
+                <LetterText className="task-header-icon" />
+                Report
+              </button>
+            */}
             {isOwner && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
               <Pencil className="task-header-icon" />
             </button>}
@@ -265,10 +269,12 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers }: TaskBasicIn
       isUpdatabale={isUpdatable}
     />
     <TaskDialog
+      isRootTask={isRootTask}
       taskInfo={taskInfo}
       setTaskInfo={setTaskInfo}
       openDialog={openTaskDialog}
       setOpenDialog={setOpenTaskDialog}
+      setAssignedUsers={setAssignedUsers}
     />
   </>
 }

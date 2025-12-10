@@ -34,7 +34,15 @@
     width: auto;
     background-color: var(--background);
     color: var(--blue-in-env);
+  }
+
+  .odc-groups-btn,
+  .odc-users-rec-btn {
     z-index: 3;
+  }
+  
+  .undo-btn {
+    z-index: 1;
   }
 
   .undo-btn,
@@ -68,6 +76,7 @@
 
     .form-group {
       width: 100%;
+      z-index: 2;
 
       .searched-users-container {
         display: block;
@@ -84,6 +93,7 @@
         box-shadow: var(--instruct-box-shadow);
         border: 1px solid var(--focusing-fieldset-color);
         border-radius: 5px;
+        z-index: 2;
 
         .searched-users {
           display: block;

@@ -60,6 +60,8 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     phaseInfo: { id: 0, name: "" },
     collectionInfo: { id: 0, name: "" }
   })
+  const [isTaskOwner, setIsTaskOwner] = useState(false)
+  const [canCreateReport, setCanCreateReport] = useState(false)
 
   useEffect(() => {
     async function getDetail() {
@@ -96,7 +98,7 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
         return
 
       setIsLoading(false)
-      const isTaskOwner = emailRes.body.email === taskInfo.userInfo.email
+      setIsTaskOwner(emailRes.body.email === taskInfo.userInfo.email);
       const isAssignedUser = assignedRes.body.result
 
       //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
@@ -104,6 +106,10 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
       setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
 
       setReportComments(response.body)
+      const reportsLength = response.body.length;
+      if (reportsLength > 0) {
+        setCanCreateReport(response.body[reportsLength - 1].report.reportStatus === 'REJECTED');
+      }
     }
     fetchReports()
   }, [userTaskId, taskInfo.userInfo.email])
@@ -111,8 +117,7 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
   return <div className="main-user-task">
     <div className="introduction">
       <Delegator taskInfo={taskInfo} />
-      <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} reportComments={reportComments}/>
-      {isReportOwner
+      {isReportOwner && canCreateReport
         ? <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} reportComments={reportComments}/>
         : <div className="form-caption">
           <FileIcon className="caption-icon" />
@@ -125,6 +130,7 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
       : (reportComments.length === 0
         ? <div className="loading-row">There are no Report submitted</div>
         : <ReportList
+          isTaskOwner={isTaskOwner}
           reportComments={reportComments}
           isReportOwner={isReportOwner}
           canReviewReport={canReviewReport}
@@ -155,7 +161,8 @@ function Delegator({ taskInfo }: { taskInfo: DTO_TaskDetail }) {
   </div>
 }
 
-function ReportList({ reportComments, isReportOwner, canReviewReport, setReportComments }: {
+function ReportList({ isTaskOwner, reportComments, isReportOwner, canReviewReport, setReportComments }: {
+  isTaskOwner: boolean,
   reportComments: DTO_ReportsComments[],
   isReportOwner: boolean,
   canReviewReport: boolean,
@@ -170,17 +177,19 @@ function ReportList({ reportComments, isReportOwner, canReviewReport, setReportC
         reportInfo={reportInfo}
         isReportOwner={isReportOwner}
         canReviewReport={canReviewReport}
-        setReportComments={setReportComments} />
+        setReportComments={setReportComments}
+        isTaskOwner={isTaskOwner} />
     )}
   </div>
 }
 
-function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, setReportComments }: {
+function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, setReportComments, isTaskOwner }: {
   reportInd: number,
   reportInfo: DTO_ReportsComments,
   isReportOwner: boolean,
   canReviewReport: boolean,
-  setReportComments: React.Dispatch<React.SetStateAction<DTO_ReportsComments[]>>
+  setReportComments: React.Dispatch<React.SetStateAction<DTO_ReportsComments[]>>,
+  isTaskOwner: boolean
 }) {
   const [openRejectDialog, setIsRejecting] = useState(false)
   const [report, setReport] = useState("")
@@ -266,13 +275,16 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
 
   const ButtonsWhenNotUpdating = useCallback(() => {
     if (isReportOwner)
-      return <button
-        className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
-        onClick={() => setIsUpdating(true)}
-        disabled={!canUpdated}
-      >
-        <Pencil className="report-btn-icon" />Update Report
-      </button>
+      return <>
+        {isTaskOwner && reportInfo.report.reviewedTime === null && <ButtonWhenSuperiorSeeing />}
+        <button
+          className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
+          onClick={() => setIsUpdating(true)}
+          disabled={!canUpdated}
+        >
+          <Pencil className="report-btn-icon" />Update Report
+        </button>
+      </>
 
     if (canReviewReport && reportInfo.report.reviewedTime === null)
       return <ButtonWhenSuperiorSeeing />
@@ -282,7 +294,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
         <CircleCheckBig className="reviewed-icon" />
         Reviewed
       </button>
-  }, [canReviewReport, isReportOwner, canUpdated])
+  }, [canReviewReport, isReportOwner, canUpdated, isTaskOwner])
 
   useEffect(() => setReport(reportInfo.report.content), [reportInfo.report.content])
 
@@ -568,7 +580,6 @@ function RejectingReportDialog({ reportId, setIsRejecting }: {
       const response = await UserTaskPageAPIs.rejectReport(request) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
-        return
       }
       setIsRejecting(false)
       window.location.reload()

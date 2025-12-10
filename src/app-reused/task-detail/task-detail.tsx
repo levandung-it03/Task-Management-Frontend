@@ -9,7 +9,7 @@ import AssignedUsers from './assigned-users/assigned-users'
 import SubTasks from './sub-tasks/sub-tasks'
 import TaskDetailInteractBtns from "./status-buttons/status-buttons"
 import { AuthHelper } from "@/util/auth.helper"
-import { DTO_TaskDetail } from "@/dtos/task-detail.page.dto"
+import { DTO_TaskDetail, DTO_TaskUser } from "@/dtos/task-detail.page.dto"
 
 /**
  * Prevent weird user accessing (not create this task, not assigned on this task)? API did for us!
@@ -56,6 +56,10 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
       name: ""
     }
   })
+  const [assignedUsers, setAssignedUsers] = useState<DTO_TaskUser[]>([])
+  const [isRootTask, setIsRootTask] = useState(taskInfo.rootTaskId === null)
+
+  useEffect(() => setIsRootTask(taskInfo.rootTaskId === null), [taskInfo.rootTaskId]);
 
   useEffect(() => {
     async function checkIsOwner() {
@@ -80,9 +84,20 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
   return (isLoading
     ? <div className="loading-row">Loading...</div>
     : <div className="task-detail-container">
-      <TaskBasicInfo taskInfo={taskInfo} setTaskInfo={setTaskInfo} totalUsers={totalUsers} />
+      <TaskBasicInfo
+        taskInfo={taskInfo}
+        setTaskInfo={setTaskInfo}
+        totalUsers={totalUsers}
+        isRootTask={isRootTask}
+        setAssignedUsers={setAssignedUsers} />
       <SubTasks taskInfo={taskInfo} />
-      <AssignedUsers taskInfo={taskInfo} isTaskOwner={isOwner} setTotalUsers={setTotalUsers} />
+      <AssignedUsers
+        taskInfo={taskInfo}
+        isTaskOwner={isOwner}
+        setTotalUsers={setTotalUsers}
+        isRootTask={isRootTask}
+        assignedUsers={assignedUsers}
+        setAssignedUsers={setAssignedUsers} />
       {isOwner && <TaskDetailInteractBtns taskInfo={taskInfo} />}
     </div>
   )

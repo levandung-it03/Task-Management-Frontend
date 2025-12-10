@@ -80,7 +80,7 @@ export default function UserInfoForm() {
   useEffect(() => {
     async function init() {
       setIsLoading(true)
-      const response = await UserInfoAPIs.getUserInfo(AuthHelper.getRoleFromToken()) as ApiResponse<DTO_UserInfoResponse>
+      const response = await UserInfoAPIs.getUserInfo() as ApiResponse<DTO_UserInfoResponse>
       if (GlobalValidators.isNull(response.body)) return
       setFullName(response.body.fullName)
       setIdentity(response.body.identity)

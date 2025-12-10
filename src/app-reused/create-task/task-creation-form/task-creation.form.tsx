@@ -16,6 +16,8 @@ import { DTO_FastUserInfo, DTO_SearchFastUserInfo, DTO_TaskRequest } from "@/dto
 import { AuthHelper } from "@/util/auth.helper"
 import { ReusableRootTaskData } from "../page"
 import { DTO_RecUsersRequest } from "@/dtos/users-rec.page.dto"
+import { UserInfoAPIs } from "@/apis/user-info.page.api"
+import { DTO_UserInfoResponse } from "@/dtos/user-info.page.dto"
 
 export interface TaskInfo {
   deadline: string,
@@ -34,8 +36,14 @@ export interface UserSelectedTag {
   }
 }
 
+interface ChooseUserToAssignProps {
+  rootId: number
+  setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
+  setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
+  assignedUsers: Record<string, DTO_FastUserInfo>;
+}
+
 interface SearchUserToAssignProps {
-  rootId: number | undefined
   setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
   assignedUsers: Record<string, DTO_FastUserInfo>;
@@ -87,6 +95,7 @@ export function TaskCreationForm({
     deadline: "",
     startDate: "",
   })
+  const [isRootTask, setIsRootTask] = useState(!rootId);
 
   const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
@@ -138,14 +147,12 @@ export function TaskCreationForm({
 
       if (GlobalValidators.isEmpty(deadline)
         || GlobalValidators.isEmpty(startDate)
-        || formattedDeadline < new Date()
         || formattedDeadline < formattedStartDate) {
         toast.error("Check for error dates")
         return
       }
 
       if (GlobalValidators.isEmpty(trimmedDescription)
-        || GlobalValidators.isEmpty(trimmedReportFormat)
         || Object.keys(assignedUsers).length === 0
       ) {
         toast.error("Please fill all required fields correctly")
@@ -167,9 +174,9 @@ export function TaskCreationForm({
         .bdescription(trimmedDescription)
         .breportFormat(trimmedReportFormat)
 
-      const response = !rootId
+      const response = isRootTask
         ? await CreateTaskPageAPIs.createTask(request) as ApiResponse<Record<string, string>>
-        : await CreateTaskPageAPIs.createSubTask(rootId, request) as ApiResponse<Record<string, string>>
+        : await CreateTaskPageAPIs.createSubTask(rootId!, request) as ApiResponse<Record<string, string>>
 
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
@@ -179,6 +186,8 @@ export function TaskCreationForm({
     }
     createTask();
   }, [collectionId, rootId, name, startDate, deadline, description, reportFormat, level, priority, taskType, assignedUsers, formValidation, formTouched])
+
+  useEffect(() => setIsRootTask(!rootId), [rootId])
 
   useEffect(() => {
     async function initValues() {
@@ -286,7 +295,7 @@ export function TaskCreationForm({
         </fieldset>
       </div>
 
-      {!rootId && <div className="form-group-container">
+      {isRootTask && <div className="form-group-container">
         <div className="open-dialog-container">
           <button type="button" className="odc-users-rec-btn" onClick={() => setOpenUsersRecDialog(true)}>
             Recommend?
@@ -300,11 +309,16 @@ export function TaskCreationForm({
       <div className="form-group-container search-user-container">
         <fieldset className="form-group">
           <legend className="form-label">Search User</legend>
-          <SearchUserToAssign
-            rootId={rootId}
-            assignedUsers={assignedUsers}
-            setAssignedUsers={setAssignedUsers}
-            setHistories={setHistories} />
+          {isRootTask
+            ? <SearchUserToAssign
+              assignedUsers={assignedUsers}
+              setAssignedUsers={setAssignedUsers}
+              setHistories={setHistories} />
+            : <ChooseUserToAssign
+              rootId={rootId!}
+              assignedUsers={assignedUsers}
+              setAssignedUsers={setAssignedUsers}
+              setHistories={setHistories} />}
         </fieldset>
       </div>
 
@@ -348,7 +362,7 @@ export function TaskCreationForm({
 
 //export { SearchUserToAssign, AssignedUsers };
 
-function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
+function ChooseUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistories }: ChooseUserToAssignProps) {
   const searchUserRef = useRef<HTMLInputElement>(null)
   const searchedUsersRef = useRef<HTMLTableElement>(null)
   const [isSearching, setIsSearching] = useState(false)
@@ -368,9 +382,97 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
         return
       }
       const request = DTO_SearchFastUserInfo.withBuilder().bquery(value)
-      const response = !rootId
-        ? await CreateTaskPageAPIs.fastSearchUsersTask(request) as ApiResponse<DTO_FastUserInfo[]>
-        : await CreateTaskPageAPIs.fastSearchUsersTaskOfRootTask(rootId, request) as ApiResponse<DTO_FastUserInfo[]>
+      const response = await CreateTaskPageAPIs.fastSearchUsersTaskOfRootTask(rootId, request) as ApiResponse<DTO_FastUserInfo[]>
+      if (response.status !== 200) {
+        toast.error(response.msg)
+        setIsSearching(false)
+        return
+      }
+      setSearchedUsers(response.body)
+      setIsSearching(false)
+    }
+    searchUser()
+  }, [])
+
+  const onFocusSearchUser = useCallback(() => setIsOpenSearchUser(true), [])
+
+  const toggleAddRemoveAssignedUser = useCallback((user: DTO_FastUserInfo) => {
+    setAssignedUsers((prev) => {
+      setHistories(prev)
+      const key = extractEmailToGetId(user.email)
+      if (key in prev) {
+        const newData = { ...prev }
+        delete newData[key]
+        return newData
+      }
+      else
+        return { [key]: user }
+    })
+  }, [setAssignedUsers, setHistories])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchUserRef.current && !searchUserRef.current.contains(event.target as Node)
+        && searchedUsersRef.current && !searchedUsersRef.current.contains(event.target as Node)
+      ) {
+        setIsOpenSearchUser(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, []);
+
+  return <>
+    <input type="text" id="searchUser" className="form-input" placeholder="Who is in charge?" autoComplete="off"
+      ref={searchUserRef} value={searchUser}
+      onChange={onChangeSearchUser}
+      onFocus={onFocusSearchUser} />
+    <table ref={searchedUsersRef} className={`searched-users-container${isOpenSearchUser ? "" : " hidden"}`}>
+      <thead></thead>
+      <tbody className="searched-users">
+        {isSearching
+          ? <tr><td className="loading-row">Loading...</td></tr>
+          : searchedUsers.map((user, ind) => {
+            const firstNameChar = user.fullName[0].toUpperCase()
+            return <tr
+              key={"usi-" + ind}
+              className={`user-short-info${(extractEmailToGetId(user.email) in assignedUsers) ? " user-short-info-selected" : ""}`}
+              onClick={() => toggleAddRemoveAssignedUser(user)}
+            >
+              <td className="usi-ava" style={getColorByCharacter(firstNameChar)}>{firstNameChar}</td>
+              <td className="usi-full-name">{user.fullName}</td>
+              <td className="usi-email">{user.email}</td>
+              <td className="usi-dep quick-blue-tag">{user.department}</td>
+              <td className={`usi-role usi-${user.role.toLowerCase().replace("_", "-")}`}>{user.role}</td>
+            </tr>
+          })
+        }
+      </tbody>
+    </table>
+  </>
+}
+
+function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: SearchUserToAssignProps) {
+  const searchUserRef = useRef<HTMLInputElement>(null)
+  const searchedUsersRef = useRef<HTMLTableElement>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchedUsers, setSearchedUsers] = useState<DTO_FastUserInfo[]>([])
+  const [searchUser, setSearchUser] = useState("")
+  const [isOpenSearchUser, setIsOpenSearchUser] = useState(false)
+
+  const onChangeSearchUser = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    async function searchUser() {
+      setIsSearching(true)
+      const value = e.target.value
+      setSearchUser(value)
+
+      if (value.trim().length === 0) {
+        setSearchedUsers([])
+        setIsSearching(false)
+        return
+      }
+      const request = DTO_SearchFastUserInfo.withBuilder().bquery(value)
+      const response = await CreateTaskPageAPIs.fastSearchUsersTask(request) as ApiResponse<DTO_FastUserInfo[]>
       if (response.status !== 200) {
         toast.error(response.msg)
         setIsSearching(false)
@@ -408,6 +510,30 @@ function SearchUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistor
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, []);
+
+  //--Default setting task-creator is the first-assigned-person.
+  useEffect(() => {
+    async function fetchCurUser() {
+      const token = AuthHelper.getAccessTokenFromCookie();
+      if (token) {
+        const response = await UserInfoAPIs.getUserInfo() as ApiResponse<DTO_UserInfoResponse>
+        if (String(response.status)[0] === "2") {
+          const token = AuthHelper.getAccessTokenFromCookie()
+          if (!token)   return;
+
+          const decoded = AuthHelper.extractToken(token);
+          const user: DTO_FastUserInfo = {
+            email: response.body.email,
+            fullName: response.body.fullName,
+            role: decoded["SCOPES"].split(" ")[0],
+            department: response.body.department.name
+          };
+          setAssignedUsers({ [user.email]: user });
+        }
+      }
+    }
+    fetchCurUser();
   }, []);
 
   return <>

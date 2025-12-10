@@ -2,7 +2,11 @@
 export function checkOverDue(dateStr: string | undefined) {
   if (dateStr === undefined)
     return null
-  return new Date(dateStr) <= new Date() ? "late" : "working"
+  const date = new Date(dateStr);
+  const today = new Date();
+  date.setHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
+  return today < date;
 }
 
 export function prettierDate(dateStr: string | undefined): string {

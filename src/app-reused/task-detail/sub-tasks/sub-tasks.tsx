@@ -51,7 +51,7 @@ function SubTask({ subTask, rootTask }: {
     </div>
     <div className="st-info">
       <span className={`st-level tag-data task-level-${subTask.level.toLowerCase()}`}>
-        {subTask.level}
+        {GeneralTools.capitalize(subTask.level)}
       </span>
       <span className="st-type tag-data quick-blue-tag">{GeneralTools.capitalize(subTask.taskType)}</span>
       <span className={`st-priority tag-data task-priority-${subTask.priority.toLowerCase()}`}>
@@ -61,7 +61,7 @@ function SubTask({ subTask, rootTask }: {
     <div className="st-dates">
       <span className="quick-blue-tag start-date">Started at {subTask.startDate}</span>
       {subTask.endDate !== null && <span className="quick-blue-tag end-date">Ended at {subTask.endDate}</span>}
-      <span className={`st-deadline ${checkOverDue(subTask.deadline)}-date`}>Deadline {subTask.deadline}</span>
+      <span className={`st-deadline ${checkOverDue(subTask.deadline) ? 'late-date' : 'quick-blue-tag'}`}>Deadline {subTask.deadline}</span>
     </div>
   </a>
 }
