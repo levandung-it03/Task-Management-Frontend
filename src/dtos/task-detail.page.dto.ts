@@ -49,6 +49,15 @@ export class DTO_UpdateContentRequest {
   public bcontent(content: string): DTO_UpdateContentRequest { this.content = content; return this }
 }
 
+export class DTO_ReassignUserSubTask {
+  id!: number;
+  addedUserEmail!: string
+
+  public static withBuilder() { return new DTO_ReassignUserSubTask() }
+  public bid(id: number): DTO_ReassignUserSubTask { this.id = id; return this }
+  public baddedUserEmail(addedUserEmail: string): DTO_ReassignUserSubTask { this.addedUserEmail = addedUserEmail; return this }
+}
+
 export class DTO_UpdateBasicTask {
   id!: number;
   level!: string;

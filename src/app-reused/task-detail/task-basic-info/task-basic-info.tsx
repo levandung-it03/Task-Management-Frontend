@@ -11,6 +11,7 @@ import "./task-basic-info.scss"
 import { AuthHelper } from '@/util/auth.helper'
 import { DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateContentRequest } from '@/dtos/task-detail.page.dto'
 import { GeneralTools } from '@/util/general.helper'
+import ReassignUserDialog from './reassign-user-dialog/reassign-user.dialog'
 
 interface TaskBasicInfoProps {
   taskInfo: DTO_TaskDetail,
@@ -171,7 +172,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
             {isOwner && !taskInfo.endDate && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
               <Pencil className="task-header-icon" />
             </button>}
-            {!isRootTask && isOwner &&
+            {!isRootTask && isOwner && !taskInfo.endDate && !taskInfo.hasAtLeastOneReport &&
               <button className="update-info-btn" onClick={() => setOpenReassignDialog(true)}>
                 <UserRoundCog className="task-header-icon" />
               </button>}
@@ -280,6 +281,11 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
       setOpenDialog={setOpenTaskDialog}
       setAssignedUsers={setAssignedUsers}
     />}
-    {}
+    {openReassignDialog && <ReassignUserDialog
+      taskInfo={taskInfo}
+      setTaskInfo={setTaskInfo}
+      setOpenDialog={setOpenReassignDialog}
+      setAssignedUsers={setAssignedUsers}
+    />}
   </>
 }

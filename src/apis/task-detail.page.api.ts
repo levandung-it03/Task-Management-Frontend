@@ -1,4 +1,4 @@
-import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest, DTO_UpdateTaskResponse } from "@/dtos/task-detail.page.dto"
+import { DTO_LockTaskStatus, DTO_OverviewSubTask, DTO_ReassignUserSubTask, DTO_TaskDelegator, DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateContentRequest, DTO_UpdateTaskResponse } from "@/dtos/task-detail.page.dto"
 import { ApiResponse, GeneralAPIs } from "./general.api"
 import { AuthHelper } from "@/util/auth.helper"
 import axiosInstance from "@/util/axios.helper"
@@ -51,19 +51,22 @@ export class TaskDetailPageAPIs {
     }
   }
 
+  static async reassignUserSubTask(request: DTO_ReassignUserSubTask): Promise<ApiResponse<DTO_UpdateTaskResponse> | unknown> {
+    try {
+      const { id, ...restParams } = request
+      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}/sub-tasks/re-assign`;
+      const response = await axiosInstance.put(url, restParams);
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
   static async updateBasicTaskInfo(request: DTO_UpdateBasicTask): Promise<ApiResponse<DTO_UpdateTaskResponse> | unknown> {
     try {
       const { id, ...restParams } = request
-      console.log(restParams)
       const response = await axiosInstance.put(`/api/private/${AuthHelper.getRoleFromToken()}/v1/task/${id}`, restParams)
       return response.data
-      // return {
-      //   code: 11001,
-      //   msg: "Thành công",
-      //   status: 200,
-      //   body: {},
-      //   time: "12:00:20 30/06/2025"
-      // }
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

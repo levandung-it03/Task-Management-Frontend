@@ -36,7 +36,7 @@ export interface UserSelectedTag {
   }
 }
 
-interface ChooseUserToAssignProps {
+export interface ChooseUserToAssignProps {
   rootId: number
   setHistories: (snapshot: Record<string, DTO_FastUserInfo>) => void;
   setAssignedUsers: React.Dispatch<React.SetStateAction<Record<string, DTO_FastUserInfo>>>;
@@ -364,7 +364,7 @@ export function TaskCreationForm({
 
 //export { SearchUserToAssign, AssignedUsers };
 
-function ChooseUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistories }: ChooseUserToAssignProps) {
+export function ChooseUserToAssign({ rootId, assignedUsers, setAssignedUsers, setHistories }: ChooseUserToAssignProps) {
   const searchUserRef = useRef<HTMLInputElement>(null)
   const searchedUsersRef = useRef<HTMLTableElement>(null)
   const [isSearching, setIsSearching] = useState(false)
