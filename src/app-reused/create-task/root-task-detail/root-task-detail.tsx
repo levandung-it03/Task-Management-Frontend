@@ -75,8 +75,13 @@ export default function RootTaskDetail({ taskId, setRootData }: {
         setTaskInfo(response.body)
         setIsLoading(false)
         setRootData({
+          level: response.body.level,
+          priority: response.body.priority,
+          taskType: response.body.taskType,
           description: response.body.description,
-          reportFormat: response.body.reportFormat
+          reportFormat: response.body.reportFormat,
+          startDate: response.body.startDate,
+          deadline: response.body.deadline
         })
       }
     }

@@ -51,7 +51,6 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     priority: "",
     startDate: "",
     isLocked: false,
-    locked: false,
     endDate: null,
     deadline: "",
     createdTime: "",
@@ -275,26 +274,22 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
   ), [onClickApproveReport])
 
   const ButtonsWhenNotUpdating = useCallback(() => {
-    if (isReportOwner)
-      return <>
-        {isTaskOwner && reportInfo.report.reviewedTime === null && <ButtonWhenSuperiorSeeing />}
-        <button
-          className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
-          onClick={() => setIsUpdating(true)}
-          disabled={!canUpdated}
-        >
-          <Pencil className="report-btn-icon" />Update Report
-        </button>
-      </>
-
-    if (canReviewReport && reportInfo.report.reviewedTime === null)
-      return <ButtonWhenSuperiorSeeing />
-
     if (reportInfo.report.reviewedTime !== null)
       return <button className="disabled-btn reviewed-btn" disabled>
         <CircleCheckBig className="reviewed-icon" />
         Reviewed
       </button>
+      
+    return <>
+      {canReviewReport && <ButtonWhenSuperiorSeeing />}
+      {isReportOwner && <button
+          className={`report-btn ${canUpdated ? "" : "report-btn-disabled"}`}
+          onClick={() => setIsUpdating(true)}
+          disabled={!canUpdated}
+        >
+          <Pencil className="report-btn-icon" />Update Report
+        </button>}
+    </>
   }, [canReviewReport, isReportOwner, canUpdated, isTaskOwner])
 
   useEffect(() => setReport(reportInfo.report.content), [reportInfo.report.content])

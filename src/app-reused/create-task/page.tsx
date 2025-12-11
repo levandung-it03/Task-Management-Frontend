@@ -10,8 +10,14 @@ import GlobalValidators from "@/util/global.validators"
 import UsersRecDialog from "./users-rec-dialog/users-rec.dialog"
 import { DTO_RecUsersRequest } from "@/dtos/users-rec.page.dto"
 import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto"
+import { GeneralTools } from "@/util/general.helper"
 
 export interface ReusableRootTaskData {
+  startDate: string
+  deadline: string
+  level: string
+  priority: string
+  taskType: string
   description: string
   reportFormat: string
 }
@@ -31,6 +37,11 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
   const [assignedUsersHist, setAssignedUsersHist] = useState<Record<string, DTO_FastUserInfo>>({})
   const [canUndo, setCanUndo] = useState(true)
   const [rootData, setRootData] = useState<ReusableRootTaskData>({
+    level: "",
+    priority: "",
+    taskType: "",
+    startDate: GeneralTools.formatedDateToDateInput(new Date().toDateString()),
+    deadline: GeneralTools.formatedDateToDateInput(new Date().toDateString()),
     description: "",
     reportFormat: ""
   })

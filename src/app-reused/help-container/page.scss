@@ -18,12 +18,13 @@
     position: absolute;
     display: none;
     top: 100%;
-    width: auto;
+    width: 250px;
     white-space: nowrap;
     padding: 5px 10px;
     background-color: var(--background);
     box-shadow: var(--instruct-box-shadow);
     color: var(--main-text-grey);
+    white-space: normal;
   }
 
   .dc-help-icon:hover+.dc-help-container {

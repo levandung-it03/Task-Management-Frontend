@@ -38,7 +38,6 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     priority: "",
     startDate: "",
     isLocked: false,
-    locked: false,
     endDate: null,
     deadline: "",
     createdTime: "",
@@ -99,7 +98,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
         isRootTask={isRootTask}
         assignedUsers={assignedUsers}
         setAssignedUsers={setAssignedUsers} />
-      {isOwner && <TaskDetailInteractBtns taskInfo={taskInfo} />}
+      {isOwner && <TaskDetailInteractBtns taskInfo={taskInfo} setTaskInfo={setTaskInfo} />}
     </div>
   )
 }

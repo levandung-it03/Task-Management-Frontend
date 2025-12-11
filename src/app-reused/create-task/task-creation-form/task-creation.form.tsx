@@ -194,7 +194,7 @@ export function TaskCreationForm({
       const levelsResponse = await GeneralAPIs.getTaskLevelEnums() as ApiResponse<Record<string, number>[]>
       if (String(levelsResponse.status)[0] === "2") {
         const levelDefVal = Object.entries(levelsResponse.body[0])[0][0];
-        setLevel(levelDefVal)
+        setLevel(!rootData.level ? levelDefVal : rootData.level)
         setLevels(levelsResponse.body.map((levelEntry: Record<string, number>) => {
           const levelEntries = Object.entries(levelEntry)[0]
           return {
@@ -205,16 +205,18 @@ export function TaskCreationForm({
       }
       const prioritiesResponse = await GeneralAPIs.getTaskPriorityEnums() as ApiResponse<string[]>
       if (String(prioritiesResponse.status)[0] === "2") {
-        setPriority(prioritiesResponse.body[0])
+        setPriority(!rootData.priority ? prioritiesResponse.body[0] : rootData.priority)
         setPriorityList(prioritiesResponse.body)
         setRecRequest(prev => ({ ...prev, priority: prioritiesResponse.body[0] }))
       }
       const taskTypesResponse = await GeneralAPIs.getTaskTypeEnums() as ApiResponse<string[]>
       if (String(taskTypesResponse.status)[0] === "2") {
-        setTaskType(taskTypesResponse.body[0])
+        setTaskType(!rootData.taskType ? taskTypesResponse.body[0] : rootData.taskType)
         setTaskTypeList(taskTypesResponse.body)
         setRecRequest(prev => ({ ...prev, domain: taskTypesResponse.body[0] }))
       }
+      setStartDate(rootData.startDate)
+      setDeadline(rootData.deadline)
       setDescription(rootData.description)
       setReportFormat(rootData.reportFormat)
     }
