@@ -58,7 +58,10 @@ export default function TaskDetailInteractBtns({ taskInfo, setTaskInfo }: TaskDe
 
   const onClickDeleteTask = useCallback(() => {
     async function deleteTask() {
-      if (!await confirm("This change cannot be undone. Are you sure?", "Change Task Status"))
+      const confirmMsg = !taskInfo.rootTaskId
+        ? "This change cannot be undone. Are you sure?"
+        : "This change cannot be undone. Assigned User will turn back to Task. Are you sure?"
+      if (!await confirm(confirmMsg, "Delete Task"))
         return
       const response = await TaskDetailPageAPIs.deleteTask(taskInfo.id) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {

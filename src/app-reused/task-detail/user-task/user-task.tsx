@@ -98,12 +98,13 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
         return
 
       setIsLoading(false)
-      setIsTaskOwner(emailRes.body.email === taskInfo.userInfo.email);
+      const isOwner = emailRes.body.email === taskInfo.userInfo.email;
+      setIsTaskOwner(isOwner);
       const isAssignedUser = assignedRes.body.result
 
       //--Just "Task-Owner", "Assigned-User" and "Project-Owner" can see this page.
       setIsReportOwner(isAssignedUser)
-      setCanReviewReport(isTaskOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
+      setCanReviewReport(isOwner) //--Is the Task Creater (PM, LEAD not own this Task cannot Review them)
 
       setReportComments(response.body)
       const reportsLength = response.body.length;
@@ -279,7 +280,7 @@ function ReportFrame({ reportInd, reportInfo, isReportOwner, canReviewReport, se
         <CircleCheckBig className="reviewed-icon" />
         Reviewed
       </button>
-      
+    
     return <>
       {canReviewReport && <ButtonWhenSuperiorSeeing />}
       {isReportOwner && <button

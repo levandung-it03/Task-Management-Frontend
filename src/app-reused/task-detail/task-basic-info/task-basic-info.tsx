@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/apis/general.api'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import HelpContainer from '@/app-reused/help-container/page'
-import { CirclePlus, ClipboardList, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
+import { CirclePlus, ClipboardList, Eye, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { checkOverDue, prettierDate, prettierTime } from '../task-detail.service'
@@ -168,7 +168,9 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
               </button>
             */}
             {isOwner && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
-              <Pencil className="task-header-icon" />
+              {taskInfo.hasAtLeastOneReport
+                ? <Eye className="task-header-icon eye-icon" />
+                : <Pencil className="task-header-icon" />}
             </button>}
           </div>
         </div>
