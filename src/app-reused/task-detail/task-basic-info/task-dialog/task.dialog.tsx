@@ -9,7 +9,7 @@ import { GeneralTools } from "@/util/general.helper";
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api";
 import toast from "react-hot-toast";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
-import { DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask } from "@/dtos/task-detail.page.dto";
+import { DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateTaskResponse } from "@/dtos/task-detail.page.dto";
 import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto";
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
 import { AuthHelper } from "@/util/auth.helper";
@@ -170,16 +170,17 @@ export default function TaskDialog({
   useEffect(() => setStartDate(taskInfo.startDate), [taskInfo.startDate])
 
   return <div className="task-dialog">
-      <div ref={overlayRef} className="dialog-overlay"></div>
-      <div className="dialog-container">
-        <div className="dialog-header">
-          <div className="dialog-header-content">
-            <ClipboardList className="dhc-icon" />
-            <span className="dhc-title">Basic Information</span>
-          </div>
-          <X className="close-dialog-btn" onClick={() => setOpenDialog(false)} />
+    <div ref={overlayRef} className="dialog-overlay"></div>
+    <div className="dialog-container">
+      <div className="dialog-header">
+        <div className="dialog-header-content">
+          <ClipboardList className="dhc-icon" />
+          <span className="dhc-title">Basic Information</span>
         </div>
-        <div className="input-container">
+        <X className="close-dialog-btn" onClick={() => setOpenDialog(false)} />
+      </div>
+      <div className="input-container">
+        {isUpdatable && <>
           <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
               <legend className="form-label">Start Date</legend>
@@ -187,15 +188,6 @@ export default function TaskDialog({
                 value={startDate} onChange={onChangeStartDate} readOnly={!isUpdatable} />
             </fieldset>
             {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
-          </div>
-
-          <div className="form-group-container half-form-right-container">
-            <fieldset className="form-group">
-              <legend className="form-label">Deadline</legend>
-              <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
-                value={deadline} onChange={onChangeDeadline} readOnly={!isUpdatable} />
-            </fieldset>
-            {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
           </div>
 
           <div className="form-group-container half-form-left-container">
@@ -230,38 +222,46 @@ export default function TaskDialog({
               </select>
             </fieldset>
           </div>
+        </>}
 
-          {isUpdatable && <>
-            {isRootTask && <>
-              <div className="form-group-container search-user-container">
-                <fieldset className="form-group">
-                  <legend className="form-label">Search User</legend>
-                  <SearchUserToAdd
-                    rootId={taskInfo.rootTaskId}
-                    mainId={taskInfo.id}
-                    addedUsers={addedUsers}
-                    setAddedUsers={setAddedUsers}
-                    setFormTouched={setFormTouched} />
-                </fieldset>
-              </div>
+          <div className="form-group-container half-form-right-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Deadline</legend>
+              <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
+                value={deadline} onChange={onChangeDeadline} readOnly={!isUpdatable} />
+            </fieldset>
+            {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
+          </div>
 
-              <div className="form-group-container added-for-container">
-                <fieldset className="form-group">
-                  <legend className="form-label">Added Users</legend>
-                  <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
-                </fieldset>
-              </div>
-            </>}
+        {isRootTask && <>
+          <div className="form-group-container search-user-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Search User</legend>
+              <SearchUserToAdd
+                rootId={taskInfo.rootTaskId}
+                mainId={taskInfo.id}
+                addedUsers={addedUsers}
+                setAddedUsers={setAddedUsers}
+                setFormTouched={setFormTouched} />
+            </fieldset>
+          </div>
 
-            <div className="update-btn-container">
-              <button className="update-content-btn" onClick={onSubmitUpdateContent} type="button">
-                Submit Update
-              </button>
-            </div>
-          </>}
+          <div className="form-group-container added-for-container">
+            <fieldset className="form-group">
+              <legend className="form-label">Added Users</legend>
+              <AddedUser addedUsers={addedUsers} setAddedUsers={setAddedUsers} />
+            </fieldset>
+          </div>
+        </>}
+
+        <div className="update-btn-container">
+          <button className="update-content-btn" onClick={onSubmitUpdateContent} type="button">
+            Submit Update
+          </button>
         </div>
       </div>
     </div>
+  </div>
 }
 
 function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers, setFormTouched }: {

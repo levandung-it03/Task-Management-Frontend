@@ -167,10 +167,8 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
                 Report
               </button>
             */}
-            {isOwner && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
-              {taskInfo.hasAtLeastOneReport
-                ? <Eye className="task-header-icon eye-icon" />
-                : <Pencil className="task-header-icon" />}
+            {isOwner && !!taskInfo.endDate && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
+              <Pencil className="task-header-icon" />
             </button>}
           </div>
         </div>
