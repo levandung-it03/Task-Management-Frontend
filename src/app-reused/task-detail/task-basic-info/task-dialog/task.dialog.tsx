@@ -185,7 +185,7 @@ export default function TaskDialog({
             <fieldset className="form-group">
               <legend className="form-label">Start Date</legend>
               <input type="date" id="startDate" className="form-input" placeholder="Type Start Date" required
-                value={startDate} onChange={onChangeStartDate} readOnly={!isUpdatable} />
+                value={startDate} onChange={onChangeStartDate} />
             </fieldset>
             {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
           </div>
@@ -193,7 +193,7 @@ export default function TaskDialog({
           <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
               <legend className="form-label">Level</legend>
-              <select id="level" className="form-select" value={level} onChange={onChangeLevel} disabled={!isUpdatable}>
+              <select id="level" className="form-select" value={level} onChange={onChangeLevel}>
                 {levelList.map((level, ind) =>
                   <option key={"tdl-" + ind} value={level}>{GeneralTools.convertEnum(level)}</option>
                 )}
@@ -204,7 +204,7 @@ export default function TaskDialog({
           <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Priority</legend>
-              <select id="priority" className="form-select" value={priority} onChange={onChangePriority} disabled={!isUpdatable}>
+              <select id="priority" className="form-select" value={priority} onChange={onChangePriority}>
                 {priorityList.map((priority, ind) =>
                   <option key={"tdp-" + ind} value={priority}>{GeneralTools.convertEnum(priority)}</option>
                 )}
@@ -215,7 +215,7 @@ export default function TaskDialog({
           <div className="form-group-container">
             <fieldset className="form-group">
               <legend className="form-label">Task Type</legend>
-              <select id="task-type" className="form-select" value={taskType} onChange={onChangeTaskType} disabled={!isUpdatable}>
+              <select id="task-type" className="form-select" value={taskType} onChange={onChangeTaskType}>
                 {taskTypeList.map((taskType, ind) =>
                   <option key={"tdt-" + ind} value={taskType}>{GeneralTools.convertEnum(taskType)}</option>
                 )}
@@ -224,14 +224,14 @@ export default function TaskDialog({
           </div>
         </>}
 
-          <div className="form-group-container half-form-right-container">
-            <fieldset className="form-group">
-              <legend className="form-label">Deadline</legend>
-              <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
-                value={deadline} onChange={onChangeDeadline} readOnly={!isUpdatable} />
-            </fieldset>
-            {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
-          </div>
+        <div className="form-group-container half-form-right-container">
+          <fieldset className="form-group">
+            <legend className="form-label">Deadline</legend>
+            <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
+              value={deadline} onChange={onChangeDeadline} />
+          </fieldset>
+          {GlobalValidators.notEmpty(formValidation.deadline) && <span className="input-err-msg">{formValidation.deadline}</span>}
+        </div>
 
         {isRootTask && <>
           <div className="form-group-container search-user-container">

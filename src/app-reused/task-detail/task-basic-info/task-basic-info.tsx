@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/apis/general.api'
 import { TaskDetailPageAPIs } from '@/apis/task-detail.page.api'
 import HelpContainer from '@/app-reused/help-container/page'
-import { CirclePlus, ClipboardList, Eye, LetterText, Pencil, ScrollText, SquareChevronRight } from 'lucide-react'
+import { CirclePlus, ClipboardList, Eye, LetterText, Pencil, ScrollText, SquareChevronRight, UserRoundCog } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
 import { checkOverDue, prettierDate, prettierTime } from '../task-detail.service'
@@ -39,6 +39,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
   const [isOwner, setIsOwner] = useState(false)
   const [openTextDialog, setOpenTextDialog] = useState(false)
   const [openTaskDialog, setOpenTaskDialog] = useState(false)
+  const [openReassignDialog, setOpenReassignDialog] = useState(false)
   const [dialogTitle, setDialogTitle] = useState("")
   const [dialogContent, setDialogContent] = useState("")
   const [onSubmitUpdateContent, setOnSubmitUpdateContent] = useState<
@@ -167,9 +168,13 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
                 Report
               </button>
             */}
-            {isOwner && !!taskInfo.endDate && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
+            {isOwner && !taskInfo.endDate && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
               <Pencil className="task-header-icon" />
             </button>}
+            {!isRootTask && isOwner &&
+              <button className="update-info-btn" onClick={() => setOpenReassignDialog(true)}>
+                <UserRoundCog className="task-header-icon" />
+              </button>}
           </div>
         </div>
         <div className="task-info-left">
@@ -275,5 +280,6 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
       setOpenDialog={setOpenTaskDialog}
       setAssignedUsers={setAssignedUsers}
     />}
+    {}
   </>
 }
