@@ -71,9 +71,9 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, is
           </div>
         </div>
       </div>
-      <ul className="assigned-users">
+      <div className="assigned-users">
         {isLoading
-          ? <li className="loading-row">Loading...</li>
+          ? <span className="loading-row">Loading...</span>
           : assignedUsers.map((user, ind) => 
             <UserTag
               key={"usi-" + ind}
@@ -84,7 +84,7 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, is
               isRootTask={isRootTask} />
             )
         }
-      </ul>
+      </div>
     </>)
 }
 
@@ -176,11 +176,10 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
       : <button className="usi-tag kick-user-btn" onClick={onClickKickUser}>
         <LogOut className="usgb-icon" />Kick
       </button>)}
-    {isRootTask
-      && isTaskOwner
-      && userTask.totalReports === 0
-      && <button className="usi-tag kick-user-btn" onClick={onClickRemoveUser}>
+    {isRootTask && isTaskOwner && userTask.totalReports === 0
+      ? <button className="usi-tag kick-user-btn" onClick={onClickRemoveUser}>
       <Trash2 className="usgb-icon" />Remove
-    </button>}
+    </button>
+      : <span style={{ width:'105px'}}></span>}
   </a>
 }
