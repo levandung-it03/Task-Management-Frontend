@@ -107,9 +107,7 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
 
       setReportComments(response.body)
       const reportsLength = response.body.length;
-      if (reportsLength > 0) {
-        setCanCreateReport(response.body[reportsLength - 1].report.reportStatus === 'REJECTED');
-      }
+      setCanCreateReport(reportsLength === 0 || response.body[reportsLength - 1].report.reportStatus === 'REJECTED');
     }
     fetchReports()
   }, [userTaskId, taskInfo.userInfo.email])

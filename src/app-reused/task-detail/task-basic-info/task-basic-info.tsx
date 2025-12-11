@@ -268,13 +268,12 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
       setOpenDialog={setOpenTextDialog}
       isUpdatabale={isUpdatable}
     />
-    <TaskDialog
+    {openTaskDialog && <TaskDialog
       isRootTask={isRootTask}
       taskInfo={taskInfo}
       setTaskInfo={setTaskInfo}
-      openDialog={openTaskDialog}
       setOpenDialog={setOpenTaskDialog}
       setAssignedUsers={setAssignedUsers}
-    />
+    />}
   </>
 }

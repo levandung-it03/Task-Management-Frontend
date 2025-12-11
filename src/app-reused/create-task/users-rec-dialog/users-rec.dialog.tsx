@@ -100,8 +100,13 @@ export default function UsersRecDialog({
             setRecUsers(response.body);
             return response.msg;
           }
+          if (response.status === 204) {
+            setRecUsers(response.body);
+            throw new Error(response.msg);
+          }
           throw new Error();
         },
+        error: (err) => err.message || "Error happened",
       }
     );
   }, [recRequest, usersQty, maxUsersQty, authEnum]);

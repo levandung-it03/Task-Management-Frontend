@@ -24,7 +24,7 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, is
     , [assignedUsers])
   const totalUsersKickedOut = useMemo(() =>
     assignedUsers.reduce((acc, user) => user.userTaskStatus === "KICKED_OUT" ? acc + 1 : acc, 0)
-    , [])
+    , [assignedUsers])
 
   useEffect(() => {
     async function fetchAssignedUsers() {
@@ -107,6 +107,12 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setUserKicked(false)
+        setAssignedUsers(prev => [...prev.map(u => {
+          if (u.id === userTask.id) {
+            u.userTaskStatus = "JOINED";
+          }
+          return u;
+        })])
         return
       }
     }
@@ -136,6 +142,12 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
       const response = await TaskDetailPageAPIs.kickUserOfTask(userTask.id) as ApiResponse<void>
       if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
+        setAssignedUsers(prev => [...prev.map(u => {
+          if (u.id === userTask.id) {
+            u.userTaskStatus = "KICKED_OUT";
+          }
+          return u;
+        })])
         setUserKicked(true)
         return
       }

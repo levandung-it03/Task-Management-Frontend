@@ -58,7 +58,7 @@ export default function TaskDetailInteractBtns({ taskInfo }: { taskInfo: DTO_Tas
     deleteTask()
   }, [taskInfo.id])
 
-  useEffect(() => setLocked(taskInfo.isLocked), [taskInfo.isLocked])
+  useEffect(() => setLocked(taskInfo.locked), [taskInfo.locked])
 
   return <div className="task-status-container">
     <div className="small-caption">

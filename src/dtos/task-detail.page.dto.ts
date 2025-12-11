@@ -14,6 +14,7 @@ export interface DTO_TaskDetail {
   reportFormat: string;
   level: string;
   taskType: string;
+  locked: boolean;
   isLocked: boolean;
   priority: string;
   startDate: string;

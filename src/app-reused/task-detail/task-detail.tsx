@@ -38,6 +38,7 @@ export default function TaskDetail({ taskId }: { taskId: number }) {
     priority: "",
     startDate: "",
     isLocked: false,
+    locked: false,
     endDate: null,
     deadline: "",
     createdTime: "",

@@ -11,6 +11,16 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json"
   },
+  transformResponse: [
+    function (data) {
+      // GIỮ NGUYÊN JSON, KHÔNG modify field
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    }
+  ]
 });
 
 axiosInstance.interceptors.request.use(

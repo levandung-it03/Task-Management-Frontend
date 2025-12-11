@@ -16,7 +16,6 @@ import { AuthHelper } from "@/util/auth.helper";
 
 interface TaskDialogProps {
   isRootTask: boolean;
-  openDialog: boolean;
   setOpenDialog: React.Dispatch<React.SetStateAction<boolean>>;
   taskInfo: DTO_TaskDetail;
   setTaskInfo: React.Dispatch<React.SetStateAction<DTO_TaskDetail>>;
@@ -27,7 +26,6 @@ export default function TaskDialog({
   isRootTask,
   taskInfo,
   setTaskInfo,
-  openDialog,
   setOpenDialog,
   setAssignedUsers
 }: TaskDialogProps) {
@@ -114,10 +112,12 @@ export default function TaskDialog({
           deadline: deadline,
           startDate: startDate
         }))
-        setAssignedUsers(prev => [
-          ...prev,
-          ...response.body.newUsers
-        ])
+        if (response.body.newUsers) {
+          setAssignedUsers(prev => [
+            ...prev,
+            ...response.body.newUsers
+          ])
+        }
       }
       setOpenDialog(false)
     }
@@ -169,8 +169,7 @@ export default function TaskDialog({
   useEffect(() => setDeadline(taskInfo.deadline), [taskInfo.deadline])
   useEffect(() => setStartDate(taskInfo.startDate), [taskInfo.startDate])
 
-  return openDialog
-    ? <div className="task-dialog">
+  return <div className="task-dialog">
       <div ref={overlayRef} className="dialog-overlay"></div>
       <div className="dialog-container">
         <div className="dialog-header">
@@ -263,7 +262,6 @@ export default function TaskDialog({
         </div>
       </div>
     </div>
-    : <></>
 }
 
 function SearchUserToAdd({ rootId, mainId, addedUsers, setAddedUsers, setFormTouched }: {

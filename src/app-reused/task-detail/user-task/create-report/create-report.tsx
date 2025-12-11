@@ -15,6 +15,8 @@ import { DTO_IdResponse } from "@/dtos/general.dto";
 import toast from "react-hot-toast";
 import { GeneralTools } from "@/util/general.helper";
 import { IndexDBHelper } from "@/util/indexdb.helper";
+import { UserInfoAPIs } from "@/apis/user-info.page.api";
+import { DTO_UserInfoResponse } from "@/dtos/user-info.page.dto";
 
 export interface CreateReportFormProps {
   userTaskId: number;
@@ -80,14 +82,21 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
   }, [])
 
   useEffect(() => {
-    // setFormat(taskInfo.reportFormat)
+    async function initWithFetchingUser() {
+      // setFormat(taskInfo.reportFormat)
 
-    const lastReportIdx = reportComments.length - 1;
-    if (lastReportIdx !== -1)
-      setReport(reportComments[lastReportIdx].report.content);
+      const lastReportIdx = reportComments.length - 1;
+      if (lastReportIdx !== -1)
+        setReport(reportComments[lastReportIdx].report.content);
 
-    setTitle(`Report for ${taskInfo.name} by ${taskInfo.userInfo.fullName}`);
-    setFormTouched(true);
+      
+      const response = await UserInfoAPIs.getUserInfo() as ApiResponse<DTO_UserInfoResponse>
+      if (String(response.status)[0] === "2") {
+        setTitle(`Report for ${taskInfo.name} by ${response.body.fullName}`);
+      }
+      setFormTouched(true);
+    }
+    initWithFetchingUser();
   }, [reportComments])
 
   useEffect(() => {
