@@ -21,7 +21,9 @@ export default function CreateTask({ rootId, collectionId }: { collectionId: num
     domain: "",
     level: "",
     priority: "",
-    numOfEmp: 0
+    numOfEmp: 0,
+    authority: "",
+    groupId: 0
   })
   const [openGrDialog, setOpenGrDialog] = useState(false)
   const [openUsersRecDialog, setOpenUsersRecDialog] = useState(false)

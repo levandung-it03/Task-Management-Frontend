@@ -90,6 +90,7 @@ export default function UsersRecDialog({
 
     recRequest.numOfEmp = usersQty;
     recRequest.authority = authEnum;
+    recRequest.groupId = group;
     const promise = UsersRecAPIs.recommendUsers(recRequest) as Promise<ApiResponse<DTO_RecUserInfo[]>>
     toast.promise(
       promise,
@@ -119,7 +120,6 @@ export default function UsersRecDialog({
       }
       const maxUsersRes = await UsersRecAPIs.getMaxUsersInDomain() as ApiResponse<DTO_MaxUsersResponse>
       if (String(maxUsersRes.status)[0] === "2") {
-        console.log(maxUsersRes)
         setMaxUsersQty(maxUsersRes.body.maxQuantity);
       }
       const authEnumsRes = await GeneralAPIs.getAuthorityEnums() as ApiResponse<string[]>
@@ -193,21 +193,7 @@ export default function UsersRecDialog({
                 </select>
               </fieldset>
             </div>
-            <div className="rec-btn-container fit-form-container">
-              <button id="rec-btn" className="rec-btn" onClick={onClickRecommendUser}>
-                Recommend
-                <ArrowDown className="rec-icon" />
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="users-rec-container-body">
-          <div className="urcb-header">
-            <div className="urdb-title">
-              <Users className="urcb-title-icon" />
-              <span className="urcb-title-text">Recommended Users</span>
-            </div>
-            <div className="form-group-container half-form-right-container">
+            <div className="form-group-container fit-form-container">
               <fieldset className="form-group">
                 <legend className="form-label">
                   <HelpContainer
@@ -221,6 +207,20 @@ export default function UsersRecDialog({
                   </option>)}
                 </select>
               </fieldset>
+            </div>
+            <div className="rec-btn-container">
+              <button id="rec-btn" className="rec-btn" onClick={onClickRecommendUser}>
+                Recommend
+                <ArrowDown className="rec-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="users-rec-container-body">
+          <div className="urcb-header">
+            <div className="urdb-title">
+              <Users className="urcb-title-icon" />
+              <span className="urcb-title-text">Recommended Users</span>
             </div>
           </div>
           <table className="rec-users-result">
@@ -239,7 +239,6 @@ export default function UsersRecDialog({
                     </td>
                   </tr>
                   : recUsers!
-                    .filter(user => group === -1 || user.groupIds.some(id => id === group))
                     .map((user, ind) => {
                       const firstNameChar = user.fullName[0].toUpperCase()
                       const id = extractEmailToGetId(user.email);

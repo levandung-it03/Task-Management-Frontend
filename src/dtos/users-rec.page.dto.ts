@@ -5,6 +5,7 @@ export interface DTO_RecUsersRequest {
   priority: string
   domain: string
   authority: string
+  groupId: number
 }
 
 export interface DTO_MaxUsersResponse {
@@ -17,5 +18,4 @@ export class DTO_RecUserInfo {
   role!: string;
   department!: string;
   score!: number
-  groupIds!: number[];
 }
