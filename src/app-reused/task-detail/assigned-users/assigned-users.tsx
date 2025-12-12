@@ -132,7 +132,7 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
       }
     }
     kickUser()
-  }, [])
+  }, [userTask.id])
 
   const onClickKickUser = useCallback((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     async function kickUser() {

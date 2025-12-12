@@ -15,9 +15,6 @@ export default function TaskListList({ taskLists }: TaskListListProps) {
   const [filterValue, setFilterValue] = useState("ALL");
   const [sortValue, setSortValue] = useState("NONE");
 
-  // ───────────────────────────────────────────────
-  // PROCESS LIST (FILTER + SORT)
-  // ───────────────────────────────────────────────
   const processedList = useMemo(() => {
     let list = [...validTaskLists];
 
