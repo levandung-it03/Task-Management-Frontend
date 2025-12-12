@@ -13,6 +13,7 @@ import { DTO_TaskDetail, DTO_TaskUser, DTO_UpdateBasicTask, DTO_UpdateTaskRespon
 import { DTO_FastUserInfo } from "@/dtos/create-task.page.dto";
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form";
 import { AuthHelper } from "@/util/auth.helper";
+import { prettierTime } from "../../task-detail.service";
 
 interface TaskDialogProps {
   isRootTask: boolean;
@@ -98,8 +99,8 @@ export default function TaskDialog({
         .bpriority(priority)
         .blevel(level)
         .btaskType(taskType)
-        .bdeadline(deadline)
-        .bstartDate(startDate)
+        .bdeadline(deadline === taskInfo.deadline ? null : deadline)
+        .bstartDate(startDate === taskInfo.startDate ? null : startDate)
         .baddedUserEmail(GlobalValidators.notEmpty(addedUsers) ? Object.values(addedUsers)[0].email : "")
       const response = await TaskDetailPageAPIs.updateBasicTaskInfo(request) as ApiResponse<DTO_UpdateTaskResponse>
       if (String(response.status).startsWith("2")) {
@@ -110,7 +111,8 @@ export default function TaskDialog({
           level: level,
           taskType: taskType,
           deadline: deadline,
-          startDate: startDate
+          startDate: startDate,
+          updatedTime: prettierTime(new Date().toISOString())
         }))
         if (response.body.newUsers) {
           setAssignedUsers(prev => [
@@ -190,7 +192,7 @@ export default function TaskDialog({
             {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
           </div>
 
-          <div className="form-group-container half-form-left-container">
+          <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Level</legend>
               <select id="level" className="form-select" value={level} onChange={onChangeLevel}>
@@ -201,7 +203,7 @@ export default function TaskDialog({
             </fieldset>
           </div>
 
-          <div className="form-group-container half-form-right-container">
+          <div className="form-group-container half-form-left-container">
             <fieldset className="form-group">
               <legend className="form-label">Priority</legend>
               <select id="priority" className="form-select" value={priority} onChange={onChangePriority}>
@@ -212,7 +214,7 @@ export default function TaskDialog({
             </fieldset>
           </div>
 
-          <div className="form-group-container">
+          <div className="form-group-container half-form-right-container">
             <fieldset className="form-group">
               <legend className="form-label">Task Type</legend>
               <select id="task-type" className="form-select" value={taskType} onChange={onChangeTaskType}>
@@ -224,7 +226,7 @@ export default function TaskDialog({
           </div>
         </>}
 
-        <div className="form-group-container half-form-right-container">
+        <div className="form-group-container">
           <fieldset className="form-group">
             <legend className="form-label">Deadline</legend>
             <input type="date" id="deadline" className="form-input" placeholder="Type Deadline" required
