@@ -50,9 +50,11 @@ export default function TaskListDetail({ collectionId }: TaskListDetailProps) {
     if (name.length === 0) {
       setTasks(cachedTasks)
     } else {
-      setTasks(prev => {
-        return [...prev.filter(collection => collection.name.toUpperCase().includes(name.toUpperCase()))]
-      })
+      setTasks(
+        cachedTasks.filter(item =>
+          item.name.toUpperCase().includes(name.toUpperCase())
+        )
+      );
     }
   }, [name, cachedTasks])
 

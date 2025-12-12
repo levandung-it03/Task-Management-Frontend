@@ -71,6 +71,16 @@ body.dark {
   }
 }
 
+.un-done-tag {
+  background-color: var(--role-admin-bg);
+  color: var(--role-admin-border) !important;
+}
+
+.done-tag {
+  background-color: var(--main-green);
+  color: #fff !important;
+}
+
 .task-level-hard,
 .task-priority-urgent {
   background-color: var(--role-admin-bg);

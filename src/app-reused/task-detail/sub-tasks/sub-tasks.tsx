@@ -57,6 +57,9 @@ function SubTask({ subTask, rootTask }: {
       <span className={`st-priority tag-data task-priority-${subTask.priority.toLowerCase()}`}>
         {GeneralTools.capitalize(subTask.priority)}
       </span>
+      <span className={`st-type tag-data ${subTask.endDate == null ? "un-done-tag" : "done-tag"}`}>
+        {subTask.endDate == null ? "Un-done" : "Done"}
+      </span>
     </div>
     <div className="st-dates">
       <span className="quick-blue-tag start-date">Started at {subTask.startDate}</span>

@@ -1,147 +1,201 @@
+/* ======================
+    WRAPPER
+====================== */
 .task-list-list {
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 9px;
+}
 
-  .task-list-item {
-    position: relative;
-    background: linear-gradient(110deg, #e6f4ec 0%, #b2dbc7 30%, #5ac8a1 50%, #b2dbc7 70%, #e6f4ec 100%);
-    border: 1px solid var(--main-green);
-    border-radius: 16px;
-    padding: 15px 32px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    transition: all 0.3s ease;
+/* ======================
+    FILTER + SORT BAR
+====================== */
+.task-list-controls {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+  width: 100%;
 
-    &.disabled {
-      background: linear-gradient(110deg, #f5f5f5 0%, #e0e0e0 30%, #cccccc 50%, #e0e0e0 70%, #f5f5f5 100%);
-      border-color: #ccc;
-      opacity: 0.6;
-    }
-
-    .task-list-info {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-
-      .task-list-content {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-    }
-
-    .task-list-name {
-      font-weight: 700;
-      font-size: 22px;
-      color: var(--main-green);
-      cursor: pointer;
-      transition: color 0.2s;
-
-      &:hover {
-        color: #0f5132;
-      }
-
-      .disabled-label {
-        font-size: 14px;
-        color: #888;
-        margin-left: 8px;
-        font-style: italic;
-      }
-    }
-
-    .task-list-subtitle {
-      font-size: 14px;
-      color: #6b7280;
-      font-style: italic;
-    }
-
-    .task-list-tags {
-      display: grid;
-      grid-template-columns: 80px 100px 80px;
-      gap: 8px;
-      align-items: center;
-      min-width: 268px; // 80 + 100 + 80 + 8*2
-
-      .task-tag {
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-        text-align: center;
-        min-height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .level-tag {
-        grid-column: 1;
-      }
-
-      .type-tag {
-        grid-column: 2;
-      }
-
-      .priority-tag {
-        grid-column: 3;
-      }
-    }
-
-    .task-list-dates {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-width: 180px;
-      text-align: right;
-
-      .start-date {
-        .date-label {
-          background-color: var(--blue-in-env);
-          color: white;
-          padding: 4px 8px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 600;
-        }
-      }
-
-      .task-list-deadline {
-        font-size: 16px;
-        color: var(--main-green);
-        font-weight: 500;
-
-        .deadline-value {
-          font-weight: 700;
-          color: #d32f2f;
-        }
-      }
-    }
-
-    .delete-btn {
-      background: transparent;
-      color: #dc2626;
-      border: none;
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 8px;
-      transition: all 0.2s;
-
-      &:hover:not(:disabled) {
-        background: rgba(220, 38, 38, 0.1);
-      }
-
-      &:disabled {
-        color: #ccc;
-        cursor: not-allowed;
-      }
-    }
+  /* Select control */
+  .task-list-controls select {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 15px;
+    background: var(--background);
+    color: var(--foreground);
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    transition: 0.2s ease;
   }
-} 
+
+  .task-select {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 15px;
+    background: var(--background);
+    color: var(--foreground);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    border: 1px solid var(--main-green);
+  }
+
+  select:hover,
+  .task-select:hover {
+    border-color: var(--main-green);
+  }
+
+  select:focus,
+  .task-select:focus {
+    border-color: var(--main-green);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  }
+}
+
+/* ======================
+    TASK ITEM
+====================== */
+.task-list-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  padding: 6px 18px;
+  gap: 16px;
+
+  transition: 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.10);
+  }
+
+  &.task-done {
+    background: #d9f8d9 !important;
+    border-left: 6px solid #16a34a;
+    opacity: 0.85;
+    filter: grayscale(0%);
+  }
+
+  /* PRIORITY BACKGROUNDS */
+  &.URGENT {
+    background: #ffe5e5;
+  }
+
+  &.HIGH {
+    background: #ffe9d6;
+  }
+
+  &.NORMAL {
+    background: #e8eeff;
+  }
+
+  &.LOW {
+    background: #e6f8f1;
+  }
+}
+
+/* ======================
+    TASK INFO (LEFT)
+====================== */
+.task-list-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  text-decoration: none;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  .task-list-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #063a24;
+  }
+}
+
+/* ======================
+    TAGS
+====================== */
+.task-list-tags {
+  display: flex;
+  gap: 6px;
+  
+  .status-tag,
+  .task-tag {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: white;
+  }
+}
+
+/* LEVEL COLORS */
+.level-tag {
+  &.HARD {
+    background: #dc2626;
+  }
+
+  &.ADVANCED {
+    background: #f97316;
+  }
+
+  &.NORMAL {
+    background: var(--blue-in-env);
+  }
+
+  &.LIGHT {
+    background: #10b981;
+  }
+}
+
+/* PRIORITY COLORS */
+.priority-tag {
+  &.URGENT {
+    background: #dc2626;
+  }
+
+  &.HIGH {
+    background: #f97316;
+  }
+
+  &.NORMAL {
+    background: var(--blue-in-env);
+  }
+
+  &.LOW {
+    background: #10b981;
+  }
+}
+
+/* TYPE TAG */
+.type-tag {
+  background: #4b5563;
+}
+
+/* ======================
+    DATE SECTION
+====================== */
+.task-list-dates {
+  text-align: right;
+  white-space: nowrap;
+
+  .date-label,
+  .deadline-value {
+    font-size: 13px;
+    color: #374151;
+  }
+}
