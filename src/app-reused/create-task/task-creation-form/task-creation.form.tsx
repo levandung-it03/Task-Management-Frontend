@@ -520,7 +520,7 @@ function SearchUserToAssign({ assignedUsers, setAssignedUsers, setHistories }: S
       const token = AuthHelper.getAccessTokenFromCookie();
       if (token) {
         const response = await UserInfoAPIs.getUserInfo() as ApiResponse<DTO_UserInfoResponse>
-        if (String(response.status)[0] === "2") {
+        if (String(response.status).startsWith("2")) {
           const token = AuthHelper.getAccessTokenFromCookie()
           if (!token)   return;
 

@@ -69,7 +69,7 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
         {
           loading: 'Wait for Model generating Report!',
           success: (response) => {
-            if (String(response.status)[0] === "2") {
+            if (String(response.status).startsWith("2")) {
               setReport(response.body.report)
               toast.success(response.msg)
             }
@@ -91,7 +91,7 @@ export default function CreateReportForm({ userTaskId, taskInfo, reportComments 
 
       
       const response = await UserInfoAPIs.getUserInfo() as ApiResponse<DTO_UserInfoResponse>
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         setTitle(`Report for ${taskInfo.name} by ${response.body.fullName}`);
       }
       setFormTouched(true);

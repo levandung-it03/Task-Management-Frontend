@@ -9,61 +9,7 @@ export class GroupPageAPIs {
   static async getGroups(request: DTO_PaginationRequest): Promise<ApiResponse<DTO_PaginatedGroupsResponse> | unknown> {
     try {
       const response = await axiosInstance.post(`/api/private/${AuthHelper.getRoleFromToken()}/v1/group/search`, request)
-      return response.data
-      // return {
-      //   code: 11000,
-      //   status: 200,
-      //   msg: "Groups retrieved successfully",
-      //   time: new Date().toISOString(),
-      //   body: {
-      //     totalPages: 3,
-      //     dataList: [
-      //       {
-      //         id: 1,
-      //         createdByUser: {
-      //           id: 1,
-      //           fullName: "Le Van Dung",
-      //           email: "emp@gmail.com"
-      //         },
-      //         name: "Development Team",
-      //         isActive: true,
-      //         createdTime: "2024-01-15 10:30:00",
-      //         updatedTime: "2024-01-15 10:30:00",
-      //         userQuantity: 10,
-      //         memberCount: 8,
-      //         createdByName: "John Doe",
-      //       },
-      //       {
-      //         id: 2,
-      //         createdByUser: {
-      //           id: 1,
-      //           fullName: "Le Van Dung",
-      //           email: "emp@gmail.com"
-      //         },
-      //         name: "Design Team",
-      //         isActive: true,
-      //         createdTime: "2024-01-16 14:20:00",
-      //         userQuantity: 10,
-      //         memberCount: 5,
-      //         createdByName: "Jane Smith",
-      //       },
-      //       {
-      //         id: 3,
-      //         createdByUser: {
-      //           id: 1,
-      //           fullName: "Le Van Dung",
-      //           email: "emp@gmail.com"
-      //         },
-      //         name: "Marketing Team",
-      //         isActive: false,
-      //         createdTime: "2024-01-10 09:15:00",
-      //         userQuantity: 10,
-      //         memberCount: 3,
-      //         createdByName: "John Doe",
-      //       },
-      //     ]
-      //   },
-      // }
+      return response.data;
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
     }

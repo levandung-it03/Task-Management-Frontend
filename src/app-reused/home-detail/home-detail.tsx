@@ -46,27 +46,6 @@ export default function HomeDetail() {
             <span className="caption-content">Dashboard</span>
             <i className="desc-content">Welcome back!</i>
           </div>
-          <div className="dashboard-actions">
-            <a
-              style={{
-                background: '#166534',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 999,
-                padding: '12px 32px',
-                fontWeight: 600,
-                fontSize: 16,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                boxShadow: '0 2px 8px #0001',
-                cursor: 'pointer'
-              }}
-              href={`/${AuthHelper.getRoleFromToken()}/projects`}
-            >
-              <span style={{ fontSize: 22, fontWeight: 700, marginRight: 4, color: '#fff' }}>+</span> Project
-            </a>
-          </div>
         </div>
 
         {/* Dashboard Stats */}

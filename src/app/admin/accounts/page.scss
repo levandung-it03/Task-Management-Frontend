@@ -194,3 +194,115 @@
     }
   }
 }
+
+.container-dept {
+  margin: 15px;
+  padding: 25px;
+  background-color: var(--background);
+  border-radius: 15px;
+
+  .dept-title {
+    font-size: 26px;
+    margin-bottom: 15px;
+    color: var(--main-green);
+    display: flex;
+    align-items: center;
+
+    .dept-icon {
+      display: flex;
+      width: 40px;
+      height: 40px;
+      padding: 5px;
+      border-radius: 10px;
+      background-color: var(--main-green);
+      color: #fff;
+      margin-right: 15px;
+    }
+  }
+
+  .create-box {
+    display: flex;
+
+    .dept-btn {
+      background-color: var(--foreground);
+      color: var(--background);
+      border-color: var(--foreground);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 15px;
+      margin-top: 8px;
+      border-radius: 10px;
+      transition: all ease 0.2s;
+      font-weight: 100;
+      border: 2px solid;
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--background);
+        color: var(--foreground);
+      }
+    }
+  }
+
+  .dept-table {
+    width: 100%;
+    border: 2px solid var(--main-green);
+    padding: 5px;
+    border-radius: 10px;
+
+    thead {
+      width: 100%;
+      display: block;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--main-green);
+    }
+
+    tr {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: left;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--main-green);
+    }
+
+    tr:last-child {
+      border-bottom: none;
+    }
+    td,
+    th {
+      flex: 1;
+      text-align: left;
+      padding-left: 10px;
+    }
+
+    .btns-cell {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: left;
+    }
+
+    .green-btn,
+    .blue-btn,
+    .red-btn {
+      color: #fff;
+      padding: 5px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+    .green-btn {
+      background-color: var(--main-green);
+    }
+    .red-btn {
+      background-color: var(--main-dark-red);
+    }
+    .blue-btn {
+      background-color: var(--blue-in-env);
+    }
+  }
+}

@@ -108,7 +108,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
           .bstartDate(startDate)
           .bdueDate(dueDate);
         const response = await PhaseAPIs.updatePhase(form.id, request) as ApiResponse<void>;
-        if (String(response.status)[0] === "2") {
+        if (String(response.status).startsWith("2")) {
           toast.success(response.msg);
           setPhases((prev) => prev.map((p) => (p.id === id
             ? {
@@ -132,7 +132,7 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
         return;
 
       const response = await PhaseAPIs.deletePhase(phase.id) as ApiResponse<void>;
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setPhases(prev => prev.filter(p => p.id !== phase.id));
       }
@@ -142,13 +142,13 @@ export default function PhaseDetail({ projectId }: { projectId: number }) {
 
   const handleCreatePhase = useCallback(() => {
     async function create() {
-        const request = DTO_CreatePhase.withBuilder()
-          .bname(createForm.name)
-          .bdescription(createForm.description)
-          .bstartDate(createForm.startDate)
-          .bdueDate(createForm.dueDate);
+      const request = DTO_CreatePhase.withBuilder()
+        .bname(createForm.name)
+        .bdescription(createForm.description)
+        .bstartDate(createForm.startDate)
+        .bdueDate(createForm.dueDate);
       const response = await PhaseAPIs.createPhase(projectId, request) as ApiResponse<DTO_IdResponse>;
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg);
         const newPhase: DTO_PhaseItem = {
           id: response.body.id,

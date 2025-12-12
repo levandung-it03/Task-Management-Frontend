@@ -78,7 +78,7 @@ export default function CreateProjectModal({ open, onClose, onCreate, initialFor
 
     onClose();
     const response = await ProjectAPIs.createProject(form as DTO_CreateProject) as ApiResponse<DTO_IdResponse>;
-    if (String(response.status)[0] === "2") {
+    if (String(response.status).startsWith("2")) {
       toast.success(response.msg);
       onCreate(response.body)
     }

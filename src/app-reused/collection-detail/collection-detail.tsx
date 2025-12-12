@@ -192,7 +192,7 @@ export default function CollectionDetail({ phaseId }: CollectionDetailProps) {
         return;
 
       const response = await CollectionAPIs.deleteCollection(collection.id) as ApiResponse<void>;
-      if (String(response.status)[0] === "2") {
+      if (String(response.status).startsWith("2")) {
         toast.success(response.msg)
         setCollections(prev => prev.filter(c => c.id !== collection.id));
       }

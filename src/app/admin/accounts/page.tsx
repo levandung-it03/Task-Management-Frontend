@@ -1,15 +1,17 @@
 'use client'
 
 import Image from "next/image"
-import { BadgeInfo, BookUser, BrushCleaning, Download, SendHorizontal, X } from "lucide-react";
+import { BadgeInfo, BookUser, BrushCleaning, Download, SendHorizontal, Table, X } from "lucide-react";
 import "./page.scss"
 import React, { useCallback, useEffect, useState } from "react";
 import { AccountCreationPageAPIs } from "@/apis/create-accounts.page.api";
 import { ApiResponse } from "@/apis/general.api";
 import toast from "react-hot-toast";
-import { DTO_AccountCreation } from "@/dtos/create-task.page.dto";
-import { DTO_ExistsObject } from "@/dtos/create-account,page.dto";
+import { DTO_AccountCreation, DTO_CreateDepartment, DTO_ExistsObject } from "@/dtos/create-task.page.dto";
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert";
+import { DepartmentAPIs } from "@/apis/department.page.api";
+import { DTO_Department } from "@/dtos/user-info.page.dto";
+import { DTO_IdResponse } from "@/dtos/general.dto";
 
 export default function AdminCreateAccountsPage() {
   const [file, setFile] = useState<File>(new File([], "empty.txt"))
@@ -132,8 +134,10 @@ export default function AdminCreateAccountsPage() {
           </div>
         </>}
       </div>
+
     </div>
     {openDialog && <InstructionDialog setOpenDialog={setOpenDialog} />}
+    <DepartmentTable />
   </>
 }
 
@@ -183,4 +187,124 @@ function InstructionDialog({ setOpenDialog }: {
       </div>
     </div>
   </>
+}
+
+function DepartmentTable() {
+  const [departments, setDepartments] = useState<DTO_Department[]>([]);
+  const [createName, setCreateName] = useState("");
+  const [editId, setEditId] = useState(-1);
+  const [editName, setEditName] = useState("");
+
+  useEffect(() => {
+    async function load() {
+      const res = await DepartmentAPIs.getAll() as ApiResponse<DTO_Department[]>;
+      if (res && String(res.status).startsWith("2")) {
+        setDepartments(res.body);
+      }
+    }
+    load();
+  }, []);
+
+  const handleCreate = useCallback(() => {
+    async function create() {
+      const request = DTO_CreateDepartment.withBuilder().bname(createName);
+      const res = await DepartmentAPIs.create(request) as ApiResponse<DTO_IdResponse>;
+
+      if (String(res.status).startsWith("2")) {
+        toast.success(res.msg);
+        setDepartments(d => [{ id: res.body.id, name: createName }, ...d]);
+        setCreateName("");
+      }
+    }
+    create();
+  }, [createName]);
+
+  const handleUpdate = useCallback(() => {
+    async function update() {
+      const req = DTO_CreateDepartment.withBuilder().bname(editName);
+      const res = await DepartmentAPIs.update(editId, req) as ApiResponse<void>;
+
+      if (String(res.status).startsWith("2")) {
+        toast.success(res.msg);
+        setDepartments(d => d.map(x => x.id === editId ? { ...x, name: editName } : x));
+        setEditId(-1);
+        setEditName("");
+      }
+    }
+    update();
+  }, [editId, editName]);
+
+  const handleDelete = useCallback((id: number) => {
+    async function remove() {
+      const res = await DepartmentAPIs.delete(id) as ApiResponse<void>;
+      if (String(res.status).startsWith("2")) {
+        toast.success(res.msg);
+        setDepartments(d => d.filter(x => x.id !== id));
+      }
+    }
+    remove();
+  }, []);
+
+  return (
+    <div className="dept-wrapper container-dept">
+      <h2 className="dept-title">
+        <Table className="dept-icon" />
+        Departments
+      </h2>
+      <div className="create-box dept-create-box">
+        <div className="form-group-container half-form-left-container">
+          <fieldset className="form-group">
+            <legend className="form-label">New Department</legend>
+            <input
+              className="form-input"
+              value={createName}
+              onChange={e => setCreateName(e.target.value)}
+              placeholder="Department name"
+            />
+          </fieldset>
+        </div>
+        <div className="form-group-container half-form-right-container">
+          <div className="dept-btn-block">
+          <button className="dept-btn" onClick={handleCreate}>Create</button>
+          </div>
+        </div>
+      </div>
+      <table className="dept-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {departments.map(d => (
+            <tr key={d.id}>
+              <td>{d.id}</td>
+              <td>
+                {editId === d.id ? (
+                  <input value={editName} onChange={e => setEditName(e.target.value)} />
+                ) : (
+                  d.name
+                )}
+              </td>
+              <td className="btns-cell">
+                {editId === d.id ? (
+                  <>
+                    <button className="green-btn" onClick={handleUpdate}>Save</button>
+                    <button className="red-btn" onClick={() => { setEditId(-1); setEditName(""); }}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button className="blue-btn" onClick={() => { setEditId(d.id); setEditName(d.name); }}>Edit</button>
+                    <button className="red-btn" onClick={() => handleDelete(d.id)}>Delete</button>
+                  </>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }

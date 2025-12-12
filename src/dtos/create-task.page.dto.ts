@@ -1,4 +1,8 @@
 
+export interface DTO_ExistsObject {
+  result: boolean;
+}
+
 export interface DTO_FastUserInfo {
   email: string
   fullName: string
@@ -62,4 +66,11 @@ export interface DTO_CollectionDetailOnTask {
   startDate: string
   createdTime: string
   updatedTime: string
+}
+
+export class DTO_CreateDepartment {
+  name = "";
+
+  static withBuilder() { return new DTO_CreateDepartment(); }
+  bname(name: string) { this.name = name; return this; }
 }
