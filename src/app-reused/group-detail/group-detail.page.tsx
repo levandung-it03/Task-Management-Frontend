@@ -6,14 +6,14 @@ import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
 import { GroupsPageService } from "@/app-reused/groups/groups-container.service"
 import { DTO_FastUserInfo, DTO_SearchFastUserInfo } from "@/dtos/create-task.page.dto"
-import { DTO_ChangeGroupRole, DTO_ChangeGroupStatus, DTO_DetailGroupResponse, DTO_UpdateGroup, GroupHasUser, OverviewedGroupInfo } from "@/dtos/groups.page.dto"
+import { DTO_ChangeGroupRole, DTO_ChangeGroupStatus, DTO_DetailGroupResponse, DTO_UpdateGroup, GroupHasUser } from "@/dtos/groups.page.dto"
 import GlobalValidators from "@/util/global.validators"
 import { Calendar, CalendarCog, CheckCircle, CircleOff, LogIn, LogOut, SquarePen, SquarePlus, UserPen, Users, UsersRound, X } from "lucide-react"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import toast from "react-hot-toast"
 import { GroupPageAPIs } from "@/apis/groups.page.api"
 import "./group-detail.page.scss"
-import { DTO_EmailResponse, DTO_IdResponse } from "@/dtos/general.dto"
+import { DTO_IdResponse, DTO_StatusResponse } from "@/dtos/general.dto"
 import { AuthHelper } from "@/util/auth.helper"
 
 export default function DetailGroupPage({ groupId }: { groupId: number }) {
@@ -50,16 +50,21 @@ export default function DetailGroupPage({ groupId }: { groupId: number }) {
 
   useEffect(() => {
     async function checkIsAdmin() {
-      const isAdmin = await AuthHelper.isEmailLoggingIn(group.baseInfo.createdByUser.email)
-      setIsAdmin(isAdmin)
+      if (group.baseInfo.id <= 0)
+        return;
+      const response = await GroupPageAPIs.checkIfAdmin(group.baseInfo.id) as ApiResponse<DTO_StatusResponse>;
+      if (String(response.status).startsWith("2")) {
+        console.log(response.body.status)
+        setIsAdmin(response.body.status);
+      }
     }
     checkIsAdmin()
-  }, [group.baseInfo.createdByUser.email])
+  }, [group.baseInfo.id])
 
   return <div className="detail-group-page">
     {isLoading
       ? <div className="loading-row">Loading...</div>
-      : <GroupInfoContainer group={group} setGroup={setGroup} isAdmin={isAdmin}/>
+      : <GroupInfoContainer group={group} setGroup={setGroup} isAdmin={isAdmin} />
     }
   </div>
 }
@@ -84,7 +89,7 @@ function GroupInfoContainer({ group, setGroup, isAdmin }: {
   }, [])
 
   return <>
-    <GroupBaseInfo group={group} setOpenDialog={setOpenUpdateDialog} setGroup={setGroup} isAdmin={isAdmin}/>
+    <GroupBaseInfo group={group} setOpenDialog={setOpenUpdateDialog} setGroup={setGroup} isAdmin={isAdmin} />
     <ul className="joined-users">
       {group.groupHasUsers.map((user, ind) =>
         <UserTag key={"ju-" + ind} userGroup={user} groupRoles={groupRoles} isAdmin={isAdmin} />

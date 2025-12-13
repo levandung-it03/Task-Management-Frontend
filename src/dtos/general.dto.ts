@@ -76,3 +76,7 @@ export interface DTO_IdResponse {
 export interface DTO_EmailResponse {
   email: string
 }
+
+export interface DTO_StatusResponse {
+  status: boolean
+}

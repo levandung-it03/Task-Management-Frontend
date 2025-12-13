@@ -136,7 +136,7 @@ function GroupBlock({ group }: { group: OverviewedGroupInfo }) {
         {`Created ${
           GroupsPageService.prettierDateByTime(group.createdTime)
         } by ${
-          GroupsPageService.getLastName(group.createdByUser.fullName)
+          group.createdByUser.fullName
         }`}
       </span>
     </div>

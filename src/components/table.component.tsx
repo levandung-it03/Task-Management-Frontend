@@ -20,6 +20,7 @@ export interface RequestDataWrapper {
   sortedField: string,
   sortedMode: number,
   page: number,
+  data: {}
 }
 
 export type MenuCallback = (data: Record<string, unknown>) => void
