@@ -74,7 +74,7 @@ export class GeneralAPIs {
 
   static async verifyEmailByOtp(request: DTO_VerifyEmailRequest): Promise<RecordResponse | unknown> {
     try {
-      const response = await axiosInstance.post(`/api/public/auth/v1/account/verify-email`, request)
+      const response = await axiosInstance.post(`/api/public/v1/account/verify-email`, request)
       return response.data
     } catch (error: unknown) {
       return GeneralAPIs.extractError(error)
