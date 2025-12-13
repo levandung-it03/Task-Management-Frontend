@@ -168,13 +168,6 @@ export default function ProjectDetail({ projectId }: { projectId: number }) {
         }
       </div>
       <div className="project-info-right">
-        {project.startDate !== null &&
-          <div className="project-info-item">
-            <span className="project-info-label">Start Date</span>
-            <span className="project-info-value">
-              <span className="project-date">{prettierDate(project.startDate)}</span>
-            </span>
-          </div>}
         {project.endDate !== null
           && <div className="project-info-item">
             <span className="project-info-label">End Date</span>
