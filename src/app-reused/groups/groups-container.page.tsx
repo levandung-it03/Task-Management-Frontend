@@ -132,8 +132,7 @@ function GroupBlock({ group }: { group: OverviewedGroupInfo }) {
         {group.userQuantity} members
       </span>
       <span className="gi-created-at">
-        <Calendar className="gi-created-at-icon gi-icon" />
-        {`Created ${
+        {`Created at ${
           GroupsPageService.prettierDateByTime(group.createdTime)
         } by ${
           group.createdByUser.fullName
