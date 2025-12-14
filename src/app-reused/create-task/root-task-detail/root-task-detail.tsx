@@ -53,7 +53,8 @@ export default function RootTaskDetail({ taskId, setRootData }: {
     deadline: "",
     createdTime: "",
     updatedTime: "",
-    hasAtLeastOneReport: false,
+    hasApprovedReport: false,
+    reportsQty: 0,
     projectInfo: {
       id: 0,
       name: ""

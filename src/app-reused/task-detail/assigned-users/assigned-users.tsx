@@ -3,12 +3,13 @@
 import { ApiResponse } from "@/apis/general.api"
 import { TaskDetailPageAPIs } from "@/apis/task-detail.page.api"
 import { extractEmailToGetId, getColorByCharacter } from "@/app-reused/create-task/task-creation-form/task-creation.form"
-import { ClipboardList, LogIn, LogOut, Trash2 } from "lucide-react"
+import { ArrowRight, ClipboardList, LogIn, LogOut, Trash2 } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import "./assigned-users.scss"
 import { DTO_TaskDetail, DTO_TaskUser } from "@/dtos/task-detail.page.dto"
 import toast from "react-hot-toast"
 import { confirm } from "@/app-reused/confirm-alert/confirm-alert"
+import { prettierTime } from "../task-detail.service"
 
 export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, isRootTask, assignedUsers, setAssignedUsers }: {
   taskInfo: DTO_TaskDetail,
@@ -30,7 +31,11 @@ export default function AssignedUsers({ taskInfo, isTaskOwner, setTotalUsers, is
     async function fetchAssignedUsers() {
       const response = await TaskDetailPageAPIs.getUsersOfTask(taskInfo.id) as ApiResponse<DTO_TaskUser[]>
       if (String(response.status).startsWith("2")) {
-        setAssignedUsers(response.body)
+        setAssignedUsers([...response.body].sort((a, b) => {
+          if (a.startedTime === null && b.startedTime !== null) return 1;
+          if (a.startedTime !== null && b.startedTime === null) return -1;
+          return 0;
+        }))
         setTotalUsers(response.body.length)
       }
       setIsLoading(false)
@@ -168,7 +173,12 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
     <span className={`usi-role usi-${userTask.role.toLowerCase().replace("_", "-")}`}>{userTask.role}</span>
     {userTask.wasDone
       ? <span className="usi-status quick-green-tag">Done</span>
-      : <span className="usi-status quick-blue-tag">In-progress</span>}
+      : (userTask.startedTime === null
+        ? <span className="usi-status quick-red-tag">Not-Started</span>
+        : <span className="usi-status quick-blue-tag">
+          Started - {prettierTime(new Date(userTask.startedTime).toISOString())}
+        </span>
+      )}
     {isRootTask && isTaskOwner && (userKicked
       ? <button className="usi-tag re-add-user-btn" onClick={onClickReaddUser}>
         <LogIn className="usgb-icon" />Re-add
@@ -181,5 +191,9 @@ function UserTag({ isTaskOwner, userTask, assignedUsers, setAssignedUsers, isRoo
       <Trash2 className="usgb-icon" />Remove
     </button>
       : <span style={{ width:'105px'}}></span>}
+    <span className="view-reports">
+      Reports
+      <ArrowRight className="vr-icon"/>
+    </span>
   </a>
 }

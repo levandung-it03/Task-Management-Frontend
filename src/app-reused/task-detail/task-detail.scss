@@ -15,3 +15,152 @@
   border-radius: 5px;
   font-size: 13px !important;
 }
+
+.popup-container {
+  position: relative;
+  height: 100%;
+  
+  .pc-hidden-warning {
+    padding: 15px;
+    margin: 15px;
+    background-color: var(--background);
+    border-radius: 10px;
+
+    .pchw-content {
+      font-size: 26px;
+      color: var(--red-in-env);
+      display: flex;
+      align-items: center;
+    }
+
+    .pchwc-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 5px;
+    }
+  }
+
+  .pc-overlay {
+    position: absolute;
+    background-color: var(--overlay-color);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 2;
+    margin-top: -15px;
+  }
+
+  .task-info-popup {
+    position: absolute;
+    z-index: 3;
+    background: var(--background);
+    padding: 25px;
+    border-radius: 10px;
+    min-width: 500px;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .tip-title {
+      color: var(--main-green);
+      font-size: 26px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+
+      .tipt-icon {
+        width: 25px;
+        height: 25px;
+        margin-right: 10px;
+      }
+    }
+
+    .ti-line {
+      padding-bottom: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      align-items: center;
+    }
+
+    .til-title {
+      width: 50%;
+    }
+
+    .til-val {
+      margin-left: 5px;
+      max-width: 45%;
+      line-break: auto;
+    }
+
+    .task-level,
+    .task-priority,
+    .task-id {
+      color: #fff;
+      font-size: 13px;
+      padding: 3px;
+      border-radius: 4px;
+    }
+
+    .task-id {
+      background-color: var(--main-green);
+    }
+
+    .ti-btn-block {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 15px;
+
+      .ti-btn {
+        min-width: 200px;
+        width: 49.5%;
+        padding: 15px 0;
+        text-align: center;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all ease 0.3s;
+
+        .ti-btn-icon {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .start {
+        background-color: var(--blue-in-env);
+        color: #fff;
+
+        .ti-btn-icon {
+          margin-left: 10px;
+        }
+
+        &:hover {
+          background-color: var(--blue-in-env-bg);
+        }
+      }
+
+      .back {
+        background-color: var(--main-green);
+        color: #fff;
+        
+        .ti-btn-icon {
+          margin-right: 10px;
+        }
+
+        &:hover {
+          background-color: var(--main-green-bg);
+        }
+      }
+    }
+  }
+}

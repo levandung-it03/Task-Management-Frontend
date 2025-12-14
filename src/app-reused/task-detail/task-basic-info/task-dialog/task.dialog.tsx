@@ -46,7 +46,7 @@ export default function TaskDialog({
     startDate: ""
   })
   const [addedUsers, setAddedUsers] = useState<Record<string, Record<string, string>>>({})
-  const isUpdatable = useMemo(() => isOwner && !taskInfo.hasAtLeastOneReport, [isOwner, taskInfo.hasAtLeastOneReport])
+  const isTaskStarted = useMemo(() => new Date() <= new Date(taskInfo.startDate + " 00:00:00"), [])
 
   const onChangeStartDate = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value)
@@ -114,11 +114,12 @@ export default function TaskDialog({
           startDate: startDate,
           updatedTime: prettierTime(new Date().toISOString())
         }))
-        if (response.body.newUsers) {
+        if (response.body.newUsers && response.body.newUsers.length !== 0) {
           setAssignedUsers(prev => [
             ...prev,
             ...response.body.newUsers
           ])
+          toast.success("New Users has been added into Tasks!");
         }
       }
       setOpenDialog(false)
@@ -182,17 +183,18 @@ export default function TaskDialog({
         <X className="close-dialog-btn" onClick={() => setOpenDialog(false)} />
       </div>
       <div className="input-container">
-        {isUpdatable && <>
-          <div className="form-group-container half-form-left-container">
-            <fieldset className="form-group">
-              <legend className="form-label">Start Date</legend>
-              <input type="date" id="startDate" className="form-input" placeholder="Type Start Date" required
-                value={startDate} onChange={onChangeStartDate} />
-            </fieldset>
-            {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
-          </div>
-
-          <div className="form-group-container half-form-right-container">
+        {isOwner && !taskInfo.hasApprovedReport && <>
+          {isTaskStarted &&
+            <div className="form-group-container half-form-left-container">
+              <fieldset className="form-group">
+                <legend className="form-label">Start Date</legend>
+                <input type="date" id="startDate" className="form-input" placeholder="Type Start Date" required
+                  value={startDate} onChange={onChangeStartDate} />
+              </fieldset>
+              {GlobalValidators.notEmpty(formValidation.startDate) && <span className="input-err-msg">{formValidation.startDate}</span>}
+            </div>
+          }
+          <div className={`form-group-container ${isTaskStarted && "half-form-right-container"}`}>
             <fieldset className="form-group">
               <legend className="form-label">Level</legend>
               <select id="level" className="form-select" value={level} onChange={onChangeLevel}>
@@ -225,7 +227,6 @@ export default function TaskDialog({
             </fieldset>
           </div>
         </>}
-
         <div className="form-group-container">
           <fieldset className="form-group">
             <legend className="form-label">Deadline</legend>

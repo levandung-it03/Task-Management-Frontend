@@ -22,7 +22,8 @@ export interface DTO_TaskDetail {
   createdTime: string;
   updatedTime: string;
 
-  hasAtLeastOneReport: boolean;
+  hasApprovedReport: boolean;
+  reportsQty: 0;
 
   projectInfo: DTO_EntityDelegator,
   phaseInfo: DTO_EntityDelegator,
@@ -86,6 +87,7 @@ export interface DTO_TaskUser {
   userTaskStatus: string
   wasDone: boolean
   totalReports: number
+  startedTime: string | null
 }
 
 export class DTO_LockTaskStatus {

@@ -92,18 +92,14 @@ export default function TaskDetailInteractBtns({ taskInfo, setTaskInfo }: TaskDe
         className={`lock-task-button task-${locked ? "unlocked" : "locked"}-btn ${taskInfo.endDate === null ? "" : "disabled-btn"}`}
         onClick={onClickLockTaskStatus}
         disabled={taskInfo.endDate !== null}>
-          {locked
-            ? (isNew ? <>
-                <Play className="tsb-icon" />
-                Start
-              </>
-              : <>
-                <LockOpenIcon className="tsb-icon" />
-                Un-Lock Task
-              </>)
-            : <>
-              <Lock className="tsb-icon" />
-              Lock Task
+        {locked
+          ? <>
+            <LockOpenIcon className="tsb-icon" />
+            Un-Lock Task
+          </>
+          : <>
+            <Lock className="tsb-icon" />
+            Lock Task
           </>}
       </button>
       {taskInfo.endDate === null

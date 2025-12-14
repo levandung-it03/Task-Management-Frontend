@@ -1,4 +1,3 @@
-
 .assigned-users {
   background-color: var(--under-background);
 
@@ -12,6 +11,30 @@
 
     .usi-status {
       margin-left: 15px;
+    }
+
+    .view-reports {
+      font-size: 13px;
+      padding: 10px;
+      margin: -6px -6px -6px 15px;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      background-color: var(--main-green);
+      color: #fff;
+      transition: all ease 0.3s;
+
+      .vr-icon {
+        width: 16px;
+        height: 16px;
+        margin-left: 5px;
+      }
+
+      &:hover {
+        background-color: #338f65;
+      }
+
     }
   }
 }

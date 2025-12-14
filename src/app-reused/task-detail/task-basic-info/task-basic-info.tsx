@@ -19,9 +19,10 @@ interface TaskBasicInfoProps {
   totalUsers: number,
   isRootTask: boolean,
   setAssignedUsers: React.Dispatch<React.SetStateAction<DTO_TaskUser[]>>
+  curUserTask: DTO_TaskUser
 }
 
-export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, setAssignedUsers }: TaskBasicInfoProps) {
+export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, setAssignedUsers, curUserTask }: TaskBasicInfoProps) {
   const [taskDelegator, setTaskDelegator] = useState<DTO_TaskDelegator>({
     taskInfo: null,
     projectInfo: {
@@ -48,7 +49,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
   >(() => {
     return () => Promise.resolve();
   });
-  const isUpdatable = useMemo(() => isOwner && !taskInfo.hasAtLeastOneReport, [isOwner, taskInfo.hasAtLeastOneReport])
+  const isUpdatable = useMemo(() => isOwner && !taskInfo.hasApprovedReport, [isOwner, taskInfo.hasApprovedReport])
 
   const onClickOpenDescription = useCallback(() => {
     setOpenTextDialog(true)
@@ -75,30 +76,30 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
     })
   }, [taskInfo.id, taskInfo.description, taskInfo, setTaskInfo])
 
-  const onClickOpenReportFormat = useCallback(() => {
-    setOpenTextDialog(true)
-    setDialogTitle("Report Format")
-    setDialogContent(taskInfo.reportFormat || "")
-    setOnSubmitUpdateContent(() => {
-      return async (content: string) => {
-        if (taskInfo.id === undefined) return;
-        if (content.trim().length === 0) {
-          toast.error("Content cannot be empty")
-          return
-        }
-        const request = DTO_UpdateContentRequest.withBuilder()
-          .bid(taskInfo.id)
-          .bcontent(content)
-        const response = await TaskDetailPageAPIs.updateTaskReportFormat(request) as ApiResponse<void>
-        if (String(response.status).startsWith("2")) {
-          toast.success(response.msg)
-          setTaskInfo(prev => ({ ...prev, reportFormat: content }))
-          setOpenTextDialog(false)
-          return
-        }
-      }
-    })
-  }, [taskInfo.id, taskInfo.reportFormat, taskInfo, setTaskInfo])
+  // const onClickOpenReportFormat = useCallback(() => {
+  //   setOpenTextDialog(true)
+  //   setDialogTitle("Report Format")
+  //   setDialogContent(taskInfo.reportFormat || "")
+  //   setOnSubmitUpdateContent(() => {
+  //     return async (content: string) => {
+  //       if (taskInfo.id === undefined) return;
+  //       if (content.trim().length === 0) {
+  //         toast.error("Content cannot be empty")
+  //         return
+  //       }
+  //       const request = DTO_UpdateContentRequest.withBuilder()
+  //         .bid(taskInfo.id)
+  //         .bcontent(content)
+  //       const response = await TaskDetailPageAPIs.updateTaskReportFormat(request) as ApiResponse<void>
+  //       if (String(response.status).startsWith("2")) {
+  //         toast.success(response.msg)
+  //         setTaskInfo(prev => ({ ...prev, reportFormat: content }))
+  //         setOpenTextDialog(false)
+  //         return
+  //       }
+  //     }
+  //   })
+  // }, [taskInfo.id, taskInfo.reportFormat, taskInfo, setTaskInfo])
 
   useEffect(() => {
     async function checkIsOwner() {
@@ -172,7 +173,7 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
             {isOwner && !taskInfo.endDate && <button className="update-info-btn" onClick={() => setOpenTaskDialog(true)}>
               <Pencil className="task-header-icon" />
             </button>}
-            {!isRootTask && isOwner && !taskInfo.endDate && !taskInfo.hasAtLeastOneReport &&
+            {!isRootTask && isOwner && !taskInfo.endDate && !taskInfo.hasApprovedReport &&
               <button className="update-info-btn" onClick={() => setOpenReassignDialog(true)}>
                 <UserRoundCog className="task-header-icon" />
               </button>}
@@ -227,11 +228,20 @@ export function TaskBasicInfo({ taskInfo, setTaskInfo, totalUsers, isRootTask, s
             </span>
           </div>
           <div className="task-info-item">
-            <span className="task-info-label">Start Date</span>
+            <span className="task-info-label">Task Started Date</span>
             <span className="task-info-value">
               <span className="task-date">{prettierDate(taskInfo.startDate)}</span>
             </span>
           </div>
+          {curUserTask && curUserTask.startedTime &&
+            <div className="task-info-item">
+            <span className="task-info-label">Your Started Time</span>
+            <span className="task-info-value">
+              <span className="task-time-content tag-data">
+                {prettierTime(new Date(curUserTask.startedTime).toISOString())}
+              </span>
+            </span>
+          </div>}
           {taskInfo.endDate !== null
             && <div className="task-info-item">
               <span className="task-info-label">End Date</span>

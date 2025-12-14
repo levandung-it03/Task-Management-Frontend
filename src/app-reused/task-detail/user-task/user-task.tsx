@@ -55,7 +55,8 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     deadline: "",
     createdTime: "",
     updatedTime: "",
-    hasAtLeastOneReport: false,
+    hasApprovedReport: false,
+    reportsQty: 0,
     projectInfo: { id: 0, name: "" },
     phaseInfo: { id: 0, name: "" },
     collectionInfo: { id: 0, name: "" }
