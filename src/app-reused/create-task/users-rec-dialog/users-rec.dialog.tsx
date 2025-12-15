@@ -110,7 +110,7 @@ export default function UsersRecDialog({
         error: (err) => err.message || "Error happened",
       }
     );
-  }, [recRequest, usersQty, maxUsersQty, authEnum]);
+  }, [recRequest, usersQty, maxUsersQty, authEnum, group]);
 
   useEffect(() => {
     async function initValues() {
