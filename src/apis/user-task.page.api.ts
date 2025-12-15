@@ -6,9 +6,29 @@ import { AuthHelper } from "@/util/auth.helper"
 
 export class UserTaskPageAPIs {
 
-  static async generateReport(request: DTO_ReportGenRequest): Promise<Record<string, string> | unknown> {
+  static async generateCompletedReport(request: DTO_ReportGenRequest): Promise<Record<string, string> | unknown> {
     try {
-      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/generate`;
+      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/completed-gen`;
+      const response = await axiosInstance.post(url, request)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async generateProcessingReport(request: DTO_ReportGenRequest): Promise<Record<string, string> | unknown> {
+    try {
+      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/processing-gen`;
+      const response = await axiosInstance.post(url, request)
+      return response.data
+    } catch (error: unknown) {
+      return GeneralAPIs.extractError(error)
+    }
+  }
+
+  static async generateDailyReport(request: DTO_ReportGenRequest): Promise<Record<string, string> | unknown> {
+    try {
+      const url = `/api/private/${AuthHelper.getRoleFromToken()}/v1/report/daily-gen`;
       const response = await axiosInstance.post(url, request)
       return response.data
     } catch (error: unknown) {

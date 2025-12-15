@@ -120,7 +120,11 @@ export default function UserTask({ userTaskId, taskId }: { userTaskId: number, t
     <div className="introduction">
       <Delegator taskInfo={taskInfo} />
       {isReportOwner && canCreateReport
-        ? <CreateReportForm userTaskId={userTaskId} taskInfo={taskInfo} reportComments={reportComments}/>
+        ? <CreateReportForm
+            userTaskId={userTaskId}
+            taskInfo={taskInfo}
+            reportComments={reportComments}
+            isTaskOwner={isTaskOwner} />
         : <div className="form-caption">
           <FileIcon className="caption-icon" />
           <span className="caption-content">Reports</span>
