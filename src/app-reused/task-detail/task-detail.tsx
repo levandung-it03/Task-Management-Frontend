@@ -165,7 +165,7 @@ function HoldingPopup({ assignedUser, setAssignedUsers, taskInfo }: {
       </div>
       <div className="ti-line">
         <b className="til-title">Task Name: </b>
-        <span className="til-val">{taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name} {taskInfo.name}</span>
+        <span className="til-val">{taskInfo.name}</span>
       </div>
       <div className="ti-line">
         <b className="til-title">Priority: </b>
@@ -193,7 +193,7 @@ function HoldingPopup({ assignedUser, setAssignedUsers, taskInfo }: {
       </div>
       <div className="ti-line">
         <b className="til-title">Description: </b>
-        <span className="til-val">{shortenByWords(taskInfo.description)}</span>
+        <span className="til-val">{taskInfo.description}</span>
       </div>
       <div className="ti-btn-block">
         <a className="ti-btn back" href={redirectUrl}>
