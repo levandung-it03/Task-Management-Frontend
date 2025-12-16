@@ -190,7 +190,7 @@ export default function UsersRecDialog({
             </div>
             <div className="form-group-container fit-form-container">
               <fieldset className="form-group">
-                <legend className="form-label">Task Type</legend>
+                <legend className="form-label">Authority</legend>
                 <select id="auth-enum" className="form-select" value={authEnum} onChange={onChangeAuthEnum}>
                   {authEnumsList.map((authEnum, ind) =>
                     <option key={"aefs-" + ind} value={authEnum}>{GeneralTools.convertEnum(authEnum)}</option>
