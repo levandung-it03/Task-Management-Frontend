@@ -108,6 +108,11 @@ export default function UsersRecDialog({
           throw new Error();
         },
         error: (err) => err.message || "Error happened",
+      },
+      {
+        loading: {
+          duration: 60000
+        }
       }
     );
   }, [recRequest, usersQty, maxUsersQty, authEnum, group]);

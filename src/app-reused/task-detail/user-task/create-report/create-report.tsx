@@ -176,6 +176,11 @@ function callToastPromiser({ promise, setReport }: {
         }
         throw new Error();
       },
+    },
+    {
+      loading: {
+        duration: 120000
+      }
     }
   );
 }
