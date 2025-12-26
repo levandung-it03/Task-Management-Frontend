@@ -178,6 +178,12 @@ function callToastPromiser({ promise, setReport }: {
       },
     },
     {
+      success: {
+        duration: 7000,
+      },
+      error: {
+        duration: 7000,
+      },
       loading: {
         duration: 120000
       }

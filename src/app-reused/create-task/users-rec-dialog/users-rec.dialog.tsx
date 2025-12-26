@@ -110,6 +110,12 @@ export default function UsersRecDialog({
         error: (err) => err.message || "Error happened",
       },
       {
+        success: {
+          duration: 7000,
+        },
+        error: {
+          duration: 7000,
+        },
         loading: {
           duration: 60000
         }
